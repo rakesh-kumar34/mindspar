@@ -1,22 +1,15 @@
-// Mindspar Firebase configuration.
+// Mindspar Firebase configuration (project: mindspar-duel, free Spark plan).
 //
-// Without this, the game runs in offline mode: local profile + bot duels only.
-// To enable real accounts, invites, and live human matches:
-//
-//   1. console.firebase.google.com → Add project (free Spark plan).
-//   2. Project settings → Your apps → Add app → Web (</>) → copy the config.
-//   3. Replace `null` below with that config object.
-//   4. Build → Authentication → Sign-in method → enable Email/Password.
-//   5. Build → Firestore Database → Create database (production mode),
-//      then paste the security rules from web/README.md.
-//
-// export const firebaseConfig = {
-//   apiKey: "...",
-//   authDomain: "your-project.firebaseapp.com",
-//   projectId: "your-project",
-//   storageBucket: "your-project.firebasestorage.app",
-//   messagingSenderId: "...",
-//   appId: "...",
-// };
+// This config is not a secret — it ships to every browser; access control
+// lives in firestore.rules. Setting this to null returns the game to
+// offline mode (local profile + bot duels only); setup steps for a fresh
+// project are in web/README.md.
 
-export const firebaseConfig = null;
+export const firebaseConfig = {
+  apiKey: "AIzaSyCZt68LOC355UeHU8rEsnAAm1LQKzB8Ir8",
+  authDomain: "mindspar-duel-7b73d.firebaseapp.com",
+  projectId: "mindspar-duel-7b73d",
+  storageBucket: "mindspar-duel-7b73d.firebasestorage.app",
+  messagingSenderId: "418895725153",
+  appId: "1:418895725153:web:d4b372274dc96378156020",
+};
