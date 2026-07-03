@@ -1,0 +1,6632 @@
+[
+ {
+  "id": "m001",
+  "domain": "math",
+  "prompt": "What is 15% of 240?",
+  "options": [
+   "51",
+   "6",
+   "36",
+   "21"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m002",
+  "domain": "math",
+  "prompt": "What is 25% of 320?",
+  "options": [
+   "40",
+   "120",
+   "160",
+   "80"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "m003",
+  "domain": "math",
+  "prompt": "What is 30% of 150?",
+  "options": [
+   "5",
+   "45",
+   "65",
+   "25"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m004",
+  "domain": "math",
+  "prompt": "What is 12% of 400?",
+  "options": [
+   "68",
+   "28",
+   "48",
+   "8"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m005",
+  "domain": "math",
+  "prompt": "What is 35% of 200?",
+  "options": [
+   "105",
+   "70",
+   "35",
+   "140"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m006",
+  "domain": "math",
+  "prompt": "What is 45% of 180?",
+  "options": [
+   "41",
+   "121",
+   "81",
+   "1"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m007",
+  "domain": "math",
+  "prompt": "What is 8% of 250?",
+  "options": [
+   "10",
+   "40",
+   "30",
+   "20"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m008",
+  "domain": "math",
+  "prompt": "What is 65% of 140?",
+  "options": [
+   "136",
+   "91",
+   "46",
+   "1"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m009",
+  "domain": "math",
+  "prompt": "What is 18% of 350?",
+  "options": [
+   "3",
+   "33",
+   "63",
+   "93"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m010",
+  "domain": "math",
+  "prompt": "What is 55% of 220?",
+  "options": [
+   "1",
+   "181",
+   "61",
+   "121"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m011",
+  "domain": "math",
+  "prompt": "What is 28% of 450?",
+  "options": [
+   "186",
+   "126",
+   "6",
+   "66"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m012",
+  "domain": "math",
+  "prompt": "What is 75% of 160?",
+  "options": [
+   "240",
+   "60",
+   "180",
+   "120"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "m013",
+  "domain": "math",
+  "prompt": "A jacket costs 800 after a 20% discount. What was the original price?",
+  "options": [
+   "1,400",
+   "900",
+   "1,000",
+   "1,100"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m014",
+  "domain": "math",
+  "prompt": "A jacket costs 1,050 after a 30% discount. What was the original price?",
+  "options": [
+   "1,600",
+   "2,025",
+   "1,500",
+   "1,400"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m015",
+  "domain": "math",
+  "prompt": "A jacket costs 600 after a 25% discount. What was the original price?",
+  "options": [
+   "900",
+   "1,100",
+   "700",
+   "800"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m016",
+  "domain": "math",
+  "prompt": "A jacket costs 1,020 after a 15% discount. What was the original price?",
+  "options": [
+   "1,200",
+   "1,300",
+   "1,100",
+   "1,710"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m017",
+  "domain": "math",
+  "prompt": "A jacket costs 1,300 after a 35% discount. What was the original price?",
+  "options": [
+   "2,000",
+   "2,650",
+   "2,100",
+   "1,900"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m018",
+  "domain": "math",
+  "prompt": "A jacket costs 360 after a 40% discount. What was the original price?",
+  "options": [
+   "780",
+   "600",
+   "700",
+   "500"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m019",
+  "domain": "math",
+  "prompt": "A jacket costs 2,200 after a 12% discount. What was the original price?",
+  "options": [
+   "3,600",
+   "2,500",
+   "2,400",
+   "2,600"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m020",
+  "domain": "math",
+  "prompt": "A jacket costs 360 after a 60% discount. What was the original price?",
+  "options": [
+   "1,080",
+   "1,000",
+   "800",
+   "900"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m021",
+  "domain": "math",
+  "prompt": "If 3x − 7 = 20, what is x?",
+  "options": [
+   "9",
+   "7",
+   "5",
+   "11"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "m022",
+  "domain": "math",
+  "prompt": "If 4x − 5 = 27, what is x?",
+  "options": [
+   "4",
+   "8",
+   "10",
+   "6"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "m023",
+  "domain": "math",
+  "prompt": "If 5x − 12 = 23, what is x?",
+  "options": [
+   "9",
+   "3",
+   "5",
+   "7"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m024",
+  "domain": "math",
+  "prompt": "If 7x − 9 = 33, what is x?",
+  "options": [
+   "4",
+   "6",
+   "8",
+   "2"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m025",
+  "domain": "math",
+  "prompt": "If 6x − 13 = 59, what is x?",
+  "options": [
+   "10",
+   "12",
+   "8",
+   "14"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m026",
+  "domain": "math",
+  "prompt": "If 8x − 15 = 57, what is x?",
+  "options": [
+   "11",
+   "5",
+   "7",
+   "9"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m027",
+  "domain": "math",
+  "prompt": "If 9x − 11 = 61, what is x?",
+  "options": [
+   "8",
+   "4",
+   "10",
+   "6"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m028",
+  "domain": "math",
+  "prompt": "If 4x − 18 = 42, what is x?",
+  "options": [
+   "15",
+   "11",
+   "13",
+   "17"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "m029",
+  "domain": "math",
+  "prompt": "If 11x − 16 = 61, what is x?",
+  "options": [
+   "5",
+   "3",
+   "9",
+   "7"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m030",
+  "domain": "math",
+  "prompt": "If 12x − 19 = 53, what is x?",
+  "options": [
+   "2",
+   "6",
+   "4",
+   "8"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m031",
+  "domain": "math",
+  "prompt": "A train covers 180 km in 2.5 hours. What is its average speed?",
+  "options": [
+   "80 km/h",
+   "76 km/h",
+   "68 km/h",
+   "72 km/h"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m032",
+  "domain": "math",
+  "prompt": "A train covers 240 km in 3 hours. What is its average speed?",
+  "options": [
+   "80 km/h",
+   "76 km/h",
+   "84 km/h",
+   "88 km/h"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m033",
+  "domain": "math",
+  "prompt": "A train covers 150 km in 2.5 hours. What is its average speed?",
+  "options": [
+   "68 km/h",
+   "64 km/h",
+   "60 km/h",
+   "56 km/h"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m034",
+  "domain": "math",
+  "prompt": "A train covers 320 km in 4 hours. What is its average speed?",
+  "options": [
+   "84 km/h",
+   "88 km/h",
+   "80 km/h",
+   "76 km/h"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m035",
+  "domain": "math",
+  "prompt": "A train covers 90 km in 1.5 hours. What is its average speed?",
+  "options": [
+   "64 km/h",
+   "56 km/h",
+   "60 km/h",
+   "68 km/h"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m036",
+  "domain": "math",
+  "prompt": "A train covers 210 km in 3.5 hours. What is its average speed?",
+  "options": [
+   "64 km/h",
+   "68 km/h",
+   "60 km/h",
+   "56 km/h"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m037",
+  "domain": "math",
+  "prompt": "A train covers 280 km in 3.5 hours. What is its average speed?",
+  "options": [
+   "80 km/h",
+   "76 km/h",
+   "84 km/h",
+   "88 km/h"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m038",
+  "domain": "math",
+  "prompt": "A train covers 135 km in 1.5 hours. What is its average speed?",
+  "options": [
+   "86 km/h",
+   "94 km/h",
+   "98 km/h",
+   "90 km/h"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m039",
+  "domain": "math",
+  "prompt": "12 workers finish a job in 10 days. At the same rate, how many days would 8 workers need?",
+  "options": [
+   "15",
+   "11",
+   "13",
+   "17"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m040",
+  "domain": "math",
+  "prompt": "6 workers finish a job in 8 days. At the same rate, how many days would 4 workers need?",
+  "options": [
+   "12",
+   "10",
+   "14",
+   "8"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m041",
+  "domain": "math",
+  "prompt": "9 workers finish a job in 12 days. At the same rate, how many days would 6 workers need?",
+  "options": [
+   "18",
+   "16",
+   "14",
+   "20"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m042",
+  "domain": "math",
+  "prompt": "10 workers finish a job in 6 days. At the same rate, how many days would 5 workers need?",
+  "options": [
+   "14",
+   "10",
+   "12",
+   "8"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m043",
+  "domain": "math",
+  "prompt": "8 workers finish a job in 9 days. At the same rate, how many days would 6 workers need?",
+  "options": [
+   "14",
+   "10",
+   "12",
+   "8"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m044",
+  "domain": "math",
+  "prompt": "15 workers finish a job in 4 days. At the same rate, how many days would 10 workers need?",
+  "options": [
+   "4",
+   "8",
+   "6",
+   "2"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m045",
+  "domain": "math",
+  "prompt": "14 workers finish a job in 6 days. At the same rate, how many days would 12 workers need?",
+  "options": [
+   "7",
+   "5",
+   "9",
+   "3"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m046",
+  "domain": "math",
+  "prompt": "16 workers finish a job in 9 days. At the same rate, how many days would 12 workers need?",
+  "options": [
+   "10",
+   "8",
+   "14",
+   "12"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m047",
+  "domain": "math",
+  "prompt": "What is the next prime number after 31?",
+  "options": [
+   "37",
+   "33",
+   "41",
+   "39"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m048",
+  "domain": "math",
+  "prompt": "What is the next prime number after 43?",
+  "options": [
+   "51",
+   "47",
+   "49",
+   "45"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m049",
+  "domain": "math",
+  "prompt": "What is the next prime number after 53?",
+  "options": [
+   "59",
+   "55",
+   "61",
+   "63"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m050",
+  "domain": "math",
+  "prompt": "What is the next prime number after 61?",
+  "options": [
+   "67",
+   "69",
+   "63",
+   "71"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m051",
+  "domain": "math",
+  "prompt": "What is the next prime number after 83?",
+  "options": [
+   "93",
+   "91",
+   "85",
+   "89"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m052",
+  "domain": "math",
+  "prompt": "What is the next prime number after 47?",
+  "options": [
+   "49",
+   "55",
+   "57",
+   "53"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m053",
+  "domain": "math",
+  "prompt": "What is the next prime number after 89?",
+  "options": [
+   "99",
+   "97",
+   "101",
+   "91"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m054",
+  "domain": "math",
+  "prompt": "(2^5 × 2^3) equals 2 raised to which power?",
+  "options": [
+   "9",
+   "2",
+   "15",
+   "8"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m055",
+  "domain": "math",
+  "prompt": "(2^4 × 2^6) equals 2 raised to which power?",
+  "options": [
+   "24",
+   "11",
+   "2",
+   "10"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m056",
+  "domain": "math",
+  "prompt": "(2^7 × 2^2) equals 2 raised to which power?",
+  "options": [
+   "10",
+   "5",
+   "14",
+   "9"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m057",
+  "domain": "math",
+  "prompt": "(2^3 × 2^9) equals 2 raised to which power?",
+  "options": [
+   "13",
+   "27",
+   "6",
+   "12"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m058",
+  "domain": "math",
+  "prompt": "(2^6 × 2^5) equals 2 raised to which power?",
+  "options": [
+   "11",
+   "1",
+   "12",
+   "30"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m059",
+  "domain": "math",
+  "prompt": "(2^8 × 2^4) equals 2 raised to which power?",
+  "options": [
+   "12",
+   "32",
+   "4",
+   "13"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m060",
+  "domain": "math",
+  "prompt": "(3^4)^2 equals 3 raised to which power?",
+  "options": [
+   "6",
+   "16",
+   "8",
+   "7"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m061",
+  "domain": "math",
+  "prompt": "(3^2)^5 equals 3 raised to which power?",
+  "options": [
+   "10",
+   "32",
+   "7",
+   "9"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m062",
+  "domain": "math",
+  "prompt": "What is the average of 12, 18, 24?",
+  "options": [
+   "15",
+   "18",
+   "12",
+   "21"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m063",
+  "domain": "math",
+  "prompt": "What is the average of 7, 11, 15?",
+  "options": [
+   "8",
+   "14",
+   "11",
+   "5"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m064",
+  "domain": "math",
+  "prompt": "What is the average of 20, 30, 40?",
+  "options": [
+   "33",
+   "30",
+   "24",
+   "27"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m065",
+  "domain": "math",
+  "prompt": "What is the average of 9, 14, 25?",
+  "options": [
+   "13",
+   "10",
+   "19",
+   "16"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m066",
+  "domain": "math",
+  "prompt": "What is the average of 16, 22, 34?",
+  "options": [
+   "27",
+   "24",
+   "21",
+   "18"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m067",
+  "domain": "math",
+  "prompt": "What is the average of 5, 25, 45?",
+  "options": [
+   "19",
+   "25",
+   "28",
+   "22"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m068",
+  "domain": "math",
+  "prompt": "What is the average of 13, 21, 32, 46?",
+  "options": [
+   "28",
+   "22",
+   "31",
+   "25"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m069",
+  "domain": "math",
+  "prompt": "What is the average of 10, 20, 30, 40?",
+  "options": [
+   "22",
+   "25",
+   "28",
+   "19"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m070",
+  "domain": "math",
+  "prompt": "What is 3/4 of 96?",
+  "options": [
+   "64",
+   "72",
+   "76",
+   "68"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m071",
+  "domain": "math",
+  "prompt": "What is 2/3 of 84?",
+  "options": [
+   "53",
+   "59",
+   "56",
+   "50"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m072",
+  "domain": "math",
+  "prompt": "What is 5/8 of 64?",
+  "options": [
+   "32",
+   "48",
+   "40",
+   "24"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m073",
+  "domain": "math",
+  "prompt": "What is 3/5 of 75?",
+  "options": [
+   "35",
+   "45",
+   "50",
+   "40"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m074",
+  "domain": "math",
+  "prompt": "What is 4/7 of 91?",
+  "options": [
+   "59",
+   "45",
+   "38",
+   "52"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m075",
+  "domain": "math",
+  "prompt": "What is 5/6 of 72?",
+  "options": [
+   "66",
+   "48",
+   "60",
+   "54"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m076",
+  "domain": "math",
+  "prompt": "What is 7/8 of 56?",
+  "options": [
+   "49",
+   "33",
+   "41",
+   "57"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m077",
+  "domain": "math",
+  "prompt": "What is 2/9 of 81?",
+  "options": [
+   "9",
+   "36",
+   "18",
+   "27"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m078",
+  "domain": "math",
+  "prompt": "60 sweets are split in the ratio 2:3. How many are in the larger share?",
+  "options": [
+   "31",
+   "26",
+   "41",
+   "36"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m079",
+  "domain": "math",
+  "prompt": "90 sweets are split in the ratio 4:5. How many are in the larger share?",
+  "options": [
+   "41",
+   "50",
+   "59",
+   "32"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m080",
+  "domain": "math",
+  "prompt": "120 sweets are split in the ratio 3:5. How many are in the larger share?",
+  "options": [
+   "59",
+   "75",
+   "67",
+   "83"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m081",
+  "domain": "math",
+  "prompt": "84 sweets are split in the ratio 3:4. How many are in the larger share?",
+  "options": [
+   "48",
+   "34",
+   "41",
+   "55"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m082",
+  "domain": "math",
+  "prompt": "150 sweets are split in the ratio 7:8. How many are in the larger share?",
+  "options": [
+   "50",
+   "95",
+   "65",
+   "80"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m083",
+  "domain": "math",
+  "prompt": "72 sweets are split in the ratio 5:7. How many are in the larger share?",
+  "options": [
+   "18",
+   "42",
+   "30",
+   "54"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m084",
+  "domain": "math",
+  "prompt": "110 sweets are split in the ratio 5:6. How many are in the larger share?",
+  "options": [
+   "49",
+   "38",
+   "60",
+   "71"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m085",
+  "domain": "math",
+  "prompt": "96 sweets are split in the ratio 5:11. How many are in the larger share?",
+  "options": [
+   "82",
+   "34",
+   "66",
+   "50"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m086",
+  "domain": "math",
+  "prompt": "Simple interest on 1,000 at 5% per year for 2 years is:",
+  "options": [
+   "90",
+   "100",
+   "80",
+   "110"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m087",
+  "domain": "math",
+  "prompt": "Simple interest on 2,000 at 4% per year for 3 years is:",
+  "options": [
+   "252",
+   "228",
+   "240",
+   "216"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m088",
+  "domain": "math",
+  "prompt": "Simple interest on 1,500 at 6% per year for 2 years is:",
+  "options": [
+   "168",
+   "156",
+   "192",
+   "180"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m089",
+  "domain": "math",
+  "prompt": "Simple interest on 800 at 5% per year for 4 years is:",
+  "options": [
+   "160",
+   "180",
+   "140",
+   "120"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m090",
+  "domain": "math",
+  "prompt": "Simple interest on 2,500 at 8% per year for 2 years is:",
+  "options": [
+   "368",
+   "416",
+   "400",
+   "384"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m091",
+  "domain": "math",
+  "prompt": "Simple interest on 1,200 at 10% per year for 3 years is:",
+  "options": [
+   "300",
+   "330",
+   "390",
+   "360"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m092",
+  "domain": "math",
+  "prompt": "A rectangle is 12 by 8. What is its area?",
+  "options": [
+   "108",
+   "96",
+   "88",
+   "40"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "m093",
+  "domain": "math",
+  "prompt": "A rectangle is 15 by 6. What is its area?",
+  "options": [
+   "105",
+   "84",
+   "90",
+   "42"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "m094",
+  "domain": "math",
+  "prompt": "A rectangle is 9 by 7. What is its area?",
+  "options": [
+   "72",
+   "63",
+   "56",
+   "32"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "m095",
+  "domain": "math",
+  "prompt": "A rectangle is 14 by 11. What is its area?",
+  "options": [
+   "154",
+   "143",
+   "50",
+   "168"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "m096",
+  "domain": "math",
+  "prompt": "A rectangle is 18 by 5. What is its area?",
+  "options": [
+   "108",
+   "85",
+   "90",
+   "46"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "m097",
+  "domain": "math",
+  "prompt": "A rectangle is 13 by 12. What is its area?",
+  "options": [
+   "156",
+   "50",
+   "169",
+   "144"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "m098",
+  "domain": "math",
+  "prompt": "A rectangle is 16 by 9. What is its perimeter?",
+  "options": [
+   "25",
+   "50",
+   "52",
+   "144"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "m099",
+  "domain": "math",
+  "prompt": "A rectangle is 11 by 7. What is its perimeter?",
+  "options": [
+   "38",
+   "18",
+   "77",
+   "36"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "m100",
+  "domain": "math",
+  "prompt": "A rectangle is 21 by 13. What is its perimeter?",
+  "options": [
+   "273",
+   "70",
+   "34",
+   "68"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "m101",
+  "domain": "math",
+  "prompt": "A rectangle is 17 by 8. What is its perimeter?",
+  "options": [
+   "52",
+   "50",
+   "25",
+   "136"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "m102",
+  "domain": "math",
+  "prompt": "What is 13²?",
+  "options": [
+   "196",
+   "156",
+   "182",
+   "169"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m103",
+  "domain": "math",
+  "prompt": "What is 14²?",
+  "options": [
+   "210",
+   "225",
+   "182",
+   "196"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m104",
+  "domain": "math",
+  "prompt": "What is 16²?",
+  "options": [
+   "240",
+   "289",
+   "256",
+   "272"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m105",
+  "domain": "math",
+  "prompt": "What is 17²?",
+  "options": [
+   "272",
+   "306",
+   "324",
+   "289"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m106",
+  "domain": "math",
+  "prompt": "What is 18²?",
+  "options": [
+   "306",
+   "342",
+   "361",
+   "324"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m107",
+  "domain": "math",
+  "prompt": "What is 19²?",
+  "options": [
+   "380",
+   "361",
+   "400",
+   "342"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m108",
+  "domain": "math",
+  "prompt": "What is 21²?",
+  "options": [
+   "441",
+   "484",
+   "462",
+   "420"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m109",
+  "domain": "math",
+  "prompt": "What is 23²?",
+  "options": [
+   "529",
+   "576",
+   "506",
+   "552"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m110",
+  "domain": "math",
+  "prompt": "What is the square root of 144?",
+  "options": [
+   "10",
+   "12",
+   "14",
+   "8"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m111",
+  "domain": "math",
+  "prompt": "What is the square root of 196?",
+  "options": [
+   "12",
+   "10",
+   "14",
+   "16"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "m112",
+  "domain": "math",
+  "prompt": "What is the square root of 225?",
+  "options": [
+   "13",
+   "15",
+   "11",
+   "17"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m113",
+  "domain": "math",
+  "prompt": "What is the square root of 289?",
+  "options": [
+   "15",
+   "17",
+   "19",
+   "13"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "m114",
+  "domain": "math",
+  "prompt": "What is the square root of 324?",
+  "options": [
+   "18",
+   "20",
+   "16",
+   "14"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "m115",
+  "domain": "math",
+  "prompt": "What is the square root of 400?",
+  "options": [
+   "18",
+   "16",
+   "22",
+   "20"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "m116",
+  "domain": "math",
+  "prompt": "What is the least common multiple of 6 and 8?",
+  "options": [
+   "30",
+   "24",
+   "2",
+   "48"
+  ],
+  "correctIndex": 1,
+  "difficulty": 3
+ },
+ {
+  "id": "m117",
+  "domain": "math",
+  "prompt": "What is the least common multiple of 4 and 10?",
+  "options": [
+   "40",
+   "24",
+   "20",
+   "2"
+  ],
+  "correctIndex": 2,
+  "difficulty": 3
+ },
+ {
+  "id": "m118",
+  "domain": "math",
+  "prompt": "What is the least common multiple of 9 and 12?",
+  "options": [
+   "45",
+   "36",
+   "108",
+   "3"
+  ],
+  "correctIndex": 1,
+  "difficulty": 3
+ },
+ {
+  "id": "m119",
+  "domain": "math",
+  "prompt": "What is the least common multiple of 8 and 12?",
+  "options": [
+   "32",
+   "4",
+   "24",
+   "96"
+  ],
+  "correctIndex": 2,
+  "difficulty": 3
+ },
+ {
+  "id": "m120",
+  "domain": "math",
+  "prompt": "What is the least common multiple of 6 and 15?",
+  "options": [
+   "30",
+   "36",
+   "90",
+   "3"
+  ],
+  "correctIndex": 0,
+  "difficulty": 3
+ },
+ {
+  "id": "m121",
+  "domain": "math",
+  "prompt": "What is the least common multiple of 10 and 14?",
+  "options": [
+   "70",
+   "80",
+   "2",
+   "140"
+  ],
+  "correctIndex": 0,
+  "difficulty": 3
+ },
+ {
+  "id": "p001",
+  "domain": "patterns",
+  "prompt": "1, 3, 6, 10, 15, … what comes next?",
+  "options": [
+   "28",
+   "22",
+   "19",
+   "21"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p002",
+  "domain": "patterns",
+  "prompt": "2, 4, 7, 11, 16, … what comes next?",
+  "options": [
+   "29",
+   "20",
+   "23",
+   "22"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p003",
+  "domain": "patterns",
+  "prompt": "3, 5, 8, 12, 17, … what comes next?",
+  "options": [
+   "24",
+   "23",
+   "21",
+   "30"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "p004",
+  "domain": "patterns",
+  "prompt": "5, 7, 10, 14, 19, … what comes next?",
+  "options": [
+   "25",
+   "23",
+   "26",
+   "32"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "p005",
+  "domain": "patterns",
+  "prompt": "2, 6, 12, 20, 30, … what comes next?",
+  "options": [
+   "36",
+   "39",
+   "45",
+   "42"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p006",
+  "domain": "patterns",
+  "prompt": "3, 4, 6, 9, 13, … what comes next?",
+  "options": [
+   "16",
+   "14",
+   "20",
+   "18"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p007",
+  "domain": "patterns",
+  "prompt": "1, 3, 8, 16, 27, … what comes next?",
+  "options": [
+   "33",
+   "45",
+   "41",
+   "37"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "p008",
+  "domain": "patterns",
+  "prompt": "5, 8, 13, 20, 29, … what comes next?",
+  "options": [
+   "43",
+   "34",
+   "40",
+   "37"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "p009",
+  "domain": "patterns",
+  "prompt": "4, 9, 17, 28, 42, … what comes next?",
+  "options": [
+   "63",
+   "59",
+   "51",
+   "55"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "p010",
+  "domain": "patterns",
+  "prompt": "2, 9, 20, 35, 54, … what comes next?",
+  "options": [
+   "77",
+   "67",
+   "72",
+   "82"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "p011",
+  "domain": "patterns",
+  "prompt": "10, 12, 16, 22, 30, … what comes next?",
+  "options": [
+   "37",
+   "43",
+   "34",
+   "40"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p012",
+  "domain": "patterns",
+  "prompt": "1, 6, 16, 31, 51, … what comes next?",
+  "options": [
+   "70",
+   "76",
+   "82",
+   "64"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "p013",
+  "domain": "patterns",
+  "prompt": "6, 8, 14, 24, 38, … what comes next?",
+  "options": [
+   "46",
+   "61",
+   "56",
+   "51"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "p014",
+  "domain": "patterns",
+  "prompt": "3, 11, 21, 33, 47, … what comes next?",
+  "options": [
+   "57",
+   "66",
+   "63",
+   "60"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "p015",
+  "domain": "patterns",
+  "prompt": "7, 8, 12, 19, 29, … what comes next?",
+  "options": [
+   "38",
+   "46",
+   "34",
+   "42"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p016",
+  "domain": "patterns",
+  "prompt": "2, 12, 27, 47, 72, … what comes next?",
+  "options": [
+   "96",
+   "90",
+   "102",
+   "108"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "p017",
+  "domain": "patterns",
+  "prompt": "12, 15, 21, 30, 42, … what comes next?",
+  "options": [
+   "53",
+   "57",
+   "49",
+   "61"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "p018",
+  "domain": "patterns",
+  "prompt": "1, 10, 25, 46, 73, … what comes next?",
+  "options": [
+   "92",
+   "113",
+   "99",
+   "106"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p019",
+  "domain": "patterns",
+  "prompt": "2, 6, 18, 54, … what comes next?",
+  "options": [
+   "54",
+   "486",
+   "165",
+   "162"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p020",
+  "domain": "patterns",
+  "prompt": "5, 10, 20, 40, 80, … what comes next?",
+  "options": [
+   "320",
+   "80",
+   "162",
+   "160"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "p021",
+  "domain": "patterns",
+  "prompt": "3, 12, 48, 192, … what comes next?",
+  "options": [
+   "768",
+   "3072",
+   "772",
+   "192"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "p022",
+  "domain": "patterns",
+  "prompt": "7, 14, 28, 56, … what comes next?",
+  "options": [
+   "112",
+   "56",
+   "114",
+   "224"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "p023",
+  "domain": "patterns",
+  "prompt": "6, 18, 54, 162, … what comes next?",
+  "options": [
+   "486",
+   "162",
+   "489",
+   "1458"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "p024",
+  "domain": "patterns",
+  "prompt": "12, 24, 48, 96, 192, … what comes next?",
+  "options": [
+   "192",
+   "386",
+   "768",
+   "384"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "p025",
+  "domain": "patterns",
+  "prompt": "2, 10, 50, 250, … what comes next?",
+  "options": [
+   "6250",
+   "250",
+   "1255",
+   "1250"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p026",
+  "domain": "patterns",
+  "prompt": "4096, 1024, 256, 64, 16, … what comes next?",
+  "options": [
+   "1",
+   "16",
+   "4",
+   "8"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "p027",
+  "domain": "patterns",
+  "prompt": "1, 1, 2, 3, 5, 8, … what comes next?",
+  "options": [
+   "16",
+   "14",
+   "11",
+   "13"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p028",
+  "domain": "patterns",
+  "prompt": "2, 3, 5, 8, 13, 21, … what comes next?",
+  "options": [
+   "34",
+   "35",
+   "32",
+   "42"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "p029",
+  "domain": "patterns",
+  "prompt": "1, 4, 5, 9, 14, 23, … what comes next?",
+  "options": [
+   "38",
+   "37",
+   "46",
+   "35"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "p030",
+  "domain": "patterns",
+  "prompt": "3, 4, 7, 11, 18, 29, … what comes next?",
+  "options": [
+   "45",
+   "47",
+   "58",
+   "48"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "p031",
+  "domain": "patterns",
+  "prompt": "2, 5, 7, 12, 19, 31, … what comes next?",
+  "options": [
+   "50",
+   "48",
+   "62",
+   "51"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "p032",
+  "domain": "patterns",
+  "prompt": "5, 6, 11, 17, 28, 45, … what comes next?",
+  "options": [
+   "74",
+   "71",
+   "90",
+   "73"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p033",
+  "domain": "patterns",
+  "prompt": "4, 7, 11, 18, 29, 47, … what comes next?",
+  "options": [
+   "94",
+   "77",
+   "74",
+   "76"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p034",
+  "domain": "patterns",
+  "prompt": "1, 6, 7, 13, 20, 33, … what comes next?",
+  "options": [
+   "54",
+   "51",
+   "53",
+   "66"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "p035",
+  "domain": "patterns",
+  "prompt": "6, 7, 13, 20, 33, 53, … what comes next?",
+  "options": [
+   "106",
+   "87",
+   "84",
+   "86"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p036",
+  "domain": "patterns",
+  "prompt": "2, 9, 11, 20, 31, 51, … what comes next?",
+  "options": [
+   "83",
+   "82",
+   "102",
+   "80"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "p037",
+  "domain": "patterns",
+  "prompt": "2, 3, 5, 9, 17, … what comes next?",
+  "options": [
+   "36",
+   "27",
+   "33",
+   "30"
+  ],
+  "correctIndex": 2,
+  "difficulty": 3
+ },
+ {
+  "id": "p038",
+  "domain": "patterns",
+  "prompt": "1, 3, 7, 15, 31, … what comes next?",
+  "options": [
+   "60",
+   "66",
+   "63",
+   "57"
+  ],
+  "correctIndex": 2,
+  "difficulty": 3
+ },
+ {
+  "id": "p039",
+  "domain": "patterns",
+  "prompt": "3, 4, 6, 10, 18, … what comes next?",
+  "options": [
+   "30",
+   "26",
+   "34",
+   "38"
+  ],
+  "correctIndex": 2,
+  "difficulty": 3
+ },
+ {
+  "id": "p040",
+  "domain": "patterns",
+  "prompt": "1, 2, 5, 14, … what comes next?",
+  "options": [
+   "41",
+   "45",
+   "33",
+   "37"
+  ],
+  "correctIndex": 0,
+  "difficulty": 3
+ },
+ {
+  "id": "p041",
+  "domain": "patterns",
+  "prompt": "2, 7, 22, 67, … what comes next?",
+  "options": [
+   "198",
+   "206",
+   "202",
+   "194"
+  ],
+  "correctIndex": 2,
+  "difficulty": 3
+ },
+ {
+  "id": "p042",
+  "domain": "patterns",
+  "prompt": "4, 11, 25, 53, … what comes next?",
+  "options": [
+   "104",
+   "109",
+   "114",
+   "99"
+  ],
+  "correctIndex": 1,
+  "difficulty": 3
+ },
+ {
+  "id": "p043",
+  "domain": "patterns",
+  "prompt": "5, 7, 11, 19, 35, … what comes next?",
+  "options": [
+   "72",
+   "62",
+   "57",
+   "67"
+  ],
+  "correctIndex": 3,
+  "difficulty": 3
+ },
+ {
+  "id": "p044",
+  "domain": "patterns",
+  "prompt": "1, 2, 6, 22, … what comes next?",
+  "options": [
+   "92",
+   "80",
+   "74",
+   "86"
+  ],
+  "correctIndex": 3,
+  "difficulty": 3
+ },
+ {
+  "id": "p045",
+  "domain": "patterns",
+  "prompt": "2, 5, 17, 65, … what comes next?",
+  "options": [
+   "264",
+   "250",
+   "257",
+   "243"
+  ],
+  "correctIndex": 2,
+  "difficulty": 3
+ },
+ {
+  "id": "p046",
+  "domain": "patterns",
+  "prompt": "3, 11, 35, 107, … what comes next?",
+  "options": [
+   "318",
+   "328",
+   "313",
+   "323"
+  ],
+  "correctIndex": 3,
+  "difficulty": 3
+ },
+ {
+  "id": "p047",
+  "domain": "patterns",
+  "prompt": "1, 5, 7, 11, 13, 17, … what comes next?",
+  "options": [
+   "13",
+   "19",
+   "25",
+   "7"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "p048",
+  "domain": "patterns",
+  "prompt": "2, 7, 10, 15, 18, 23, … what comes next?",
+  "options": [
+   "18",
+   "10",
+   "26",
+   "34"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "p049",
+  "domain": "patterns",
+  "prompt": "10, 13, 19, 22, 28, 31, … what comes next?",
+  "options": [
+   "19",
+   "37",
+   "46",
+   "28"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "p050",
+  "domain": "patterns",
+  "prompt": "4, 11, 12, 19, 20, 27, … what comes next?",
+  "options": [
+   "12",
+   "36",
+   "20",
+   "28"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p051",
+  "domain": "patterns",
+  "prompt": "6, 8, 16, 18, 26, 28, … what comes next?",
+  "options": [
+   "36",
+   "26",
+   "16",
+   "46"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "p052",
+  "domain": "patterns",
+  "prompt": "3, 12, 16, 25, 29, 38, … what comes next?",
+  "options": [
+   "29",
+   "42",
+   "55",
+   "16"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "p053",
+  "domain": "patterns",
+  "prompt": "5, 11, 13, 19, 21, 27, … what comes next?",
+  "options": [
+   "37",
+   "13",
+   "21",
+   "29"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p054",
+  "domain": "patterns",
+  "prompt": "1, 9, 12, 20, 23, 31, … what comes next?",
+  "options": [
+   "45",
+   "34",
+   "23",
+   "12"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "p055",
+  "domain": "patterns",
+  "prompt": "7, 11, 20, 24, 33, 37, … what comes next?",
+  "options": [
+   "59",
+   "33",
+   "46",
+   "20"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "p056",
+  "domain": "patterns",
+  "prompt": "2, 12, 17, 27, 32, 42, … what comes next?",
+  "options": [
+   "32",
+   "17",
+   "62",
+   "47"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p057",
+  "domain": "patterns",
+  "prompt": "A, C, F, J, O, … which letter comes next?",
+  "options": [
+   "S",
+   "W",
+   "V",
+   "U"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p058",
+  "domain": "patterns",
+  "prompt": "B, C, E, H, L, … which letter comes next?",
+  "options": [
+   "R",
+   "O",
+   "S",
+   "Q"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p059",
+  "domain": "patterns",
+  "prompt": "C, E, H, L, Q, … which letter comes next?",
+  "options": [
+   "W",
+   "Y",
+   "U",
+   "X"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "p060",
+  "domain": "patterns",
+  "prompt": "D, G, K, P, V, … which letter comes next?",
+  "options": [
+   "E",
+   "A",
+   "D",
+   "C"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p061",
+  "domain": "patterns",
+  "prompt": "F, G, I, L, P, … which letter comes next?",
+  "options": [
+   "V",
+   "S",
+   "W",
+   "U"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p062",
+  "domain": "patterns",
+  "prompt": "H, J, M, Q, V, … which letter comes next?",
+  "options": [
+   "D",
+   "B",
+   "C",
+   "Z"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "p063",
+  "domain": "patterns",
+  "prompt": "J, M, Q, V, B, … which letter comes next?",
+  "options": [
+   "J",
+   "G",
+   "I",
+   "K"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "p064",
+  "domain": "patterns",
+  "prompt": "K, L, N, Q, U, … which letter comes next?",
+  "options": [
+   "Z",
+   "X",
+   "B",
+   "A"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "p065",
+  "domain": "patterns",
+  "prompt": "M, O, R, V, A, … which letter comes next?",
+  "options": [
+   "I",
+   "G",
+   "H",
+   "E"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "p066",
+  "domain": "patterns",
+  "prompt": "E, H, L, Q, W, … which letter comes next?",
+  "options": [
+   "D",
+   "E",
+   "F",
+   "B"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "p067",
+  "domain": "patterns",
+  "prompt": "100, 96, 88, 76, 60, … what comes next?",
+  "options": [
+   "32",
+   "44",
+   "36",
+   "40"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p068",
+  "domain": "patterns",
+  "prompt": "90, 88, 83, 75, 64, … what comes next?",
+  "options": [
+   "44",
+   "53",
+   "47",
+   "50"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p069",
+  "domain": "patterns",
+  "prompt": "120, 115, 105, 90, 70, … what comes next?",
+  "options": [
+   "45",
+   "50",
+   "35",
+   "40"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "p070",
+  "domain": "patterns",
+  "prompt": "80, 79, 76, 71, 64, … what comes next?",
+  "options": [
+   "53",
+   "57",
+   "55",
+   "51"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "p071",
+  "domain": "patterns",
+  "prompt": "200, 190, 170, 140, 100, … what comes next?",
+  "options": [
+   "60",
+   "40",
+   "30",
+   "50"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p072",
+  "domain": "patterns",
+  "prompt": "150, 147, 138, 123, 102, … what comes next?",
+  "options": [
+   "63",
+   "81",
+   "69",
+   "75"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p073",
+  "domain": "patterns",
+  "prompt": "60, 59, 55, 48, 38, … what comes next?",
+  "options": [
+   "25",
+   "22",
+   "19",
+   "28"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "p074",
+  "domain": "patterns",
+  "prompt": "110, 104, 96, 86, 74, … what comes next?",
+  "options": [
+   "60",
+   "58",
+   "56",
+   "62"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "p075",
+  "domain": "patterns",
+  "prompt": "140, 132, 120, 104, 84, … what comes next?",
+  "options": [
+   "52",
+   "64",
+   "56",
+   "60"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p076",
+  "domain": "patterns",
+  "prompt": "75, 70, 64, 57, 49, … what comes next?",
+  "options": [
+   "41",
+   "38",
+   "40",
+   "39"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "p077",
+  "domain": "patterns",
+  "prompt": "1, 4, 9, 16, 25, … what comes next?",
+  "options": [
+   "42",
+   "34",
+   "38",
+   "36"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p078",
+  "domain": "patterns",
+  "prompt": "2, 5, 10, 17, 26, … what comes next?",
+  "options": [
+   "43",
+   "39",
+   "35",
+   "37"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p079",
+  "domain": "patterns",
+  "prompt": "3, 6, 11, 18, 27, … what comes next?",
+  "options": [
+   "44",
+   "38",
+   "40",
+   "36"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "p080",
+  "domain": "patterns",
+  "prompt": "0, 3, 8, 15, 24, … what comes next?",
+  "options": [
+   "41",
+   "33",
+   "35",
+   "37"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "p081",
+  "domain": "patterns",
+  "prompt": "4, 7, 12, 19, 28, … what comes next?",
+  "options": [
+   "39",
+   "45",
+   "37",
+   "41"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "p082",
+  "domain": "patterns",
+  "prompt": "6, 9, 14, 21, 30, … what comes next?",
+  "options": [
+   "47",
+   "43",
+   "41",
+   "39"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "p083",
+  "domain": "patterns",
+  "prompt": "1, 8, 27, 64, … what comes next?",
+  "options": [
+   "216",
+   "130",
+   "115",
+   "125"
+  ],
+  "correctIndex": 3,
+  "difficulty": 3
+ },
+ {
+  "id": "p084",
+  "domain": "patterns",
+  "prompt": "2, 9, 28, 65, … what comes next?",
+  "options": [
+   "126",
+   "116",
+   "217",
+   "131"
+  ],
+  "correctIndex": 0,
+  "difficulty": 3
+ },
+ {
+  "id": "p085",
+  "domain": "patterns",
+  "prompt": "0, 7, 26, 63, … what comes next?",
+  "options": [
+   "129",
+   "114",
+   "124",
+   "215"
+  ],
+  "correctIndex": 2,
+  "difficulty": 3
+ },
+ {
+  "id": "p086",
+  "domain": "patterns",
+  "prompt": "3, 10, 29, 66, … what comes next?",
+  "options": [
+   "218",
+   "117",
+   "132",
+   "127"
+  ],
+  "correctIndex": 3,
+  "difficulty": 3
+ },
+ {
+  "id": "p087",
+  "domain": "patterns",
+  "prompt": "1, 5, 11, 19, 29, … what comes next?",
+  "options": [
+   "37",
+   "41",
+   "33",
+   "45"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "p088",
+  "domain": "patterns",
+  "prompt": "1, 7, 16, 28, 43, … what comes next?",
+  "options": [
+   "61",
+   "55",
+   "49",
+   "67"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "p089",
+  "domain": "patterns",
+  "prompt": "3, 7, 13, 21, 31, … what comes next?",
+  "options": [
+   "47",
+   "35",
+   "43",
+   "39"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "p090",
+  "domain": "patterns",
+  "prompt": "5, 11, 20, 32, 47, … what comes next?",
+  "options": [
+   "71",
+   "59",
+   "53",
+   "65"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p091",
+  "domain": "patterns",
+  "prompt": "4, 12, 24, 40, 60, … what comes next?",
+  "options": [
+   "68",
+   "76",
+   "84",
+   "92"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "p092",
+  "domain": "patterns",
+  "prompt": "2, 10, 22, 38, 58, … what comes next?",
+  "options": [
+   "90",
+   "66",
+   "74",
+   "82"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "p093",
+  "domain": "patterns",
+  "prompt": "6, 10, 16, 24, 34, … what comes next?",
+  "options": [
+   "50",
+   "46",
+   "38",
+   "42"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "r001",
+  "domain": "reasoning",
+  "prompt": "All florists in Bloomsdale are early risers. Maya is not one of the early risers. What must be true?",
+  "options": [
+   "Maya dislikes being one of the early risers",
+   "Maya is not one of the florists in Bloomsdale",
+   "Maya is one of the florists in Bloomsdale",
+   "Nothing can be concluded"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "r002",
+  "domain": "reasoning",
+  "prompt": "All violinists in the orchestra are sight-readers. Noor is not one of the sight-readers. What must be true?",
+  "options": [
+   "Noor is not one of the violinists in the orchestra",
+   "Nothing can be concluded",
+   "Noor is one of the violinists in the orchestra",
+   "Noor dislikes being one of the sight-readers"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r003",
+  "domain": "reasoning",
+  "prompt": "All guides on the mountain are certified climbers. Priya is not one of the certified climbers. What must be true?",
+  "options": [
+   "Priya dislikes being one of the certified climbers",
+   "Nothing can be concluded",
+   "Priya is one of the guides on the mountain",
+   "Priya is not one of the guides on the mountain"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "r004",
+  "domain": "reasoning",
+  "prompt": "All chefs at the bistro are trained bakers. Kavi is not one of the trained bakers. What must be true?",
+  "options": [
+   "Nothing can be concluded",
+   "Kavi is one of the chefs at the bistro",
+   "Kavi dislikes being one of the trained bakers",
+   "Kavi is not one of the chefs at the bistro"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "r005",
+  "domain": "reasoning",
+  "prompt": "All pilots at the airfield are licensed navigators. Ravi is not one of the licensed navigators. What must be true?",
+  "options": [
+   "Ravi dislikes being one of the licensed navigators",
+   "Nothing can be concluded",
+   "Ravi is not one of the pilots at the airfield",
+   "Ravi is one of the pilots at the airfield"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "r006",
+  "domain": "reasoning",
+  "prompt": "All librarians in Westport are avid readers. Asha is not one of the avid readers. What must be true?",
+  "options": [
+   "Asha is not one of the librarians in Westport",
+   "Asha is one of the librarians in Westport",
+   "Asha dislikes being one of the avid readers",
+   "Nothing can be concluded"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r007",
+  "domain": "reasoning",
+  "prompt": "All lifeguards at the bay are strong swimmers. Rohan is not one of the strong swimmers. What must be true?",
+  "options": [
+   "Rohan is not one of the lifeguards at the bay",
+   "Rohan dislikes being one of the strong swimmers",
+   "Nothing can be concluded",
+   "Rohan is one of the lifeguards at the bay"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r008",
+  "domain": "reasoning",
+  "prompt": "All bakers on Mill Street are early risers. Sara is not one of the early risers. What must be true?",
+  "options": [
+   "Nothing can be concluded",
+   "Sara is one of the bakers on Mill Street",
+   "Sara dislikes being one of the early risers",
+   "Sara is not one of the bakers on Mill Street"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "r009",
+  "domain": "reasoning",
+  "prompt": "All referees in the league are certified officials. Leo is not one of the certified officials. What must be true?",
+  "options": [
+   "Nothing can be concluded",
+   "Leo is not one of the referees in the league",
+   "Leo dislikes being one of the certified officials",
+   "Leo is one of the referees in the league"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "r010",
+  "domain": "reasoning",
+  "prompt": "All archivists at the museum are trained historians. Anika is not one of the trained historians. What must be true?",
+  "options": [
+   "Nothing can be concluded",
+   "Anika is one of the archivists at the museum",
+   "Anika dislikes being one of the trained historians",
+   "Anika is not one of the archivists at the museum"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "r011",
+  "domain": "reasoning",
+  "prompt": "All rangers in the reserve are licensed trackers. Omar is not one of the licensed trackers. What must be true?",
+  "options": [
+   "Omar is one of the rangers in the reserve",
+   "Omar is not one of the rangers in the reserve",
+   "Omar dislikes being one of the licensed trackers",
+   "Nothing can be concluded"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "r012",
+  "domain": "reasoning",
+  "prompt": "All editors at the journal are careful proofreaders. Ishan is not one of the careful proofreaders. What must be true?",
+  "options": [
+   "Nothing can be concluded",
+   "Ishan is not one of the editors at the journal",
+   "Ishan is one of the editors at the journal",
+   "Ishan dislikes being one of the careful proofreaders"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "r013",
+  "domain": "reasoning",
+  "prompt": "If it rains, the match is postponed. The match was not postponed. What follows?",
+  "options": [
+   "The match is postponed anyway",
+   "Nothing can be concluded",
+   "It did not rain",
+   "It rained lightly"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "r014",
+  "domain": "reasoning",
+  "prompt": "If the bridge is open, the ferry is cancelled. The ferry was not cancelled. What follows?",
+  "options": [
+   "The bridge was not open",
+   "The ferry is cancelled anyway",
+   "The bridge was open all day",
+   "Nothing can be concluded"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r015",
+  "domain": "reasoning",
+  "prompt": "If the alarm rings, the doors lock. The doors did not lock. What follows?",
+  "options": [
+   "The alarm did not ring",
+   "Nothing can be concluded",
+   "The alarm rang twice",
+   "The doors lock anyway"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r016",
+  "domain": "reasoning",
+  "prompt": "If the oven is hot, the light is on. The light was not on. What follows?",
+  "options": [
+   "The oven was warming up",
+   "The oven was not hot",
+   "The light is on anyway",
+   "Nothing can be concluded"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "r017",
+  "domain": "reasoning",
+  "prompt": "If she catches the 8 am train, she arrives before noon. She did not arrive before noon. What follows?",
+  "options": [
+   "She did not catch the 8 am train",
+   "Nothing can be concluded",
+   "She caught a later train home",
+   "She arrives before noon anyway"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r018",
+  "domain": "reasoning",
+  "prompt": "If the tide is high, the cave floods. The cave did not flood. What follows?",
+  "options": [
+   "The tide was rising",
+   "The cave floods anyway",
+   "Nothing can be concluded",
+   "The tide was not high"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "r019",
+  "domain": "reasoning",
+  "prompt": "If the kiln is fired, the workshop smells of smoke. The workshop did not smell of smoke. What follows?",
+  "options": [
+   "The workshop smells of smoke anyway",
+   "The kiln was cleaned",
+   "Nothing can be concluded",
+   "The kiln was not fired"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "r020",
+  "domain": "reasoning",
+  "prompt": "If the road is icy, the bus takes the tunnel. The bus did not take the tunnel. What follows?",
+  "options": [
+   "The road was not icy",
+   "The bus takes the tunnel anyway",
+   "Nothing can be concluded",
+   "The bus was early"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r021",
+  "domain": "reasoning",
+  "prompt": "If the review passes, the update ships on Friday. The update did not ship on Friday. What follows?",
+  "options": [
+   "The update ships on friday anyway",
+   "The review did not pass",
+   "The review passed twice",
+   "Nothing can be concluded"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "r022",
+  "domain": "reasoning",
+  "prompt": "Some doctors are pilots. All pilots are trained in navigation. Which must be true?",
+  "options": [
+   "All trained in navigation are doctors",
+   "No doctors are trained in navigation",
+   "Some doctors are trained in navigation",
+   "All doctors are trained in navigation"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "r023",
+  "domain": "reasoning",
+  "prompt": "Some painters are sailors. All sailors are licensed to sail. Which must be true?",
+  "options": [
+   "No painters are licensed to sail",
+   "Some painters are licensed to sail",
+   "All licensed to sail are painters",
+   "All painters are licensed to sail"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "r024",
+  "domain": "reasoning",
+  "prompt": "Some teachers are beekeepers. All beekeepers are registered with the guild. Which must be true?",
+  "options": [
+   "All registered with the guild are teachers",
+   "All teachers are registered with the guild",
+   "Some teachers are registered with the guild",
+   "No teachers are registered with the guild"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "r025",
+  "domain": "reasoning",
+  "prompt": "Some farmers are weavers. All weavers are members of the craft union. Which must be true?",
+  "options": [
+   "All farmers are members of the craft union",
+   "Some farmers are members of the craft union",
+   "All members of the craft union are farmers",
+   "No farmers are members of the craft union"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "r026",
+  "domain": "reasoning",
+  "prompt": "Some dancers are drummers. All drummers are graduates of the academy. Which must be true?",
+  "options": [
+   "All graduates of the academy are dancers",
+   "All dancers are graduates of the academy",
+   "No dancers are graduates of the academy",
+   "Some dancers are graduates of the academy"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "r027",
+  "domain": "reasoning",
+  "prompt": "If no Q are R, and all P are R, then:",
+  "options": [
+   "All Q are P",
+   "No P are Q",
+   "Some P are Q",
+   "Nothing can be concluded"
+  ],
+  "correctIndex": 1,
+  "difficulty": 3
+ },
+ {
+  "id": "r028",
+  "domain": "reasoning",
+  "prompt": "If no runners are flyers, and all swans are flyers, then:",
+  "options": [
+   "No swans are runners",
+   "All runners are swans",
+   "Some swans are runners",
+   "Nothing can be concluded"
+  ],
+  "correctIndex": 0,
+  "difficulty": 3
+ },
+ {
+  "id": "r029",
+  "domain": "reasoning",
+  "prompt": "If no discs are solids with corners, and all cubes are solids with corners, then:",
+  "options": [
+   "Nothing can be concluded",
+   "All discs are cubes",
+   "Some cubes are discs",
+   "No cubes are discs"
+  ],
+  "correctIndex": 3,
+  "difficulty": 3
+ },
+ {
+  "id": "r030",
+  "domain": "reasoning",
+  "prompt": "Asha faces north. They turn 90° right, then 180°, then 90° left. Which way do they face now?",
+  "options": [
+   "North",
+   "West",
+   "South",
+   "East"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "r031",
+  "domain": "reasoning",
+  "prompt": "Rohan faces east. They turn 90° left, then 90° left. Which way do they face now?",
+  "options": [
+   "East",
+   "South",
+   "North",
+   "West"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "r032",
+  "domain": "reasoning",
+  "prompt": "Sara faces south. They turn 180°, then 90° right. Which way do they face now?",
+  "options": [
+   "East",
+   "South",
+   "North",
+   "West"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r033",
+  "domain": "reasoning",
+  "prompt": "Leo faces west. They turn 90° right, then 90° right, then 90° right. Which way do they face now?",
+  "options": [
+   "East",
+   "South",
+   "North",
+   "West"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "r034",
+  "domain": "reasoning",
+  "prompt": "Anika faces north. They turn 90° left, then 180°, then 90° left. Which way do they face now?",
+  "options": [
+   "South",
+   "West",
+   "North",
+   "East"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "r035",
+  "domain": "reasoning",
+  "prompt": "Omar faces east. They turn 270° right. Which way do they face now?",
+  "options": [
+   "North",
+   "East",
+   "South",
+   "West"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r036",
+  "domain": "reasoning",
+  "prompt": "Ishan faces south. They turn 90° right, then 90° left, then 180°. Which way do they face now?",
+  "options": [
+   "South",
+   "East",
+   "West",
+   "North"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "r037",
+  "domain": "reasoning",
+  "prompt": "Tara faces west. They turn 180°, then 180°, then 90° left. Which way do they face now?",
+  "options": [
+   "East",
+   "South",
+   "North",
+   "West"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "r038",
+  "domain": "reasoning",
+  "prompt": "Nikhil is taller than Dev. Dev is taller than Priya. Kavi is shorter than Priya. Who is second tallest?",
+  "options": [
+   "Nikhil",
+   "Kavi",
+   "Priya",
+   "Dev"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "r039",
+  "domain": "reasoning",
+  "prompt": "Kavi is taller than Tara. Tara is taller than Priya. Maya is shorter than Priya. Who is second tallest?",
+  "options": [
+   "Tara",
+   "Maya",
+   "Priya",
+   "Kavi"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r040",
+  "domain": "reasoning",
+  "prompt": "Tara is taller than Ishan. Ishan is taller than Noor. Nikhil is shorter than Noor. Who is second tallest?",
+  "options": [
+   "Ishan",
+   "Noor",
+   "Nikhil",
+   "Tara"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r041",
+  "domain": "reasoning",
+  "prompt": "Maya is taller than Tara. Tara is taller than Anika. Sara is shorter than Anika. Who is second tallest?",
+  "options": [
+   "Tara",
+   "Anika",
+   "Maya",
+   "Sara"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r042",
+  "domain": "reasoning",
+  "prompt": "Leo is taller than Kavi. Kavi is taller than Sara. Dev is shorter than Sara. Who is second tallest?",
+  "options": [
+   "Leo",
+   "Dev",
+   "Kavi",
+   "Sara"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "r043",
+  "domain": "reasoning",
+  "prompt": "Omar is taller than Sara. Sara is taller than Rohan. Nikhil is shorter than Rohan. Who is second tallest?",
+  "options": [
+   "Sara",
+   "Nikhil",
+   "Rohan",
+   "Omar"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r044",
+  "domain": "reasoning",
+  "prompt": "Ishan is taller than Kavi. Kavi is taller than Maya. Sara is shorter than Maya. Who is second tallest?",
+  "options": [
+   "Kavi",
+   "Ishan",
+   "Sara",
+   "Maya"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r045",
+  "domain": "reasoning",
+  "prompt": "Tara is taller than Maya. Maya is taller than Ravi. Rohan is shorter than Ravi. Who is second tallest?",
+  "options": [
+   "Ravi",
+   "Maya",
+   "Rohan",
+   "Tara"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "r046",
+  "domain": "reasoning",
+  "prompt": "Ravi is taller than Dev. Dev is taller than Sara. Kavi is shorter than Sara. Who is second tallest?",
+  "options": [
+   "Sara",
+   "Kavi",
+   "Dev",
+   "Ravi"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "r047",
+  "domain": "reasoning",
+  "prompt": "Omar is taller than Nikhil. Nikhil is taller than Maya. Zara is shorter than Maya. Who is second tallest?",
+  "options": [
+   "Zara",
+   "Maya",
+   "Nikhil",
+   "Omar"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "r048",
+  "domain": "reasoning",
+  "prompt": "Nikhil is taller than Ishan. Ishan is taller than Zara. Maya is shorter than Zara. Who is second tallest?",
+  "options": [
+   "Nikhil",
+   "Ishan",
+   "Maya",
+   "Zara"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "r049",
+  "domain": "reasoning",
+  "prompt": "Dev is taller than Asha. Asha is taller than Priya. Zara is shorter than Priya. Who is second tallest?",
+  "options": [
+   "Zara",
+   "Priya",
+   "Dev",
+   "Asha"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "r050",
+  "domain": "reasoning",
+  "prompt": "Asha is taller than Sara. Sara is taller than Priya. Ishan is shorter than Priya. Who is second tallest?",
+  "options": [
+   "Ishan",
+   "Asha",
+   "Sara",
+   "Priya"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "r051",
+  "domain": "reasoning",
+  "prompt": "Nikhil is taller than Noor. Noor is taller than Leo. Zara is shorter than Leo. Who is second tallest?",
+  "options": [
+   "Zara",
+   "Noor",
+   "Nikhil",
+   "Leo"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "r052",
+  "domain": "reasoning",
+  "prompt": "A keeper has 17 goats. All but 9 wander off. How many goats remain?",
+  "options": [
+   "26",
+   "8",
+   "17",
+   "9"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "r053",
+  "domain": "reasoning",
+  "prompt": "A keeper has 23 lamps. All but 8 wander off. How many lamps remain?",
+  "options": [
+   "8",
+   "23",
+   "31",
+   "15"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "r054",
+  "domain": "reasoning",
+  "prompt": "A keeper has 31 hens. All but 12 wander off. How many hens remain?",
+  "options": [
+   "12",
+   "31",
+   "43",
+   "19"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "r055",
+  "domain": "reasoning",
+  "prompt": "A keeper has 14 kites. All but 6 wander off. How many kites remain?",
+  "options": [
+   "14",
+   "8",
+   "6",
+   "20"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "r056",
+  "domain": "reasoning",
+  "prompt": "A keeper has 26 boats. All but 11 wander off. How many boats remain?",
+  "options": [
+   "11",
+   "37",
+   "26",
+   "15"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "r057",
+  "domain": "reasoning",
+  "prompt": "If today is Monday, what day of the week will it be in 10 days?",
+  "options": [
+   "Thursday",
+   "Tuesday",
+   "Friday",
+   "Saturday"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r058",
+  "domain": "reasoning",
+  "prompt": "If today is Wednesday, what day of the week will it be in 16 days?",
+  "options": [
+   "Saturday",
+   "Friday",
+   "Wednesday",
+   "Sunday"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "r059",
+  "domain": "reasoning",
+  "prompt": "If today is Friday, what day of the week will it be in 9 days?",
+  "options": [
+   "Sunday",
+   "Monday",
+   "Friday",
+   "Tuesday"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r060",
+  "domain": "reasoning",
+  "prompt": "If today is Tuesday, what day of the week will it be in 23 days?",
+  "options": [
+   "Tuesday",
+   "Thursday",
+   "Friday",
+   "Saturday"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "r061",
+  "domain": "reasoning",
+  "prompt": "If today is Saturday, what day of the week will it be in 12 days?",
+  "options": [
+   "Friday",
+   "Saturday",
+   "Tuesday",
+   "Thursday"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "r062",
+  "domain": "reasoning",
+  "prompt": "If today is Thursday, what day of the week will it be in 30 days?",
+  "options": [
+   "Thursday",
+   "Monday",
+   "Sunday",
+   "Saturday"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "r063",
+  "domain": "reasoning",
+  "prompt": "If today is Sunday, what day of the week will it be in 15 days?",
+  "options": [
+   "Monday",
+   "Wednesday",
+   "Tuesday",
+   "Saturday"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "r064",
+  "domain": "reasoning",
+  "prompt": "If today is Monday, what day of the week will it be in 45 days?",
+  "options": [
+   "Saturday",
+   "Friday",
+   "Thursday",
+   "Tuesday"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "r065",
+  "domain": "reasoning",
+  "prompt": "If today is Wednesday, what day of the week will it be in 100 days?",
+  "options": [
+   "Sunday",
+   "Wednesday",
+   "Friday",
+   "Saturday"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "r066",
+  "domain": "reasoning",
+  "prompt": "Rule: every card with a vowel has an even number on its back. Cards show A, K, 4, 7. Which cards must you flip to test the rule?",
+  "options": [
+   "All four",
+   "A and 7",
+   "K and 4",
+   "A and 4"
+  ],
+  "correctIndex": 1,
+  "difficulty": 3
+ },
+ {
+  "id": "r067",
+  "domain": "reasoning",
+  "prompt": "Rule: every card with a vowel has an even number on its back. Cards show E, T, 8, 3. Which cards must you flip to test the rule?",
+  "options": [
+   "E and 3",
+   "All four",
+   "E and 8",
+   "T and 8"
+  ],
+  "correctIndex": 0,
+  "difficulty": 3
+ },
+ {
+  "id": "r068",
+  "domain": "reasoning",
+  "prompt": "Rule: every card with a vowel has an even number on its back. Cards show I, M, 6, 9. Which cards must you flip to test the rule?",
+  "options": [
+   "I and 6",
+   "I and 9",
+   "All four",
+   "M and 6"
+  ],
+  "correctIndex": 1,
+  "difficulty": 3
+ },
+ {
+  "id": "r069",
+  "domain": "reasoning",
+  "prompt": "Rule: every card with a vowel has an even number on its back. Cards show U, R, 2, 5. Which cards must you flip to test the rule?",
+  "options": [
+   "R and 2",
+   "U and 5",
+   "All four",
+   "U and 2"
+  ],
+  "correctIndex": 1,
+  "difficulty": 3
+ },
+ {
+  "id": "v001",
+  "domain": "verbal",
+  "prompt": "GLOVE is to HAND as SOCK is to:",
+  "options": [
+   "Wool",
+   "Foot",
+   "Ankle",
+   "Shoe"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "v002",
+  "domain": "verbal",
+  "prompt": "AUTHOR is to NOVEL as SCULPTOR is to:",
+  "options": [
+   "Gallery",
+   "Marble",
+   "Chisel",
+   "Statue"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "v003",
+  "domain": "verbal",
+  "prompt": "BIRD is to NEST as BEE is to:",
+  "options": [
+   "Flower",
+   "Hive",
+   "Swarm",
+   "Honey"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "v004",
+  "domain": "verbal",
+  "prompt": "PAINTER is to CANVAS as WRITER is to:",
+  "options": [
+   "Story",
+   "Desk",
+   "Pen",
+   "Page"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "v005",
+  "domain": "verbal",
+  "prompt": "KEY is to LOCK as PASSWORD is to:",
+  "options": [
+   "Letter",
+   "Screen",
+   "Account",
+   "Keyboard"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "v006",
+  "domain": "verbal",
+  "prompt": "SEED is to TREE as EGG is to:",
+  "options": [
+   "Bird",
+   "Shell",
+   "Nest",
+   "Feather"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "v007",
+  "domain": "verbal",
+  "prompt": "LIBRARY is to BOOKS as ORCHARD is to:",
+  "options": [
+   "Fences",
+   "Farmers",
+   "Trees",
+   "Fruit"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "v008",
+  "domain": "verbal",
+  "prompt": "CAPTAIN is to SHIP as PILOT is to:",
+  "options": [
+   "Anchor",
+   "Aircraft",
+   "Runway",
+   "Harbor"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "v009",
+  "domain": "verbal",
+  "prompt": "THERMOMETER is to TEMPERATURE as SCALE is to:",
+  "options": [
+   "Metal",
+   "Balance",
+   "Height",
+   "Weight"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "v010",
+  "domain": "verbal",
+  "prompt": "SHEEP is to FLOCK as WOLF is to:",
+  "options": [
+   "Pack",
+   "Den",
+   "Litter",
+   "Herd"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "v011",
+  "domain": "verbal",
+  "prompt": "EYE is to SEE as EAR is to:",
+  "options": [
+   "Hear",
+   "Speak",
+   "Sound",
+   "Listen loudly"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "v012",
+  "domain": "verbal",
+  "prompt": "HAMMER is to NAIL as SCREWDRIVER is to:",
+  "options": [
+   "Drill",
+   "Screw",
+   "Wrench",
+   "Bolt"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "v013",
+  "domain": "verbal",
+  "prompt": "CHAPTER is to BOOK as SCENE is to:",
+  "options": [
+   "Ticket",
+   "Stage",
+   "Play",
+   "Actor"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "v014",
+  "domain": "verbal",
+  "prompt": "WATER is to THIRST as FOOD is to:",
+  "options": [
+   "Kitchen",
+   "Hunger",
+   "Meal",
+   "Taste"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "v015",
+  "domain": "verbal",
+  "prompt": "SPIDER is to WEB as BEAVER is to:",
+  "options": [
+   "Lodgepole",
+   "River",
+   "Dam",
+   "Wood"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "v016",
+  "domain": "verbal",
+  "prompt": "DOCTOR is to HOSPITAL as JUDGE is to:",
+  "options": [
+   "Jury",
+   "Verdict",
+   "Court",
+   "Lawyer"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "v017",
+  "domain": "verbal",
+  "prompt": "CATERPILLAR is to BUTTERFLY as TADPOLE is to:",
+  "options": [
+   "Newt",
+   "Fish",
+   "Pond",
+   "Frog"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "v018",
+  "domain": "verbal",
+  "prompt": "SUGAR is to SWEET as LEMON is to:",
+  "options": [
+   "Yellow",
+   "Juice",
+   "Bitter melon",
+   "Sour"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "v019",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to CANDID?",
+  "options": [
+   "Clever",
+   "Guarded",
+   "Frank",
+   "Sweet"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "v020",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to EPHEMERAL?",
+  "options": [
+   "Rare",
+   "Delicate",
+   "Short-lived",
+   "Glowing"
+  ],
+  "correctIndex": 2,
+  "difficulty": 3
+ },
+ {
+  "id": "v021",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to ABUNDANT?",
+  "options": [
+   "Loud",
+   "Heavy",
+   "Plentiful",
+   "Scarce"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "v022",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to DILIGENT?",
+  "options": [
+   "Quick",
+   "Hard-working",
+   "Talented",
+   "Careless"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "v023",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to LUCID?",
+  "options": [
+   "Confusing",
+   "Loose",
+   "Bright",
+   "Clear"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "v024",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to FRUGAL?",
+  "options": [
+   "Thrifty",
+   "Wasteful",
+   "Fragile",
+   "Generous"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "v025",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to OBSTINATE?",
+  "options": [
+   "Rude",
+   "Flexible",
+   "Lazy",
+   "Stubborn"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "v026",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to BENEVOLENT?",
+  "options": [
+   "Strict",
+   "Proud",
+   "Kind",
+   "Wealthy"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "v027",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to TRANQUIL?",
+  "options": [
+   "Noisy",
+   "Cold",
+   "Calm",
+   "Distant"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "v028",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to METICULOUS?",
+  "options": [
+   "Slow",
+   "Precise",
+   "Nervous",
+   "Messy"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "v029",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to AUGMENT?",
+  "options": [
+   "Reduce",
+   "Predict",
+   "Increase",
+   "Argue"
+  ],
+  "correctIndex": 2,
+  "difficulty": 3
+ },
+ {
+  "id": "v030",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to CONCISE?",
+  "options": [
+   "Brief",
+   "Wordy",
+   "Exact",
+   "Polite"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "v031",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to NOVICE?",
+  "options": [
+   "Beginner",
+   "Priest",
+   "Author",
+   "Expert"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "v032",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to PROHIBIT?",
+  "options": [
+   "Allow",
+   "Punish",
+   "Delay",
+   "Forbid"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "v033",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to VIVID?",
+  "options": [
+   "Striking",
+   "Faint",
+   "Alive",
+   "Fast"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "v034",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to RESILIENT?",
+  "options": [
+   "Very strong",
+   "Stubborn",
+   "Easily broken",
+   "Quick to recover"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "v035",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to AMBIGUOUS?",
+  "options": [
+   "Ambitious",
+   "Unclear",
+   "Certain",
+   "Twofold"
+  ],
+  "correctIndex": 1,
+  "difficulty": 3
+ },
+ {
+  "id": "v036",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to PRUDENT?",
+  "options": [
+   "Reckless",
+   "Wise-looking",
+   "Proud",
+   "Cautious"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "v037",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to SCRUTINIZE?",
+  "options": [
+   "Examine closely",
+   "Glance at",
+   "Criticize",
+   "Copy"
+  ],
+  "correctIndex": 0,
+  "difficulty": 3
+ },
+ {
+  "id": "v038",
+  "domain": "verbal",
+  "prompt": "Which word is closest in meaning to ELATED?",
+  "options": [
+   "Overjoyed",
+   "Late",
+   "Exhausted",
+   "Depressed"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "v039",
+  "domain": "verbal",
+  "prompt": "Which word is the opposite of SCARCE?",
+  "options": [
+   "Costly",
+   "Rare",
+   "Abundant",
+   "Hidden"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "v040",
+  "domain": "verbal",
+  "prompt": "Which word is the opposite of EXPAND?",
+  "options": [
+   "Contract",
+   "Enlarge",
+   "Explode",
+   "Extend"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "v041",
+  "domain": "verbal",
+  "prompt": "Which word is the opposite of ANCIENT?",
+  "options": [
+   "Historic",
+   "Ruined",
+   "Old",
+   "Modern"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "v042",
+  "domain": "verbal",
+  "prompt": "Which word is the opposite of TRANSPARENT?",
+  "options": [
+   "Opaque",
+   "Clear",
+   "Thin",
+   "Fragile"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "v043",
+  "domain": "verbal",
+  "prompt": "Which word is the opposite of HUMBLE?",
+  "options": [
+   "Quiet",
+   "Honest",
+   "Arrogant",
+   "Shy"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "v044",
+  "domain": "verbal",
+  "prompt": "Which word is the opposite of ACCELERATE?",
+  "options": [
+   "Advance",
+   "Decelerate",
+   "Rotate",
+   "Drive"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "v045",
+  "domain": "verbal",
+  "prompt": "Which word is the opposite of SURPLUS?",
+  "options": [
+   "Storage",
+   "Profit",
+   "Extra",
+   "Shortage"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "v046",
+  "domain": "verbal",
+  "prompt": "Which word is the opposite of HOSTILE?",
+  "options": [
+   "Angry",
+   "Foreign",
+   "Friendly",
+   "Armed"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "v047",
+  "domain": "verbal",
+  "prompt": "Which word is the opposite of RIGID?",
+  "options": [
+   "Hard",
+   "Upright",
+   "Rough",
+   "Flexible"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "v048",
+  "domain": "verbal",
+  "prompt": "Which word is the opposite of VICTORY?",
+  "options": [
+   "Trophy",
+   "Battle",
+   "Defeat",
+   "Draw"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "v049",
+  "domain": "verbal",
+  "prompt": "Which word is the opposite of OPTIMIST?",
+  "options": [
+   "Dreamer",
+   "Critic",
+   "Pessimist",
+   "Realist"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "v050",
+  "domain": "verbal",
+  "prompt": "Which word is the opposite of PERMANENT?",
+  "options": [
+   "Solid",
+   "Frequent",
+   "Temporary",
+   "Eternal"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "v051",
+  "domain": "verbal",
+  "prompt": "Which word is the opposite of GENEROUS?",
+  "options": [
+   "Kindly",
+   "Wealthy",
+   "Careful",
+   "Stingy"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "v052",
+  "domain": "verbal",
+  "prompt": "Which word is the opposite of CHAOS?",
+  "options": [
+   "Storm",
+   "Noise",
+   "Order",
+   "Crowd"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "v053",
+  "domain": "verbal",
+  "prompt": "Which word is the opposite of CONCEAL?",
+  "options": [
+   "Protect",
+   "Contain",
+   "Reveal",
+   "Cover"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "v054",
+  "domain": "verbal",
+  "prompt": "Which word is the opposite of PROSPERITY?",
+  "options": [
+   "Progress",
+   "Wealth",
+   "Poverty",
+   "Property"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "v055",
+  "domain": "verbal",
+  "prompt": "Pick the odd one out:",
+  "options": [
+   "Whisper",
+   "Mutter",
+   "Murmur",
+   "Shout"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "v056",
+  "domain": "verbal",
+  "prompt": "Which word means \"to make less severe\"?",
+  "options": [
+   "Mitigate",
+   "Insinuate",
+   "Replicate",
+   "Aggravate"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "v057",
+  "domain": "verbal",
+  "prompt": "Which word means \"to give up a throne or position\"?",
+  "options": [
+   "Abduct",
+   "Abdicate",
+   "Dedicate",
+   "Advocate"
+  ],
+  "correctIndex": 1,
+  "difficulty": 3
+ },
+ {
+  "id": "v058",
+  "domain": "verbal",
+  "prompt": "Which word means \"lasting for a very short time\"?",
+  "options": [
+   "Frequent",
+   "Sudden",
+   "Fleeting",
+   "Enduring"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "v059",
+  "domain": "verbal",
+  "prompt": "Which word means \"a person who loves books\"?",
+  "options": [
+   "Bibliophile",
+   "Philosopher",
+   "Curator",
+   "Bibliographer"
+  ],
+  "correctIndex": 0,
+  "difficulty": 3
+ },
+ {
+  "id": "v060",
+  "domain": "verbal",
+  "prompt": "Which word means \"impossible to deny or disprove\"?",
+  "options": [
+   "Irrelevant",
+   "Irregular",
+   "Impartial",
+   "Irrefutable"
+  ],
+  "correctIndex": 3,
+  "difficulty": 3
+ },
+ {
+  "id": "v061",
+  "domain": "verbal",
+  "prompt": "Which word means \"to officially cancel a law\"?",
+  "options": [
+   "Reprove",
+   "Appeal",
+   "Repeal",
+   "Repel"
+  ],
+  "correctIndex": 2,
+  "difficulty": 3
+ },
+ {
+  "id": "v062",
+  "domain": "verbal",
+  "prompt": "Which word means \"a solution for all problems\"?",
+  "options": [
+   "Pinnacle",
+   "Paradox",
+   "Panacea",
+   "Placebo"
+  ],
+  "correctIndex": 2,
+  "difficulty": 3
+ },
+ {
+  "id": "v063",
+  "domain": "verbal",
+  "prompt": "Which word means \"to walk in a leisurely way\"?",
+  "options": [
+   "Saunter",
+   "Scurry",
+   "Trudge",
+   "March"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "v064",
+  "domain": "verbal",
+  "prompt": "Which word means \"deliberately avoiding work\"?",
+  "options": [
+   "Shivering",
+   "Shirking",
+   "Sharing",
+   "Shepherding"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "v065",
+  "domain": "verbal",
+  "prompt": "Which word means \"expressed clearly and in few words\"?",
+  "options": [
+   "Succinct",
+   "Extinct",
+   "Distinct",
+   "Sustained"
+  ],
+  "correctIndex": 0,
+  "difficulty": 3
+ },
+ {
+  "id": "v066",
+  "domain": "verbal",
+  "prompt": "\"The committee's decision was unanimous\" means:",
+  "options": [
+   "Everyone agreed",
+   "Most members agreed",
+   "The vote was secret",
+   "The decision was final"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "v067",
+  "domain": "verbal",
+  "prompt": "\"She gave a tacit approval\" means her approval was:",
+  "options": [
+   "Reluctantly withdrawn",
+   "Written and signed",
+   "Implied without being spoken",
+   "Loudly declared"
+  ],
+  "correctIndex": 2,
+  "difficulty": 3
+ },
+ {
+  "id": "v068",
+  "domain": "verbal",
+  "prompt": "\"His argument was cogent\" means it was:",
+  "options": [
+   "Angry and loud",
+   "Clear and convincing",
+   "Long and rambling",
+   "Secretive"
+  ],
+  "correctIndex": 1,
+  "difficulty": 3
+ },
+ {
+  "id": "v069",
+  "domain": "verbal",
+  "prompt": "\"They reached an impasse\" means:",
+  "options": [
+   "No progress was possible",
+   "They found a shortcut",
+   "They signed a deal",
+   "They changed leaders"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "v070",
+  "domain": "verbal",
+  "prompt": "\"A prolific writer\" is one who:",
+  "options": [
+   "Produces many works",
+   "Is widely translated",
+   "Writes about the past",
+   "Writes professionally"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "k001",
+  "domain": "knowledge",
+  "prompt": "What is the capital of France?",
+  "options": [
+   "Lyon",
+   "Marseille",
+   "Nice",
+   "Paris"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "k002",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Japan?",
+  "options": [
+   "Tokyo",
+   "Seoul",
+   "Osaka",
+   "Kyoto"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "k003",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Australia?",
+  "options": [
+   "Melbourne",
+   "Perth",
+   "Sydney",
+   "Canberra"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "k004",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Canada?",
+  "options": [
+   "Toronto",
+   "Montreal",
+   "Vancouver",
+   "Ottawa"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "k005",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Brazil?",
+  "options": [
+   "Salvador",
+   "Rio de Janeiro",
+   "São Paulo",
+   "Brasília"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "k006",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Turkey?",
+  "options": [
+   "Izmir",
+   "Istanbul",
+   "Antalya",
+   "Ankara"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "k007",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Switzerland?",
+  "options": [
+   "Basel",
+   "Geneva",
+   "Bern",
+   "Zurich"
+  ],
+  "correctIndex": 2,
+  "difficulty": 3
+ },
+ {
+  "id": "k008",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Kenya?",
+  "options": [
+   "Mombasa",
+   "Kampala",
+   "Lagos",
+   "Nairobi"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "k009",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Egypt?",
+  "options": [
+   "Giza",
+   "Cairo",
+   "Alexandria",
+   "Luxor"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "k010",
+  "domain": "knowledge",
+  "prompt": "What is the capital of India?",
+  "options": [
+   "Kolkata",
+   "Bengaluru",
+   "New Delhi",
+   "Mumbai"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "k011",
+  "domain": "knowledge",
+  "prompt": "What is the capital of China?",
+  "options": [
+   "Hong Kong",
+   "Shanghai",
+   "Beijing",
+   "Shenzhen"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "k012",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Russia?",
+  "options": [
+   "Kyiv",
+   "Moscow",
+   "St. Petersburg",
+   "Kazan"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "k013",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Germany?",
+  "options": [
+   "Berlin",
+   "Munich",
+   "Hamburg",
+   "Frankfurt"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "k014",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Spain?",
+  "options": [
+   "Madrid",
+   "Valencia",
+   "Seville",
+   "Barcelona"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "k015",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Portugal?",
+  "options": [
+   "Lisbon",
+   "Madrid",
+   "Seville",
+   "Porto"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "k016",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Italy?",
+  "options": [
+   "Milan",
+   "Venice",
+   "Naples",
+   "Rome"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "k017",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Greece?",
+  "options": [
+   "Sparta",
+   "Thessaloniki",
+   "Athens",
+   "Crete"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "k018",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Norway?",
+  "options": [
+   "Helsinki",
+   "Oslo",
+   "Bergen",
+   "Stockholm"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "k019",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Sweden?",
+  "options": [
+   "Gothenburg",
+   "Copenhagen",
+   "Stockholm",
+   "Oslo"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "k020",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Finland?",
+  "options": [
+   "Stockholm",
+   "Helsinki",
+   "Oslo",
+   "Tallinn"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "k021",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Poland?",
+  "options": [
+   "Warsaw",
+   "Kraków",
+   "Prague",
+   "Gdańsk"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "k022",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Austria?",
+  "options": [
+   "Vienna",
+   "Zurich",
+   "Salzburg",
+   "Graz"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "k023",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Netherlands?",
+  "options": [
+   "Rotterdam",
+   "Amsterdam",
+   "Brussels",
+   "The Hague"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "k024",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Argentina?",
+  "options": [
+   "Montevideo",
+   "Buenos Aires",
+   "Córdoba",
+   "Santiago"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "k025",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Chile?",
+  "options": [
+   "Valparaíso",
+   "Lima",
+   "Santiago",
+   "Buenos Aires"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "k026",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Peru?",
+  "options": [
+   "Bogotá",
+   "Quito",
+   "Cusco",
+   "Lima"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "k027",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Colombia?",
+  "options": [
+   "Bogotá",
+   "Medellín",
+   "Caracas",
+   "Cali"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "k028",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Mexico?",
+  "options": [
+   "Guadalajara",
+   "Monterrey",
+   "Cancún",
+   "Mexico City"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "k029",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Cuba?",
+  "options": [
+   "San Juan",
+   "Kingston",
+   "Havana",
+   "Santiago de Cuba"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "k030",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Morocco?",
+  "options": [
+   "Rabat",
+   "Marrakesh",
+   "Casablanca",
+   "Fez"
+  ],
+  "correctIndex": 0,
+  "difficulty": 3
+ },
+ {
+  "id": "k031",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Nigeria?",
+  "options": [
+   "Kano",
+   "Lagos",
+   "Accra",
+   "Abuja"
+  ],
+  "correctIndex": 3,
+  "difficulty": 3
+ },
+ {
+  "id": "k032",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Ethiopia?",
+  "options": [
+   "Djibouti",
+   "Addis Ababa",
+   "Khartoum",
+   "Nairobi"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "k033",
+  "domain": "knowledge",
+  "prompt": "What is the capital of South Korea?",
+  "options": [
+   "Busan",
+   "Incheon",
+   "Tokyo",
+   "Seoul"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "k034",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Thailand?",
+  "options": [
+   "Hanoi",
+   "Bangkok",
+   "Phuket",
+   "Chiang Mai"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "k035",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Vietnam?",
+  "options": [
+   "Ho Chi Minh City",
+   "Hanoi",
+   "Bangkok",
+   "Da Nang"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "k036",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Indonesia?",
+  "options": [
+   "Jakarta",
+   "Bali",
+   "Surabaya",
+   "Kuala Lumpur"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "k037",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Malaysia?",
+  "options": [
+   "Singapore",
+   "Jakarta",
+   "Kuala Lumpur",
+   "Penang"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "k038",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Philippines?",
+  "options": [
+   "Cebu",
+   "Davao",
+   "Manila",
+   "Quezon"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "k039",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Saudi Arabia?",
+  "options": [
+   "Jeddah",
+   "Mecca",
+   "Dubai",
+   "Riyadh"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "k040",
+  "domain": "knowledge",
+  "prompt": "What is the capital of New Zealand?",
+  "options": [
+   "Auckland",
+   "Christchurch",
+   "Wellington",
+   "Sydney"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "k041",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Ireland?",
+  "options": [
+   "Dublin",
+   "Edinburgh",
+   "Belfast",
+   "Cork"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "k042",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Hungary?",
+  "options": [
+   "Vienna",
+   "Budapest",
+   "Debrecen",
+   "Bucharest"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "k043",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Czechia?",
+  "options": [
+   "Budapest",
+   "Brno",
+   "Bratislava",
+   "Prague"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "k044",
+  "domain": "knowledge",
+  "prompt": "What is the capital of Ukraine?",
+  "options": [
+   "Kyiv",
+   "Lviv",
+   "Odesa",
+   "Kharkiv"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "k045",
+  "domain": "knowledge",
+  "prompt": "What is the currency of Japan?",
+  "options": [
+   "Ringgit",
+   "Yuan",
+   "Yen",
+   "Won"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "k046",
+  "domain": "knowledge",
+  "prompt": "What is the currency of India?",
+  "options": [
+   "Taka",
+   "Rupiah",
+   "Dinar",
+   "Rupee"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "k047",
+  "domain": "knowledge",
+  "prompt": "What is the currency of United Kingdom?",
+  "options": [
+   "Euro",
+   "Dollar",
+   "Pound sterling",
+   "Franc"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "k048",
+  "domain": "knowledge",
+  "prompt": "What is the currency of Mexico?",
+  "options": [
+   "Colón",
+   "Bolívar",
+   "Peso",
+   "Real"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "k049",
+  "domain": "knowledge",
+  "prompt": "What is the currency of Russia?",
+  "options": [
+   "Hryvnia",
+   "Lev",
+   "Złoty",
+   "Ruble"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "k050",
+  "domain": "knowledge",
+  "prompt": "What is the currency of South Korea?",
+  "options": [
+   "Yuan",
+   "Won",
+   "Baht",
+   "Yen"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "k051",
+  "domain": "knowledge",
+  "prompt": "What is the currency of China?",
+  "options": [
+   "Yen",
+   "Yuan",
+   "Won",
+   "Dong"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "k052",
+  "domain": "knowledge",
+  "prompt": "What is the currency of Sweden?",
+  "options": [
+   "Crown pound",
+   "Euro",
+   "Krona",
+   "Franc"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "k053",
+  "domain": "knowledge",
+  "prompt": "What is the currency of Switzerland?",
+  "options": [
+   "Mark",
+   "Euro",
+   "Krone",
+   "Franc"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "k054",
+  "domain": "knowledge",
+  "prompt": "What is the currency of Brazil?",
+  "options": [
+   "Cruzado",
+   "Escudo",
+   "Peso",
+   "Real"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "k055",
+  "domain": "knowledge",
+  "prompt": "What is the currency of South Africa?",
+  "options": [
+   "Naira",
+   "Shilling",
+   "Rand",
+   "Cedi"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "k056",
+  "domain": "knowledge",
+  "prompt": "What is the currency of Turkey?",
+  "options": [
+   "Drachma",
+   "Dirham",
+   "Lira",
+   "Dinar"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "k057",
+  "domain": "knowledge",
+  "prompt": "What is the currency of Thailand?",
+  "options": [
+   "Dong",
+   "Kip",
+   "Baht",
+   "Ringgit"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "k058",
+  "domain": "knowledge",
+  "prompt": "What is the currency of Vietnam?",
+  "options": [
+   "Riel",
+   "Kyat",
+   "Baht",
+   "Dong"
+  ],
+  "correctIndex": 3,
+  "difficulty": 3
+ },
+ {
+  "id": "k059",
+  "domain": "knowledge",
+  "prompt": "What is the currency of Poland?",
+  "options": [
+   "Lev",
+   "Forint",
+   "Koruna",
+   "Złoty"
+  ],
+  "correctIndex": 3,
+  "difficulty": 3
+ },
+ {
+  "id": "k060",
+  "domain": "knowledge",
+  "prompt": "What is the currency of Bangladesh?",
+  "options": [
+   "Afghani",
+   "Taka",
+   "Rupee",
+   "Kyat"
+  ],
+  "correctIndex": 1,
+  "difficulty": 3
+ },
+ {
+  "id": "k061",
+  "domain": "knowledge",
+  "prompt": "What is the currency of Indonesia?",
+  "options": [
+   "Rupee",
+   "Peso",
+   "Ringgit",
+   "Rupiah"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "k062",
+  "domain": "knowledge",
+  "prompt": "What is the currency of Malaysia?",
+  "options": [
+   "Baht",
+   "Ringgit",
+   "Peso",
+   "Rupiah"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "k063",
+  "domain": "knowledge",
+  "prompt": "The Eiffel Tower stands in which city?",
+  "options": [
+   "Brussels",
+   "Lyon",
+   "Paris",
+   "London"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "k064",
+  "domain": "knowledge",
+  "prompt": "Machu Picchu is located in which country?",
+  "options": [
+   "Peru",
+   "Chile",
+   "Bolivia",
+   "Mexico"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "k065",
+  "domain": "knowledge",
+  "prompt": "The Colosseum is in which city?",
+  "options": [
+   "Rome",
+   "Naples",
+   "Istanbul",
+   "Athens"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "k066",
+  "domain": "knowledge",
+  "prompt": "The Taj Mahal stands in which Indian city?",
+  "options": [
+   "Jaipur",
+   "Agra",
+   "Delhi",
+   "Varanasi"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "k067",
+  "domain": "knowledge",
+  "prompt": "The Sahara Desert is on which continent?",
+  "options": [
+   "Australia",
+   "South America",
+   "Asia",
+   "Africa"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "k068",
+  "domain": "knowledge",
+  "prompt": "Mount Everest lies in which mountain range?",
+  "options": [
+   "The Rockies",
+   "The Andes",
+   "The Himalayas",
+   "The Alps"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "k069",
+  "domain": "knowledge",
+  "prompt": "The Great Wall is in which country?",
+  "options": [
+   "Mongolia",
+   "Korea",
+   "Japan",
+   "China"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "k070",
+  "domain": "knowledge",
+  "prompt": "Angkor Wat is in which country?",
+  "options": [
+   "Laos",
+   "Vietnam",
+   "Cambodia",
+   "Thailand"
+  ],
+  "correctIndex": 2,
+  "difficulty": 3
+ },
+ {
+  "id": "k071",
+  "domain": "knowledge",
+  "prompt": "Petra, the rock-cut city, is in which country?",
+  "options": [
+   "Egypt",
+   "Morocco",
+   "Syria",
+   "Jordan"
+  ],
+  "correctIndex": 3,
+  "difficulty": 3
+ },
+ {
+  "id": "k072",
+  "domain": "knowledge",
+  "prompt": "Christ the Redeemer overlooks which city?",
+  "options": [
+   "São Paulo",
+   "Lima",
+   "Rio de Janeiro",
+   "Buenos Aires"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "k073",
+  "domain": "knowledge",
+  "prompt": "Stonehenge is located in which country?",
+  "options": [
+   "Ireland",
+   "Scotland",
+   "Wales",
+   "England"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "k074",
+  "domain": "knowledge",
+  "prompt": "The Louvre museum is in which city?",
+  "options": [
+   "Rome",
+   "Madrid",
+   "Vienna",
+   "Paris"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "k075",
+  "domain": "knowledge",
+  "prompt": "The Kremlin is in which city?",
+  "options": [
+   "Kyiv",
+   "St. Petersburg",
+   "Minsk",
+   "Moscow"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "k076",
+  "domain": "knowledge",
+  "prompt": "The Statue of Liberty was a gift from which country?",
+  "options": [
+   "Italy",
+   "France",
+   "Spain",
+   "England"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "k077",
+  "domain": "knowledge",
+  "prompt": "The Acropolis overlooks which city?",
+  "options": [
+   "Rome",
+   "Sparta",
+   "Athens",
+   "Cairo"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "k078",
+  "domain": "knowledge",
+  "prompt": "Table Mountain overlooks which city?",
+  "options": [
+   "Durban",
+   "Nairobi",
+   "Cape Town",
+   "Johannesburg"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "k079",
+  "domain": "knowledge",
+  "prompt": "The Alhambra palace is in which country?",
+  "options": [
+   "Portugal",
+   "Morocco",
+   "Italy",
+   "Spain"
+  ],
+  "correctIndex": 3,
+  "difficulty": 3
+ },
+ {
+  "id": "k080",
+  "domain": "knowledge",
+  "prompt": "Uluru (Ayers Rock) is in which country?",
+  "options": [
+   "Namibia",
+   "Australia",
+   "New Zealand",
+   "South Africa"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "k081",
+  "domain": "knowledge",
+  "prompt": "Which country has the longest coastline in the world?",
+  "options": [
+   "Indonesia",
+   "Russia",
+   "Canada",
+   "Australia"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "k082",
+  "domain": "knowledge",
+  "prompt": "The Great Barrier Reef lies off the coast of which country?",
+  "options": [
+   "Australia",
+   "Mexico",
+   "Brazil",
+   "Philippines"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "k083",
+  "domain": "knowledge",
+  "prompt": "Which language has the most native speakers worldwide?",
+  "options": [
+   "Hindi",
+   "Mandarin Chinese",
+   "English",
+   "Spanish"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "k084",
+  "domain": "knowledge",
+  "prompt": "Mount Kilimanjaro is on which continent?",
+  "options": [
+   "Africa",
+   "Europe",
+   "Asia",
+   "South America"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "k085",
+  "domain": "knowledge",
+  "prompt": "Which ancient wonder of the world is still standing today?",
+  "options": [
+   "Lighthouse of Alexandria",
+   "Colossus of Rhodes",
+   "Hanging Gardens",
+   "Great Pyramid of Giza"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "k086",
+  "domain": "knowledge",
+  "prompt": "How many time zones does mainland China officially use?",
+  "options": [
+   "One",
+   "Three",
+   "Seven",
+   "Five"
+  ],
+  "correctIndex": 0,
+  "difficulty": 3
+ },
+ {
+  "id": "k087",
+  "domain": "knowledge",
+  "prompt": "The Suez Canal connects the Mediterranean Sea with which sea?",
+  "options": [
+   "Black Sea",
+   "Red Sea",
+   "Caspian Sea",
+   "Arabian Sea"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "k088",
+  "domain": "knowledge",
+  "prompt": "Which is the largest ocean on Earth?",
+  "options": [
+   "Indian",
+   "Atlantic",
+   "Pacific",
+   "Arctic"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "k089",
+  "domain": "knowledge",
+  "prompt": "Which continent has the most countries?",
+  "options": [
+   "South America",
+   "Europe",
+   "Asia",
+   "Africa"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "k090",
+  "domain": "knowledge",
+  "prompt": "The Panama Canal connects the Atlantic Ocean with which ocean?",
+  "options": [
+   "Indian",
+   "Southern",
+   "Arctic",
+   "Pacific"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "k091",
+  "domain": "knowledge",
+  "prompt": "Which country is known as the Land of the Rising Sun?",
+  "options": [
+   "South Korea",
+   "China",
+   "Thailand",
+   "Japan"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "k092",
+  "domain": "knowledge",
+  "prompt": "Which desert is the largest hot desert in the world?",
+  "options": [
+   "Kalahari",
+   "Sahara",
+   "Mojave",
+   "Gobi"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "k093",
+  "domain": "knowledge",
+  "prompt": "Which two countries share the longest international border?",
+  "options": [
+   "Argentina and Chile",
+   "Canada and the USA",
+   "India and China",
+   "Russia and China"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "k094",
+  "domain": "knowledge",
+  "prompt": "Venice is famous for its:",
+  "options": [
+   "Cobblestone hills",
+   "Cliffs",
+   "Castles",
+   "Canals"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "k095",
+  "domain": "knowledge",
+  "prompt": "Which country hosts the city of Marrakesh?",
+  "options": [
+   "Algeria",
+   "Egypt",
+   "Tunisia",
+   "Morocco"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "s001",
+  "domain": "science",
+  "prompt": "The chemical symbol for gold is:",
+  "options": [
+   "Au",
+   "Ag",
+   "Gd",
+   "Go"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "s002",
+  "domain": "science",
+  "prompt": "The chemical symbol for silver is:",
+  "options": [
+   "Si",
+   "Ag",
+   "Sr",
+   "Au"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "s003",
+  "domain": "science",
+  "prompt": "The chemical symbol for iron is:",
+  "options": [
+   "Ir",
+   "I",
+   "Fe",
+   "In"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "s004",
+  "domain": "science",
+  "prompt": "The chemical symbol for lead is:",
+  "options": [
+   "Ld",
+   "Le",
+   "Pb",
+   "Pd"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "s005",
+  "domain": "science",
+  "prompt": "The chemical symbol for sodium is:",
+  "options": [
+   "Sd",
+   "Sn",
+   "So",
+   "Na"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "s006",
+  "domain": "science",
+  "prompt": "The chemical symbol for potassium is:",
+  "options": [
+   "Pt",
+   "K",
+   "P",
+   "Po"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "s007",
+  "domain": "science",
+  "prompt": "The chemical symbol for tin is:",
+  "options": [
+   "Tn",
+   "Sn",
+   "Ti",
+   "St"
+  ],
+  "correctIndex": 1,
+  "difficulty": 3
+ },
+ {
+  "id": "s008",
+  "domain": "science",
+  "prompt": "The chemical symbol for mercury is:",
+  "options": [
+   "Me",
+   "Hg",
+   "Mc",
+   "My"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "s009",
+  "domain": "science",
+  "prompt": "The chemical symbol for copper is:",
+  "options": [
+   "Cr",
+   "Co",
+   "Cu",
+   "Cp"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "s010",
+  "domain": "science",
+  "prompt": "The chemical symbol for tungsten is:",
+  "options": [
+   "Ts",
+   "W",
+   "Tu",
+   "Tg"
+  ],
+  "correctIndex": 1,
+  "difficulty": 3
+ },
+ {
+  "id": "s011",
+  "domain": "science",
+  "prompt": "The chemical symbol for zinc is:",
+  "options": [
+   "Zi",
+   "Zn",
+   "Z",
+   "Zc"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "s012",
+  "domain": "science",
+  "prompt": "The chemical symbol for calcium is:",
+  "options": [
+   "Cl",
+   "C",
+   "Ca",
+   "Cm"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "s013",
+  "domain": "science",
+  "prompt": "The chemical symbol for helium is:",
+  "options": [
+   "He",
+   "H",
+   "Hm",
+   "Hl"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "s014",
+  "domain": "science",
+  "prompt": "The chemical symbol for nitrogen is:",
+  "options": [
+   "N",
+   "Ne",
+   "Na",
+   "Ni"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "s015",
+  "domain": "science",
+  "prompt": "The chemical symbol for silicon is:",
+  "options": [
+   "Si",
+   "Sl",
+   "Sc",
+   "S"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "s016",
+  "domain": "science",
+  "prompt": "The chemical symbol for chlorine is:",
+  "options": [
+   "Ch",
+   "Cl",
+   "Cr",
+   "C"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "s017",
+  "domain": "science",
+  "prompt": "The chemical symbol for aluminium is:",
+  "options": [
+   "Al",
+   "Au",
+   "An",
+   "Am"
+  ],
+  "correctIndex": 0,
+  "difficulty": 1
+ },
+ {
+  "id": "s018",
+  "domain": "science",
+  "prompt": "The chemical symbol for magnesium is:",
+  "options": [
+   "Ms",
+   "Mg",
+   "Ma",
+   "Mn"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "s019",
+  "domain": "science",
+  "prompt": "Which is the largest planet in the Solar System?",
+  "options": [
+   "Earth",
+   "Jupiter",
+   "Saturn",
+   "Neptune"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "s020",
+  "domain": "science",
+  "prompt": "Which is the smallest planet in the Solar System?",
+  "options": [
+   "Pluto",
+   "Venus",
+   "Mercury",
+   "Mars"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "s021",
+  "domain": "science",
+  "prompt": "Which planet is the hottest in the Solar System?",
+  "options": [
+   "Mercury",
+   "Jupiter",
+   "Venus",
+   "Mars"
+  ],
+  "correctIndex": 2,
+  "difficulty": 3
+ },
+ {
+  "id": "s022",
+  "domain": "science",
+  "prompt": "Which planet is known as the Red Planet?",
+  "options": [
+   "Mercury",
+   "Jupiter",
+   "Mars",
+   "Venus"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "s023",
+  "domain": "science",
+  "prompt": "Which planet is famous for its prominent rings?",
+  "options": [
+   "Jupiter",
+   "Uranus",
+   "Neptune",
+   "Saturn"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "s024",
+  "domain": "science",
+  "prompt": "What is the closest star to Earth?",
+  "options": [
+   "Sirius",
+   "The Sun",
+   "Polaris",
+   "Proxima Centauri"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "s025",
+  "domain": "science",
+  "prompt": "The Great Red Spot is a storm on which planet?",
+  "options": [
+   "Jupiter",
+   "Saturn",
+   "Neptune",
+   "Mars"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "s026",
+  "domain": "science",
+  "prompt": "Roughly how long does sunlight take to reach Earth?",
+  "options": [
+   "8 hours",
+   "8 minutes",
+   "8 seconds",
+   "1 second"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "s027",
+  "domain": "science",
+  "prompt": "What force keeps planets in orbit around the Sun?",
+  "options": [
+   "Magnetism",
+   "Inertia",
+   "Friction",
+   "Gravity"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "s028",
+  "domain": "science",
+  "prompt": "What is a light-year a measure of?",
+  "options": [
+   "Speed",
+   "Time",
+   "Distance",
+   "Brightness"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "s029",
+  "domain": "science",
+  "prompt": "What is the SI unit of force?",
+  "options": [
+   "Watt",
+   "Joule",
+   "Newton",
+   "Pascal"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "s030",
+  "domain": "science",
+  "prompt": "What is the SI unit of power?",
+  "options": [
+   "Volt",
+   "Watt",
+   "Newton",
+   "Ampere"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "s031",
+  "domain": "science",
+  "prompt": "What is the SI unit of electrical resistance?",
+  "options": [
+   "Farad",
+   "Ohm",
+   "Volt",
+   "Ampere"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "s032",
+  "domain": "science",
+  "prompt": "What is the SI unit of frequency?",
+  "options": [
+   "Hertz",
+   "Watt",
+   "Kelvin",
+   "Decibel"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "s033",
+  "domain": "science",
+  "prompt": "What is the SI unit of energy?",
+  "options": [
+   "Newton",
+   "Tesla",
+   "Pascal",
+   "Joule"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "s034",
+  "domain": "science",
+  "prompt": "What is the SI unit of electric current?",
+  "options": [
+   "Ampere",
+   "Volt",
+   "Ohm",
+   "Coulomb"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "s035",
+  "domain": "science",
+  "prompt": "What is the SI unit of pressure?",
+  "options": [
+   "Joule",
+   "Pascal",
+   "Barometer",
+   "Newton"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "s036",
+  "domain": "science",
+  "prompt": "What is the SI unit of temperature?",
+  "options": [
+   "Calorie",
+   "Kelvin",
+   "Joule",
+   "Celsius degree-hour"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "s037",
+  "domain": "science",
+  "prompt": "What is the SI unit of electric charge?",
+  "options": [
+   "Coulomb",
+   "Volt",
+   "Ampere",
+   "Watt"
+  ],
+  "correctIndex": 0,
+  "difficulty": 3
+ },
+ {
+  "id": "s038",
+  "domain": "science",
+  "prompt": "Which gas do plants primarily absorb for photosynthesis?",
+  "options": [
+   "Oxygen",
+   "Carbon dioxide",
+   "Hydrogen",
+   "Nitrogen"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "s039",
+  "domain": "science",
+  "prompt": "Which organelle produces most of a cell's energy?",
+  "options": [
+   "Ribosome",
+   "Nucleus",
+   "Mitochondrion",
+   "Golgi body"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "s040",
+  "domain": "science",
+  "prompt": "At high altitude, water boils at:",
+  "options": [
+   "A lower temperature",
+   "Exactly 100°C",
+   "It cannot boil",
+   "A higher temperature"
+  ],
+  "correctIndex": 0,
+  "difficulty": 3
+ },
+ {
+  "id": "s041",
+  "domain": "science",
+  "prompt": "Which blood type is the universal donor?",
+  "options": [
+   "A positive",
+   "O negative",
+   "AB positive",
+   "B negative"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "s042",
+  "domain": "science",
+  "prompt": "In which part of the cell is DNA primarily stored?",
+  "options": [
+   "Cytoplasm",
+   "Nucleus",
+   "Cell wall",
+   "Membrane"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "s043",
+  "domain": "science",
+  "prompt": "The speed of light in a vacuum is approximately:",
+  "options": [
+   "30,000 km/s",
+   "300 km/s",
+   "300,000 km/s",
+   "3,000 km/s"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "s044",
+  "domain": "science",
+  "prompt": "What is the largest organ of the human body?",
+  "options": [
+   "Liver",
+   "Brain",
+   "Skin",
+   "Lungs"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "s045",
+  "domain": "science",
+  "prompt": "Red blood cells carry which gas around the body?",
+  "options": [
+   "Carbon dioxide only",
+   "Oxygen",
+   "Helium",
+   "Nitrogen"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "s046",
+  "domain": "science",
+  "prompt": "Insulin is produced by which organ?",
+  "options": [
+   "Spleen",
+   "Pancreas",
+   "Kidney",
+   "Liver"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "s047",
+  "domain": "science",
+  "prompt": "What is the longest bone in the human body?",
+  "options": [
+   "Spine",
+   "Tibia",
+   "Femur",
+   "Humerus"
+  ],
+  "correctIndex": 2,
+  "difficulty": 2
+ },
+ {
+  "id": "s048",
+  "domain": "science",
+  "prompt": "Why can't sound travel through space?",
+  "options": [
+   "There is no medium to carry it",
+   "Space is too cold",
+   "It is absorbed by light",
+   "It moves too slowly"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "s049",
+  "domain": "science",
+  "prompt": "What is the chemical formula of water?",
+  "options": [
+   "OH",
+   "HO₂",
+   "H₂O₂",
+   "H₂O"
+  ],
+  "correctIndex": 3,
+  "difficulty": 1
+ },
+ {
+  "id": "s050",
+  "domain": "science",
+  "prompt": "Table salt is chemically known as:",
+  "options": [
+   "Sodium chloride",
+   "Calcium chloride",
+   "Potassium chloride",
+   "Sodium carbonate"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "s051",
+  "domain": "science",
+  "prompt": "Which pigment makes plants green?",
+  "options": [
+   "Keratin",
+   "Chlorophyll",
+   "Melanin",
+   "Carotene"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "s052",
+  "domain": "science",
+  "prompt": "A pH of 7 indicates a solution is:",
+  "options": [
+   "Acidic",
+   "Neutral",
+   "Alkaline",
+   "Saturated"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "s053",
+  "domain": "science",
+  "prompt": "You see lightning before hearing thunder because:",
+  "options": [
+   "Thunder happens later",
+   "Light travels faster than sound",
+   "Eyes react faster than ears",
+   "Sound is blocked by clouds"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "s054",
+  "domain": "science",
+  "prompt": "How many chromosomes does a typical human cell have?",
+  "options": [
+   "46",
+   "48",
+   "23",
+   "44"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "s055",
+  "domain": "science",
+  "prompt": "How many chambers does the human heart have?",
+  "options": [
+   "Two",
+   "Three",
+   "Four",
+   "Six"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "s056",
+  "domain": "science",
+  "prompt": "The speed of sound in air is roughly:",
+  "options": [
+   "1,000 m/s",
+   "3,430 m/s",
+   "34 m/s",
+   "343 m/s"
+  ],
+  "correctIndex": 3,
+  "difficulty": 3
+ },
+ {
+  "id": "s057",
+  "domain": "science",
+  "prompt": "Ice floats on water because ice is:",
+  "options": [
+   "Less dense than water",
+   "Colder than water",
+   "Purer than water",
+   "Heavier than water"
+  ],
+  "correctIndex": 0,
+  "difficulty": 2
+ },
+ {
+  "id": "s058",
+  "domain": "science",
+  "prompt": "Which vitamin does human skin produce in sunlight?",
+  "options": [
+   "Vitamin A",
+   "Vitamin C",
+   "Vitamin B12",
+   "Vitamin D"
+  ],
+  "correctIndex": 3,
+  "difficulty": 2
+ },
+ {
+  "id": "s059",
+  "domain": "science",
+  "prompt": "What type of energy is stored in a stretched spring?",
+  "options": [
+   "Kinetic energy",
+   "Elastic potential energy",
+   "Thermal energy",
+   "Chemical energy"
+  ],
+  "correctIndex": 1,
+  "difficulty": 2
+ },
+ {
+  "id": "s060",
+  "domain": "science",
+  "prompt": "Which state of matter has a fixed volume but no fixed shape?",
+  "options": [
+   "Gas",
+   "Liquid",
+   "Solid",
+   "Plasma"
+  ],
+  "correctIndex": 1,
+  "difficulty": 1
+ },
+ {
+  "id": "s061",
+  "domain": "science",
+  "prompt": "Evaporation happens faster when the temperature is:",
+  "options": [
+   "Below freezing",
+   "Constant",
+   "Higher",
+   "Lower"
+  ],
+  "correctIndex": 2,
+  "difficulty": 1
+ },
+ {
+  "id": "s062",
+  "domain": "science",
+  "prompt": "The process by which plants lose water through leaves is:",
+  "options": [
+   "Respiration",
+   "Transpiration",
+   "Fermentation",
+   "Condensation"
+  ],
+  "correctIndex": 1,
+  "difficulty": 3
+ }
+]

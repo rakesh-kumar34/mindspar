@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mindspar</title>
+  <meta name="description" content="Head-to-head thinking duels. Reasoning, math, verbal, knowledge, science, patterns.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <div class="screen" id="screen" aria-live="polite"></div>
+    <nav class="tabs" id="tabs" style="display:none">
+      <button class="tab on" id="t-play">⚔︎<span>Play</span></button>
+      <button class="tab" id="t-prof">◉<span>Profile</span></button>
+    </nav>
+    <div class="arena" id="arena"></div>
+    <div class="overlay" id="overlay"></div>
+    <div class="toast" id="toast" role="status"></div>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
