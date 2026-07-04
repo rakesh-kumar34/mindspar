@@ -180,10 +180,16 @@ async function makeFirebaseBackend(config) {
       return !!u.emailVerified;
     },
     // Called after the email is verified: writes the profile doc for real.
+    // If a profile already exists (e.g. an older account that just verified),
+    // keep it rather than overwriting with a fresh one.
     async completeSignup(pending) {
       const u = auth.currentUser;
       if (!u || !u.emailVerified) throw new Error("Email not verified yet.");
       await u.getIdToken(true);
+      const existing = await getDoc(doc(db, "users", u.uid));
+      if (existing.exists()) return existing.data();
+      if (!pending || !pending.name || !pending.dob)
+        throw new Error("Let's set up your profile again — please sign up.");
       const profile = newProfile(u.uid, pending);
       await setDoc(doc(db, "users", profile.id), profile);
       return profile;
@@ -452,16 +458,24 @@ async function boot() {
     try { backend = await makeFirebaseBackend(firebaseConfig); }
     catch (e) { console.error(e); toast("Firebase failed to load — running offline."); }
   }
-  const restored = await backend.restore();
-  if (restored && restored.pendingVerification) {
-    // Signed in but not verified — resume the verification gate.
-    let saved = null;
-    try { saved = JSON.parse(localStorage.getItem(PENDING_KEY)); } catch { /* ignore */ }
-    setPending(saved || { uid: restored.uid, email: restored.email });
-    return renderVerify();
+  try {
+    const restored = await backend.restore();
+    if (restored && restored.pendingVerification) {
+      // Signed in but not verified — resume the verification gate.
+      let saved = null;
+      try { saved = JSON.parse(localStorage.getItem(PENDING_KEY)); } catch { /* ignore */ }
+      setPending(saved || { uid: restored.uid, email: restored.email });
+      return renderVerify();
+    }
+    P = restored;
+    if (P && backend.isLive) await startSession();
+  } catch (e) {
+    // A stale or broken session (e.g. a deleted account, or a permissions
+    // change) must never leave a blank page: drop the session and show sign-in.
+    console.error("Session restore failed — clearing it.", e);
+    try { await backend.signOut(); } catch { /* ignore */ }
+    P = null;
   }
-  P = restored;
-  if (P && backend.isLive) await startSession();
   armIdleTimer();
   render();
 }
