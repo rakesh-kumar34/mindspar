@@ -11,7 +11,12 @@ Two clients, one backend:
 
 - **iOS** (SwiftUI, 17+) — this repo's Xcode project.
 - **Web** (`web/`) — static, no build step, playable in any browser. See
-  [web/README.md](web/README.md) for setup and free hosting options.
+  [web/README.md](web/README.md) for setup and free hosting options. The web
+  client additionally has: **light/dark themes**, a **friends system** (add by
+  email, accept/decline, challenge), **end-to-end encrypted 1:1 text chat**
+  between friends (Web Crypto ECDH + AES-GCM; the server only ever stores
+  ciphertext), **email verification** at signup, and a **30-minute idle
+  sign-out**. These are web-only for now — see the iOS parity note below.
 
 All 510 questions, bot personalities, names, and visuals are original — the game
 shares a *genre* with titles like Brain Wars and QuizUp, but no content, assets,
@@ -49,17 +54,11 @@ adding files). The Firebase iOS SDK is pulled via Swift Package Manager on first
    (add it to the target in Xcode). The file is gitignored — never commit it.
 3. In the console: **Authentication → Sign-in method → Email/Password → Enable**,
    and **Firestore Database → Create** (production mode).
-4. Firestore rules to start with (tighten before any public release):
-   ```
-   rules_version = '2';
-   service cloud.firestore {
-     match /databases/{database}/documents {
-       match /{document=**} {
-         allow read, write: if request.auth != null;
-       }
-     }
-   }
-   ```
+4. Deploy the hardened rules: `firebase deploy --only firestore:rules`
+   (they live in [`firestore.rules`](firestore.rules)). These enforce, server-side:
+   email-verified accounts only; per-collection ownership; friends-only chat;
+   and no bulk listing of the user table. Don't fall back to a blanket
+   `allow read, write: if request.auth != null` — that was the old loophole.
 
 The app detects the plist at launch and switches from `LocalBackend` to
 `FirebaseBackend` automatically — no code changes. The web client reuses the

@@ -30,24 +30,29 @@ python3 -m http.server 8080
    export const firebaseConfig = { apiKey: "...", authDomain: "...", projectId: "...", appId: "..." };
    ```
 
-5. Firestore **Rules** → publish:
+5. Deploy the hardened **Firestore rules** from the repo root
+   (`../firestore.rules`): `firebase deploy --only firestore:rules`.
 
-   ```
-   rules_version = '2';
-   service cloud.firestore {
-     match /databases/{database}/documents {
-       match /{document=**} {
-         allow read, write: if request.auth != null;
-       }
-     }
-   }
-   ```
-
-   (v1: any signed-in player can read/write game docs. Tighten per-collection
-   before opening to strangers.)
+   These enforce, server-side: **email-verified accounts only**, per-collection
+   ownership, **friends-only chat**, immutable messages, and a cap that prevents
+   listing the whole user/email table. Do **not** replace them with a blanket
+   `allow read, write: if request.auth != null`.
 
 The Firebase web config is not a secret — it's shipped to every browser — so
 it's fine to commit. Access control lives in the rules.
+
+## Accounts, friends & encrypted chat
+
+- **Sign-up requires email verification** — a link is emailed; the account can't
+  read or write anything until it's confirmed (so fake/throwaway emails are shut
+  out). Idle sessions sign out after 30 minutes.
+- **Friends**: add by email (both must be verified), accept/decline requests,
+  then challenge or chat. You can't friend yourself.
+- **Chat is end-to-end encrypted and text-only.** Keys are ECDH P-256 per
+  device (private key in `localStorage`, public key on your profile); messages
+  are AES-GCM sealed in the browser (`e2e.js`), so Firestore stores only
+  `{ iv, ct }`. Only confirmed friends can open a channel. No media/attachments.
+- **Light/dark theme** toggle in Profile → Appearance (dark by default).
 
 ## Deploy
 

@@ -3,6 +3,7 @@
 // firebase-config.js is filled in — same graceful degradation as the iOS app.
 import { QUESTIONS } from "./questions.js";
 import { firebaseConfig } from "./firebase-config.js";
+import { loadOrCreateKeys, makeChannel } from "./e2e.js";
 
 // ---------------- game math (mirrors the Swift services) ----------------
 const LIMIT = 18, N = 8, MIN_ANSWERS = 16;
@@ -96,6 +97,9 @@ const localBackend = {
     return profile;
   },
   async signIn() { throw new Error("Offline mode has a single local profile — sign up to create it."); },
+  // Offline has no email to verify — sign-up creates the profile directly.
+  async resendVerification() {}, async refreshVerified() { return true; },
+  async completeSignup() { return JSON.parse(localStorage.getItem("mindspar-web")); },
   async signOut() { localStorage.removeItem("mindspar-web"); },
   async save(profile) { localStorage.setItem("mindspar-web", JSON.stringify(profile)); },
   async findMatch() { throw new Error("Online play needs Firebase — see web/README.md. Bots are ready!"); },
@@ -104,10 +108,17 @@ const localBackend = {
   listenInvites() {},
   async acceptInvite() { throw new Error("Online play needs Firebase."); },
   submitAnswer() {}, listenOpponent() {}, stopMatch() {},
+  // Friends + chat require accounts, so they're online-only.
+  async publishPublicKey() {},
+  async sendFriendRequest() { throw new Error("Friends need Firebase — see web/README.md."); },
+  listenFriendRequests() {}, async acceptFriendRequest() {}, async declineFriendRequest() {},
+  async listFriends() { return []; }, listenFriends() { return () => {}; },
+  sendMessage() {}, listenMessages() { return () => {}; },
 };
 
 function newProfile(id, { name, email, dob }) {
-  return { id, name, email: email.toLowerCase(), dob, photo: null,
+  return { id, name, email: email.toLowerCase(), dob, photo: null, pubKey: null,
+           createdAt: Date.now(),
            rating: 1000, played: 0, won: 0, streak: 0, best: 0,
            dA: {}, dC: {}, sfSum: 0, sfN: 0, seen: {} };
 }
@@ -115,7 +126,7 @@ function newProfile(id, { name, email, dob }) {
 async function makeFirebaseBackend(config) {
   const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js");
   const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-          signOut, onAuthStateChanged } =
+          signOut, onAuthStateChanged, sendEmailVerification } =
     await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js");
   const { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, getDocs,
           collection, query, where, orderBy, limit, onSnapshot, arrayUnion, serverTimestamp } =
@@ -124,8 +135,14 @@ async function makeFirebaseBackend(config) {
   const app = initializeApp(config);
   const auth = getAuth(app);
   const db = getFirestore(app);
-  let unsubs = [];
-  const stopAll = () => { unsubs.forEach(u => u()); unsubs = []; };
+  // Session listeners (invites, friend requests, friends) live for the whole
+  // sign-in; match listeners (lobby, opponent feed) are torn down when a duel
+  // ends. Keeping them separate means finishing a match no longer kills the
+  // invite/friend feeds.
+  let sessionSubs = [], matchSubs = [];
+  const stopSession = () => { sessionSubs.forEach(u => u()); sessionSubs = []; };
+  const stopMatchSubs = () => { matchSubs.forEach(u => u()); matchSubs = []; };
+  const chatId = (a, b) => [a, b].sort().join("__");
 
   const authReady = new Promise(resolve => {
     const stop = onAuthStateChanged(auth, user => { stop(); resolve(user); });
@@ -136,22 +153,56 @@ async function makeFirebaseBackend(config) {
     async restore() {
       const user = await authReady;
       if (!user) return null;
+      // Not verified yet → tell the app to show the verification gate rather
+      // than a usable profile (the security rules would block it anyway).
+      if (!user.emailVerified) return { pendingVerification: true, uid: user.uid, email: user.email };
       const snap = await getDoc(doc(db, "users", user.uid));
       return snap.exists() ? snap.data() : null;
     },
+    // Create the account and send the verification email, but DON'T create the
+    // profile doc yet — that happens once the email is confirmed. Real, owned
+    // email required; fake/random addresses can never verify.
     async signUp(fields) {
       const cred = await createUserWithEmailAndPassword(auth, fields.email, fields.password);
-      const profile = newProfile(cred.user.uid, fields);
+      await sendEmailVerification(cred.user);
+      return { pendingVerification: true, uid: cred.user.uid, ...fields };
+    },
+    async resendVerification() {
+      if (auth.currentUser) await sendEmailVerification(auth.currentUser);
+    },
+    // Re-check verification; refresh the ID token so its email_verified claim
+    // updates for the security rules. Returns true once verified.
+    async refreshVerified() {
+      const u = auth.currentUser;
+      if (!u) return false;
+      await u.reload();
+      if (u.emailVerified) await u.getIdToken(true);
+      return !!u.emailVerified;
+    },
+    // Called after the email is verified: writes the profile doc for real.
+    async completeSignup(pending) {
+      const u = auth.currentUser;
+      if (!u || !u.emailVerified) throw new Error("Email not verified yet.");
+      await u.getIdToken(true);
+      const profile = newProfile(u.uid, pending);
       await setDoc(doc(db, "users", profile.id), profile);
       return profile;
     },
     async signIn(email, password) {
       const cred = await signInWithEmailAndPassword(auth, email, password);
+      await cred.user.reload();
+      if (!cred.user.emailVerified) {
+        await sendEmailVerification(cred.user).catch(() => {});
+        await signOut(auth);
+        throw new Error("Please verify your email first — we've sent a fresh link to your inbox.");
+      }
+      await cred.user.getIdToken(true);
       const snap = await getDoc(doc(db, "users", cred.user.uid));
-      if (!snap.exists()) throw new Error("Profile not found.");
+      if (!snap.exists()) throw new Error("Profile not found — please sign up again.");
       return snap.data();
     },
-    async signOut() { stopAll(); await signOut(auth); },
+    async signOut() { stopSession(); stopMatchSubs(); await signOut(auth); },
+    async publishPublicKey(uid, jwk) { await updateDoc(doc(db, "users", uid), { pubKey: jwk }); },
     async save(profile) { await setDoc(doc(db, "users", profile.id), profile); },
 
     // --- random matchmaking, rating-banded (mirrors FirebaseBackend.swift) ---
@@ -196,9 +247,9 @@ async function makeFirebaseBackend(config) {
                   oppRating: players[oppId]?.rating ?? 1000,
                   deckIds: match.get("deckIds") ?? [] });
       });
-      unsubs.push(stop);
+      matchSubs.push(stop);
     },
-    async cancelSearch(P) { stopAll(); await deleteDoc(doc(db, "lobby", P.id)).catch(() => {}); },
+    async cancelSearch(P) { stopMatchSubs(); await deleteDoc(doc(db, "lobby", P.id)).catch(() => {}); },
 
     // --- email invites ---
     async sendInvite(email, P, onMatch) {
@@ -222,7 +273,7 @@ async function makeFirebaseBackend(config) {
                   oppRating: players[oppId]?.rating ?? 1000,
                   deckIds: match.get("deckIds") ?? [] });
       });
-      unsubs.push(stop);
+      matchSubs.push(stop);
     },
     listenInvites(P, onChange) {
       const stop = onSnapshot(
@@ -232,7 +283,7 @@ async function makeFirebaseBackend(config) {
           id: d.id, fromId: d.get("fromId"),
           fromName: d.get("fromName") ?? "Player", fromRating: d.get("fromRating") ?? 1000,
         }))));
-      unsubs.push(stop);
+      sessionSubs.push(stop);
     },
     async acceptInvite(invite, P) {
       const target = ladder(Math.round((P.rating + invite.fromRating) / 2));
@@ -260,17 +311,120 @@ async function makeFirebaseBackend(config) {
         raw.sort((a, b) => a.q - b.q);
         while (delivered < raw.length) onAnswer(raw[delivered++]);
       });
-      unsubs.push(stop);
+      matchSubs.push(stop);
     },
-    stopMatch() { stopAll(); },
+    stopMatch() { stopMatchSubs(); },
+
+    // --- friends ---
+    async sendFriendRequest(email, P) {
+      const key = email.toLowerCase().trim();
+      if (key === P.email) throw new Error("That's your own email — you can't friend yourself.");
+      const found = await getDocs(query(collection(db, "users"), where("email", "==", key), limit(1)));
+      if (found.empty) throw new Error("No player found with that email.");
+      const toId = found.docs[0].id;
+      if (toId === P.id) throw new Error("That's you — you can't friend yourself.");
+      const already = await getDoc(doc(db, "users", P.id, "friends", toId));
+      if (already.exists()) throw new Error("You're already friends.");
+      // Request ids are deterministic ("<from>__<to>") so the security rules can
+      // verify an invite exists before letting the accepter join a friend list.
+      const reverse = await getDoc(doc(db, "friendRequests", `${toId}__${P.id}`));
+      if (reverse.exists()) {                       // they already invited you — just accept
+        await this.acceptFriendRequest({ fromId: toId, toId: P.id }, P);
+        return found.docs[0].get("name") ?? "Player";
+      }
+      const dup = await getDoc(doc(db, "friendRequests", `${P.id}__${toId}`));
+      if (dup.exists()) throw new Error("Request already sent.");
+      await setDoc(doc(db, "friendRequests", `${P.id}__${toId}`), {
+        fromId: P.id, fromName: P.name, fromEmail: P.email, fromRating: P.rating,
+        toId, toEmail: key, createdAt: serverTimestamp(),
+      });
+      return found.docs[0].get("name") ?? "Player";
+    },
+    listenFriendRequests(P, onChange) {
+      const stop = onSnapshot(query(collection(db, "friendRequests"), where("toId", "==", P.id)),
+        snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
+      sessionSubs.push(stop);
+    },
+    async acceptFriendRequest(req, P) {
+      const now = serverTimestamp();
+      // Write both friend docs while the request still exists (the rule requires
+      // it), then remove the request.
+      await setDoc(doc(db, "users", P.id, "friends", req.fromId), { since: now });
+      await setDoc(doc(db, "users", req.fromId, "friends", P.id), { since: now });
+      await deleteDoc(doc(db, "friendRequests", `${req.fromId}__${P.id}`)).catch(() => {});
+    },
+    async declineFriendRequest(req) {
+      await deleteDoc(doc(db, "friendRequests", req.id)).catch(() => {});
+    },
+    async listFriends(P) {
+      const mine = await getDocs(collection(db, "users", P.id, "friends"));
+      const docs = await Promise.all(mine.docs.map(d => getDoc(doc(db, "users", d.id))));
+      return docs.filter(d => d.exists()).map(d => ({
+        id: d.id, name: d.get("name") ?? "Player", rating: d.get("rating") ?? 1000,
+        photo: d.get("photo") ?? null, email: d.get("email"), pubKey: d.get("pubKey") ?? null,
+      })).sort((a, b) => a.name.localeCompare(b.name));
+    },
+    listenFriends(P, onChange) {
+      const stop = onSnapshot(collection(db, "users", P.id, "friends"),
+        async () => onChange(await this.listFriends(P)));
+      sessionSubs.push(stop);
+    },
+
+    // --- encrypted chat (payloads are ciphertext; see e2e.js) ---
+    sendMessage(a, b, payload) {
+      return addDoc(collection(db, "chats", chatId(a, b), "messages"),
+        { ...payload, createdAt: serverTimestamp() });
+    },
+    listenMessages(a, b, onMsgs) {
+      // Not a session sub: the app owns this and stops it on leaving the chat.
+      return onSnapshot(query(collection(db, "chats", chatId(a, b), "messages"), orderBy("createdAt")),
+        snap => onMsgs(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
+    },
   };
 }
 
 // ---------------- app state & shell ----------------
 const $ = id => document.getElementById(id);
-const screen = $("screen"), tabs = $("tabs"), arena = $("arena"), overlay = $("overlay");
+const screen = $("screen"), tabs = $("tabs"), arena = $("arena"), overlay = $("overlay"),
+      chatEl = $("chat");
 let backend = localBackend, P = null, tab = "play", invites = [], subject = null;
 let toastTimer;
+let myKeys = null, friends = [], friendReqs = [];       // friends + E2E chat
+let chatFriend = null, chatUnsub = null, chatChannel = null, chatCache = new Map();
+let pending = null;                                     // awaiting email verification
+
+const PENDING_KEY = "mindspar-pending";
+function setPending(p) {
+  pending = p;
+  if (p) localStorage.setItem(PENDING_KEY, JSON.stringify(p));
+  else localStorage.removeItem(PENDING_KEY);
+}
+
+// ---- theme (dark by default; the choice persists per browser) ----
+let theme = localStorage.getItem("mindspar-theme") || "dark";
+function applyTheme(t) {
+  theme = t;
+  document.documentElement.setAttribute("data-theme", t);
+  localStorage.setItem("mindspar-theme", t);
+}
+applyTheme(theme);
+
+// ---- idle auto sign-out: 30 minutes with no interaction, an industry-standard
+// session timeout. Any pointer/key/touch activity resets the clock. ----
+const IDLE_MS = 30 * 60 * 1000;
+let idleTimer;
+function armIdleTimer() {
+  clearTimeout(idleTimer);
+  if (!P) return;
+  idleTimer = setTimeout(async () => {
+    if (!P) return;
+    await doSignOut();
+    toast("Signed out after 30 minutes of inactivity.");
+  }, IDLE_MS);
+}
+["pointerdown", "keydown", "touchstart", "visibilitychange"].forEach(ev =>
+  window.addEventListener(ev, () => { if (P && document.visibilityState !== "hidden") armIdleTimer(); },
+    { passive: true }));
 
 function toast(message) {
   const el = $("toast");
@@ -283,10 +437,12 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 $("t-play").onclick = () => setTab("play");
+$("t-friends").onclick = () => setTab("friends");
 $("t-prof").onclick = () => setTab("prof");
 function setTab(t) {
   tab = t;
   $("t-play").classList.toggle("on", t === "play");
+  $("t-friends").classList.toggle("on", t === "friends");
   $("t-prof").classList.toggle("on", t === "prof");
   render();
 }
@@ -296,13 +452,59 @@ async function boot() {
     try { backend = await makeFirebaseBackend(firebaseConfig); }
     catch (e) { console.error(e); toast("Firebase failed to load — running offline."); }
   }
-  P = await backend.restore();
-  if (P && backend.isLive) startInviteListener();
+  const restored = await backend.restore();
+  if (restored && restored.pendingVerification) {
+    // Signed in but not verified — resume the verification gate.
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(PENDING_KEY)); } catch { /* ignore */ }
+    setPending(saved || { uid: restored.uid, email: restored.email });
+    return renderVerify();
+  }
+  P = restored;
+  if (P && backend.isLive) await startSession();
+  armIdleTimer();
   render();
 }
 
-function startInviteListener() {
+// Bring up everything a signed-in online player needs: their E2E key pair and
+// the live invite/friend feeds.
+async function startSession() {
+  await ensureKeys();
   backend.listenInvites(P, list => { invites = list; if (tab === "play" && !arena.classList.contains("on")) render(); });
+  backend.listenFriendRequests(P, list => { friendReqs = list; updateFriendBadge(); if (tab === "friends") renderFriends(); });
+  backend.listenFriends(P, list => {
+    friends = list;
+    if (tab === "friends" && !chatFriend) renderFriends();
+    else if (tab === "prof") renderProfile();
+  });
+}
+
+// Make sure this device has an E2E key pair and that the public half is
+// published on the profile so friends can start a secure channel.
+async function ensureKeys() {
+  try {
+    myKeys = await loadOrCreateKeys(P.id);
+    if (!P.pubKey || P.pubKey.x !== myKeys.pub.x || P.pubKey.y !== myKeys.pub.y) {
+      P.pubKey = myKeys.pub;
+      await backend.publishPublicKey(P.id, myKeys.pub);
+    }
+  } catch (e) { console.error("E2E key setup failed", e); }
+}
+
+function updateFriendBadge() {
+  const badge = $("fr-badge");
+  if (badge) badge.style.display = friendReqs.length ? "block" : "none";
+}
+
+async function doSignOut() {
+  leaveChat();
+  await backend.signOut();
+  P = null; invites = []; friends = []; friendReqs = []; myKeys = null;
+  setPending(null);
+  chatCache.clear();
+  clearTimeout(idleTimer);
+  updateFriendBadge?.();
+  render();
 }
 
 async function persist() { try { await backend.save(P); } catch (e) { console.error(e); } }
@@ -310,7 +512,10 @@ async function persist() { try { await backend.save(P); } catch (e) { console.er
 function render() {
   if (!P) { tabs.style.display = "none"; return renderAuth(); }
   tabs.style.display = "flex";
-  tab === "play" ? renderHome() : renderProfile();
+  updateFriendBadge();
+  if (tab === "friends") renderFriends();
+  else if (tab === "prof") renderProfile();
+  else renderHome();
 }
 
 // ---------------- auth ----------------
@@ -335,7 +540,9 @@ function renderAuth() {
     <div class="err" id="a-err"></div>
     <button class="primary" id="a-go">${signup ? "Create Account" : "Sign In"}</button>
     <button class="ghost" id="a-switch">${signup ? "Already have an account? Sign in" : "New here? Create an account"}</button>
-    ${backend.isLive ? "" : `<div class="fine">Running offline — your profile stays in this browser. Online play switches on once Firebase is configured (web/README.md).</div>`}
+    ${backend.isLive
+      ? (signup ? `<div class="fine">We'll email you a link to confirm your address — you'll verify it before playing.</div>` : "")
+      : `<div class="fine">Running offline — your profile stays in this browser. Online play switches on once Firebase is configured (web/README.md).</div>`}
     <div class="fine">Mindspar is for adults 18 and over.</div>
   </div>`;
   $("a-switch").onclick = () => { authMode = signup ? "signin" : "signup"; renderAuth(); };
@@ -355,11 +562,53 @@ async function submitAuth() {
       if (!dob) return err.textContent = "Enter your date of birth.";
       if (yearsOld(dob) < 18) return err.textContent = "Mindspar is for adults 18 and over.";
       if (!$("a-adult").checked) return err.textContent = "Please confirm you are 18 or older.";
-      P = await backend.signUp({ name, email, password, dob });
+      const result = await backend.signUp({ name, email, password, dob });
+      if (result && result.pendingVerification) {   // online: must confirm email first
+        setPending({ uid: result.uid, name, email: email.toLowerCase(), dob });
+        return renderVerify();
+      }
+      P = result;                                    // offline: profile created directly
     }
-    if (backend.isLive) startInviteListener();
+    if (backend.isLive) await startSession();
+    armIdleTimer();
     render();
   } catch (e) { err.textContent = e.message.replace("Firebase: ", ""); }
+}
+
+// ---- email verification gate ----
+function renderVerify() {
+  tabs.style.display = "none";
+  const email = pending?.email || "your email";
+  screen.innerHTML = `<div class="pad" style="justify-content:center;gap:14px;text-align:center">
+    <div style="font-size:52px">✉️</div>
+    <div class="serif" style="font-size:28px;font-weight:600">Confirm your email</div>
+    <div style="font-size:14px;color:var(--ink2);line-height:1.6">
+      We sent a verification link to<br><b style="color:var(--ink)">${esc(email)}</b>.<br>
+      Click it, then come back and continue. This keeps Mindspar to real,
+      verified players only.</div>
+    <div class="err" id="v-err"></div>
+    <button class="primary" id="v-cont">I've verified — continue</button>
+    <button class="ghost" id="v-resend">Resend the email</button>
+    <button class="ghost" id="v-cancel">Use a different account</button>
+  </div>`;
+  $("v-cont").onclick = async () => {
+    const err = $("v-err");
+    err.textContent = "";
+    try {
+      const ok = await backend.refreshVerified();
+      if (!ok) return err.textContent = "Not verified yet — click the link in your email, then try again.";
+      P = await backend.completeSignup(pending);
+      setPending(null);
+      if (backend.isLive) await startSession();
+      armIdleTimer();
+      render();
+    } catch (e) { err.textContent = e.message.replace("Firebase: ", ""); }
+  };
+  $("v-resend").onclick = async () => {
+    try { await backend.resendVerification(); toast("Verification email sent."); }
+    catch (e) { toast(e.message); }
+  };
+  $("v-cancel").onclick = async () => { setPending(null); await doSignOut(); };
 }
 
 // ---------------- home ----------------
@@ -444,20 +693,43 @@ function inviteFlow() {
     <button class="primary" id="inv-send">Send Challenge</button>
     <button class="ghost" id="inv-close">Close</button></div>`;
   $("inv-close").onclick = () => overlay.classList.remove("on");
-  $("inv-send").onclick = async () => {
+  $("inv-send").onclick = () => {
     const email = $("inv-email").value.trim();
     if (!email) return;
     if (!backend.isLive) return $("inv-err").textContent = "Online play needs Firebase — see web/README.md.";
-    try {
-      searchingPanel("Waiting for them to accept…", "They'll see your challenge on their home screen",
-        () => { overlay.classList.remove("on"); backend.stopMatch(); });
-      await backend.sendInvite(email, P, human => {
-        if (!overlay.classList.contains("on")) return;
-        overlay.classList.remove("on");
-        startHumanDuel(human);
-      });
-    } catch (e) { inviteFlow(); $("inv-err").textContent = e.message; }
+    startInvite(email);
   };
+}
+
+// Send a challenge and give immediate feedback: confirm it went out, then show
+// a waiting panel that times out instead of spinning forever if they're away.
+async function startInvite(email, name) {
+  if (!backend.isLive) return toast("Online play needs Firebase — duel a bot meanwhile!");
+  overlay.classList.add("on");
+  overlay.innerHTML = `<div class="panel"><div class="spin"></div><b>Sending challenge…</b></div>`;
+  let timeout;
+  try {
+    await backend.sendInvite(email, P, human => {
+      clearTimeout(timeout);
+      if (!overlay.classList.contains("on")) return;
+      overlay.classList.remove("on");
+      startHumanDuel(human);
+    });
+    // sendInvite resolves once the invite is written — the opponent exists.
+    toast(`Challenge sent${name ? " to " + name : ""} — waiting for them to accept.`);
+    searchingPanel(`Waiting for ${name || "them"} to accept…`,
+      "They'll see it on their home screen and in Friends",
+      () => { clearTimeout(timeout); overlay.classList.remove("on"); backend.stopMatch(); });
+    timeout = setTimeout(() => {
+      if (!overlay.classList.contains("on")) return;
+      overlay.classList.remove("on");
+      backend.stopMatch();
+      toast(`${name || "They"} hasn't responded yet — they'll still see your challenge.`);
+    }, 60000);
+  } catch (e) {
+    overlay.classList.remove("on");
+    toast(e.message);
+  }
 }
 
 async function acceptInvite(id) {
@@ -626,17 +898,172 @@ function end() {
   $("d-done").onclick = () => { arena.classList.remove("on"); render(); };
 }
 
+// ---------------- friends ----------------
+function renderFriends() {
+  if (!backend.isLive) {
+    screen.innerHTML = `<div class="pad">
+      <div class="serif" style="font-size:24px;font-weight:600">Friends</div>
+      <div class="cardbox" style="padding:20px;font-size:13.5px;color:var(--ink2);line-height:1.6">
+        Adding friends and encrypted chat need an online account. This browser is
+        running in offline mode — see web/README.md to switch it on.</div></div>`;
+    return;
+  }
+  const reqRows = friendReqs.map(r => `
+    <div class="frow"><span class="fav">${esc((r.fromName || "?")[0].toUpperCase())}</span>
+      <span class="fmeta"><b>${esc(r.fromName)}</b><span>wants to be friends · ${r.fromRating ?? 1000}</span></span>
+      <span class="fbtns">
+        <button class="smallbtn" data-acc="${r.id}">Accept</button>
+        <button class="chip" style="background:var(--iris-soft);color:var(--ink2)" data-dec="${r.id}">Ignore</button>
+      </span></div>`).join("");
+  const friendRows = friends.length ? friends.map(f => `
+    <div class="frow">
+      <span class="fav">${f.photo
+        ? `<img src="${f.photo}" alt="">` : esc((f.name || "?")[0].toUpperCase())}</span>
+      <span class="fmeta"><b>${esc(f.name)}</b>
+        <span>${tier(f.rating)} · ${f.rating}${f.pubKey ? "" : " · chat pending"}</span></span>
+      <span class="fbtns">
+        <button class="smallbtn" data-chal="${f.id}">Challenge</button>
+        <button class="iconbtn" data-chat="${f.id}" title="Encrypted chat"${f.pubKey ? "" : " disabled"}>🔒</button>
+      </span></div>`).join("")
+    : `<div class="cardbox" style="padding:18px;font-size:13px;color:var(--ink2);text-align:center">
+         No friends yet — add someone by email above to challenge and chat.</div>`;
+
+  screen.innerHTML = `<div class="pad" style="gap:14px">
+    <div class="serif" style="font-size:24px;font-weight:600">Friends</div>
+    <div class="cardbox" style="padding:16px;display:flex;flex-direction:column;gap:10px">
+      <div class="eyebrow">ADD A FRIEND</div>
+      <div style="display:flex;gap:8px">
+        <input id="fr-email" type="email" placeholder="Friend's email" autocomplete="off" style="flex:1">
+        <button class="smallbtn" id="fr-add" style="padding:0 18px">Add</button>
+      </div>
+      <div class="err" id="fr-err"></div>
+    </div>
+    ${friendReqs.length ? `<div class="eyebrow">REQUESTS</div>${reqRows}` : ""}
+    <div class="eyebrow">YOUR FRIENDS</div>
+    ${friendRows}
+    <div class="fine">Chats are end-to-end encrypted on your device — Mindspar's
+      servers only ever store scrambled text they can't read.</div>
+  </div>`;
+
+  $("fr-add").onclick = addFriend;
+  $("fr-email").addEventListener("keydown", e => { if (e.key === "Enter") addFriend(); });
+  screen.querySelectorAll("[data-acc]").forEach(el =>
+    el.onclick = async () => { try { await backend.acceptFriendRequest(friendReqs.find(r => r.id === el.dataset.acc), P); toast("Friend added."); } catch (e) { toast(e.message); } });
+  screen.querySelectorAll("[data-dec]").forEach(el =>
+    el.onclick = () => backend.declineFriendRequest({ id: el.dataset.dec }));
+  screen.querySelectorAll("[data-chal]").forEach(el =>
+    el.onclick = () => { const f = friends.find(x => x.id === el.dataset.chal); startInvite(f.email, f.name); });
+  screen.querySelectorAll("[data-chat]").forEach(el =>
+    el.onclick = () => openChat(friends.find(x => x.id === el.dataset.chat)));
+}
+
+async function addFriend() {
+  const email = $("fr-email").value.trim();
+  if (!email) return;
+  try {
+    const name = await backend.sendFriendRequest(email, P);
+    $("fr-email").value = "";
+    $("fr-err").textContent = "";
+    toast(`Friend request sent to ${name}.`);
+  } catch (e) { $("fr-err").textContent = e.message; }
+}
+
+// ---------------- encrypted chat ----------------
+async function openChat(friend) {
+  if (!friend) return;
+  if (!friend.pubKey) return toast(`${friend.name} hasn't opened Mindspar since secure chat launched.`);
+  if (!myKeys) return toast("Secure chat isn't ready yet — try again in a moment.");
+  chatFriend = friend;
+  try {
+    chatChannel = await makeChannel(myKeys.priv, friend.pubKey);
+  } catch (e) { console.error(e); return toast("Couldn't set up the secure channel."); }
+  chatEl.classList.add("on");
+  paintChat([], true);
+  chatUnsub = backend.listenMessages(P.id, friend.id, async raw => {
+    const rows = await Promise.all(raw.map(async m => {
+      if (!chatCache.has(m.id)) chatCache.set(m.id, await chatChannel.open(m));
+      return { mine: m.from === P.id, text: chatCache.get(m.id) };
+    }));
+    paintChat(rows, false);
+  });
+}
+
+function leaveChat() {
+  if (chatUnsub) { chatUnsub(); chatUnsub = null; }
+  chatFriend = null; chatChannel = null;
+  chatEl.classList.remove("on");
+}
+
+function paintChat(rows, loading) {
+  const f = chatFriend;
+  chatEl.innerHTML = `
+    <div class="chat-head">
+      <button class="iconbtn" id="c-back" title="Back">‹</button>
+      <span class="fav sm">${f.photo ? `<img src="${f.photo}" alt="">` : esc((f.name || "?")[0].toUpperCase())}</span>
+      <span class="chat-who"><b>${esc(f.name)}</b><span>🔒 End-to-end encrypted</span></span>
+    </div>
+    <div class="msgs" id="c-msgs">${loading
+      ? `<div class="chat-note">Setting up secure channel…</div>`
+      : rows.length
+        ? rows.map(r => `<div class="bubble ${r.mine ? "me" : "them"}">${r.text === null
+            ? `<i style="opacity:.6">🔒 can't decrypt</i>` : esc(r.text)}</div>`).join("")
+        : `<div class="chat-note">Say hello — messages are encrypted end-to-end.</div>`}</div>
+    <div class="chat-input">
+      <input id="c-text" placeholder="Message" autocomplete="off" maxlength="2000">
+      <button class="smallbtn" id="c-send">Send</button>
+    </div>`;
+  $("c-back").onclick = leaveChat;
+  const input = $("c-text"), send = $("c-send");
+  const doSend = async () => {
+    const text = input.value.trim();
+    if (!text || !chatChannel) return;
+    input.value = "";
+    try {
+      const sealed = await chatChannel.seal(text);
+      await backend.sendMessage(P.id, chatFriend.id, { from: P.id, ...sealed });
+    } catch (e) { toast("Message failed to send."); input.value = text; }
+  };
+  send.onclick = doSend;
+  input.addEventListener("keydown", e => { if (e.key === "Enter") doSend(); });
+  if (!loading) { const m = $("c-msgs"); m.scrollTop = m.scrollHeight; input.focus(); }
+}
+
 // ---------------- profile ----------------
+const TIERS = [["Novice", 0, 900], ["Adept", 900, 1050], ["Scholar", 1050, 1200],
+               ["Sage", 1200, 1350], ["Luminary", 1350, 1500]];
+const fmtDate = ms => ms ? new Date(ms).toLocaleDateString(undefined, { month: "short", year: "numeric" }) : "—";
+
 function renderProfile() {
   const answered = Object.values(P.dA).reduce((a, b) => a + b, 0);
+  const correct = Object.values(P.dC).reduce((a, b) => a + b, 0);
+  const acc = answered ? Math.round(correct / answered * 100) : null;
+  const avgSpeed = P.sfN ? (P.sfSum / P.sfN) : null;   // 0–1, higher = faster
   const score = sparScore(P);
+
+  // Where the rating sits inside its tier, and what's next.
+  const ti = TIERS.findIndex(([, lo, hi]) => P.rating >= lo && P.rating < hi);
+  const [tName, tLo, tHi] = TIERS[Math.max(0, ti)];
+  const tierPct = Math.max(0, Math.min(100, Math.round((P.rating - tLo) / (tHi - tLo) * 100)));
+  const next = TIERS[ti + 1];
+  const toNext = next ? next[1] - P.rating : 0;
+
+  // Best and focus domains (need a little data before calling it).
+  const accByDom = Object.entries(DOMAINS)
+    .map(([k]) => [k, P.dA[k] ? (P.dC[k] || 0) / P.dA[k] : null, P.dA[k] || 0])
+    .filter(([, a, n]) => a !== null && n >= 3);
+  const best = accByDom.slice().sort((a, b) => b[1] - a[1])[0];
+  const focus = accByDom.slice().sort((a, b) => a[1] - b[1])[0];
+
   const bars = Object.entries(DOMAINS).map(([k, [t, c, g]]) => {
-    const pct = P.dA[k] ? Math.round((P.dC[k] || 0) / P.dA[k] * 100) : null;
+    const n = P.dA[k] || 0;
+    const pct = n ? Math.round((P.dC[k] || 0) / n * 100) : null;
     return `<div class="srow"><span style="color:${c};width:20px">${g}</span>
       <span class="sl">${t}</span>
       <span class="bar"><i style="width:${pct ?? 0}%;background:${c}"></i></span>
-      <span class="pv">${pct === null ? "—" : pct + "%"}</span></div>`;
+      <span class="pv">${pct === null ? "—" : pct + "%"}</span>
+      <span class="pn">${n || ""}</span></div>`;
   }).join("");
+
   screen.innerHTML = `<div class="pad" style="gap:14px">
     <div style="text-align:center;padding-top:6px">
       <div class="avatar" id="p-avatar" style="cursor:pointer" title="Add a photo">${P.photo
@@ -645,9 +1072,12 @@ function renderProfile() {
       <input type="file" id="p-file" accept="image/*" style="display:none">
       <button class="ghost" id="p-photo" style="margin-top:2px">${P.photo ? "Change photo" : "Add photo"}</button>
       <div class="serif" style="font-size:25px;font-weight:600">${esc(P.name)}</div>
-      <div style="margin-top:8px"><span class="tierpill">${tier(P.rating).toUpperCase()}
+      <div style="font-size:12px;color:var(--ink2);margin-top:3px">${esc(P.email || "")}</div>
+      <div style="margin-top:8px"><span class="tierpill">${tName.toUpperCase()}
         <i>${P.rating} · ${ageGroup(P.dob)}</i></span></div>
+      ${P.createdAt ? `<div style="font-size:11px;color:var(--ink2);margin-top:7px">Member since ${fmtDate(P.createdAt)}</div>` : ""}
     </div>
+
     <div class="cardbox" style="padding:24px;text-align:center">
       <div class="eyebrow">MINDSPAR SCORE</div>
       ${score !== null
@@ -658,22 +1088,78 @@ function renderProfile() {
            <div style="font-size:11.5px;color:var(--ink2)">${MIN_ANSWERS} answers unlock your score —
              ${Math.min(100, Math.round(answered / MIN_ANSWERS * 100))}% there</div>`}
     </div>
+
+    <div class="cardbox" style="padding:18px;display:flex;flex-direction:column;gap:11px">
+      <div class="rank-top"><span class="eyebrow">RANK</span>
+        <span style="font-size:12.5px;color:var(--ink2)">${next
+          ? `${toNext} to <b style="color:var(--ink)">${next[0]}</b>` : "Top tier"}</span></div>
+      <div class="ladder"><i style="width:${tierPct}%"></i></div>
+      <div class="ladder-lbl"><span>${tName}</span><span>${next ? next[0] : ""}</span></div>
+    </div>
+
     <div class="cardbox rec">
       <div><div class="v">${P.played}</div><div class="l">Duels</div></div>
       <div><div class="v">${P.won}</div><div class="l">Wins</div></div>
       <div><div class="v">${P.played ? Math.round(P.won / P.played * 100) + "%" : "—"}</div><div class="l">Win rate</div></div>
-      <div><div class="v">${P.best}</div><div class="l">Best streak</div></div>
+      <div><div class="v">${P.streak}</div><div class="l">Streak</div></div>
+      <div><div class="v">${P.best}</div><div class="l">Best</div></div>
     </div>
-    <div class="cardbox strengths"><div class="eyebrow">STRENGTHS</div>${bars}</div>
+
+    <div class="cardbox rec">
+      <div><div class="v">${answered}</div><div class="l">Answered</div></div>
+      <div><div class="v">${acc === null ? "—" : acc + "%"}</div><div class="l">Accuracy</div></div>
+      <div><div class="v">${avgSpeed === null ? "—" : Math.round(avgSpeed * 100) + "%"}</div><div class="l">Speed</div></div>
+    </div>
+
+    ${accByDom.length ? `<div class="cardbox" style="padding:16px;display:flex;gap:10px">
+      <div class="hl"><div class="hl-l">STRONGEST</div>
+        <div class="hl-v" style="color:${DOMAINS[best[0]][1]}">${DOMAINS[best[0]][0]}</div>
+        <div class="hl-s">${Math.round(best[1] * 100)}% correct</div></div>
+      <div class="hl"><div class="hl-l">FOCUS AREA</div>
+        <div class="hl-v" style="color:${DOMAINS[focus[0]][1]}">${DOMAINS[focus[0]][0]}</div>
+        <div class="hl-s">${Math.round(focus[1] * 100)}% correct</div></div>
+    </div>` : ""}
+
+    <div class="cardbox strengths"><div class="eyebrow">DOMAIN ACCURACY</div>${bars}</div>
+
+    ${backend.isLive ? `<div class="cardbox" style="padding:16px;display:flex;flex-direction:column;gap:12px">
+      <div class="rank-top"><span class="eyebrow">FRIENDS</span>
+        <button class="ghost" id="p-friends-all" style="padding:0;font-weight:600;color:var(--iris)">Manage</button></div>
+      ${friends.length ? friends.map(f => `
+        <div class="frow" style="box-shadow:none;padding:0;border:none;background:none">
+          <span class="fav sm">${f.photo ? `<img src="${f.photo}" alt="">` : esc((f.name || "?")[0].toUpperCase())}</span>
+          <span class="fmeta"><b>${esc(f.name)}</b><span>${tier(f.rating)} · ${f.rating}</span></span>
+          <span class="fbtns">
+            <button class="chip" style="background:var(--iris-soft);color:var(--iris)" data-pchal="${f.id}">Challenge</button>
+            <button class="iconbtn" data-pchat="${f.id}" title="Encrypted chat"${f.pubKey ? "" : " disabled"}>🔒</button>
+          </span></div>`).join("")
+        : `<div style="font-size:12.5px;color:var(--ink2)">No friends yet — add someone from the Friends tab.</div>`}
+    </div>` : ""}
+
+    <div class="cardbox" style="padding:16px;display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:14px;font-weight:500">Appearance</span>
+      <div class="seg"><button class="seg-b ${theme === "light" ? "on" : ""}" data-th="light">Light</button>
+        <button class="seg-b ${theme === "dark" ? "on" : ""}" data-th="dark">Dark</button></div>
+    </div>
+
     <div class="fine">The Mindspar Score reflects your relative performance in this game, normalized by
       age group. It is an entertainment estimate — not a clinical or psychometric IQ assessment.</div>
     <button class="ghost" id="p-out">Sign out</button>
   </div>`;
+
   const fileInput = $("p-file");
   $("p-avatar").onclick = () => fileInput.click();
   $("p-photo").onclick = () => fileInput.click();
   fileInput.onchange = () => resizePhoto(fileInput.files[0]);
-  $("p-out").onclick = async () => { await backend.signOut(); P = null; invites = []; render(); };
+  screen.querySelectorAll("[data-th]").forEach(el =>
+    el.onclick = () => { applyTheme(el.dataset.th); renderProfile(); });
+  const allBtn = $("p-friends-all");
+  if (allBtn) allBtn.onclick = () => setTab("friends");
+  screen.querySelectorAll("[data-pchal]").forEach(el =>
+    el.onclick = () => { const f = friends.find(x => x.id === el.dataset.pchal); startInvite(f.email, f.name); });
+  screen.querySelectorAll("[data-pchat]").forEach(el =>
+    el.onclick = () => openChat(friends.find(x => x.id === el.dataset.pchat)));
+  $("p-out").onclick = doSignOut;
 }
 
 // Downscale to a small square JPEG data URL so the profile doc stays light.

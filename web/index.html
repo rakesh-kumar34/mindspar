@@ -2,10 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
   <title>Mindspar</title>
   <meta name="description" content="Head-to-head thinking duels. Reasoning, math, verbal, knowledge, science, patterns.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Mindspar">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#f6f6f9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0e0f15" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+  <script>
+    // Apply the saved theme before paint so there's no light-mode flash.
+    try { document.documentElement.setAttribute("data-theme",
+      localStorage.getItem("mindspar-theme") || "dark"); } catch (e) {}
+  </script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,9 +24,11 @@
     <div class="screen" id="screen" aria-live="polite"></div>
     <nav class="tabs" id="tabs" style="display:none">
       <button class="tab on" id="t-play">⚔︎<span>Play</span></button>
+      <button class="tab" id="t-friends">👥<span>Friends</span><i class="badge" id="fr-badge"></i></button>
       <button class="tab" id="t-prof">◉<span>Profile</span></button>
     </nav>
     <div class="arena" id="arena"></div>
+    <div class="chat" id="chat"></div>
     <div class="overlay" id="overlay"></div>
     <div class="toast" id="toast" role="status"></div>
   </main>

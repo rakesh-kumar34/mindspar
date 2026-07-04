@@ -73,7 +73,33 @@ and result headlines; rounded monospaced digits for scores and timers.
 
 ## Firestore layout
 
-`users/{uid}`, `usernames/{lower}` (uniqueness), `lobby/{uid}` (matchmaking),
-`invites/{id}`, `matches/{id}` with `answers_<uid>` arrays. Matchmaking is
-best-effort claim (no transactions yet) — acceptable at small scale, revisit
-before real traffic.
+`users/{uid}` (+ `users/{uid}/friends/{fid}` subcollection), `usernames/{lower}`
+(iOS uniqueness), `lobby/{uid}` (matchmaking), `invites/{id}`, `matches/{id}`
+with `answers_<uid>` arrays, `friendRequests/{fromId}__{toId}` (**deterministic
+id** so rules can verify an invite exists), `chats/{a}__{b}/messages/{id}`
+(E2E ciphertext only). Matchmaking is best-effort claim (no transactions yet).
+
+## Security (web — `firestore.rules` is the source of truth, deployed)
+
+- **Never** revert to `allow read, write: if request.auth != null`. The rules
+  are per-collection and require `email_verified`. Two invariants that are easy
+  to break when editing: (1) the friends-subcollection write rule lets the
+  invited party write into the inviter's list only if
+  `friendRequests/{uid}__{fid}` exists — that's why request ids are
+  deterministic and why `acceptFriendRequest` writes both friend docs *before*
+  deleting the request; (2) chat read/create requires the requester to have the
+  peer in their own `friends` subcollection — friends-only chat is enforced
+  server-side, not just in the UI.
+- `users` allows single-doc `get` but caps `list` at `limit <= 1`, so email
+  lookup works but the user/email table can't be enumerated.
+- Rules changes must be validated against `tools`/scratch REST tests using
+  admin-verified users (email gate blocks unverified writes).
+
+## Web client (features beyond iOS — harmonize eventually)
+
+Email verification gate, friends + friend-requests, E2E-encrypted text-only chat
+(`e2e.js`: ECDH P-256 + AES-GCM via Web Crypto; static keys, no forward secrecy
+by design; private key in localStorage, public key on the profile doc),
+light/dark theming (`data-theme`, dark default), and a 30-min idle sign-out.
+Chat is **text only** — never add media/file upload. These aren't in the iOS
+app yet.

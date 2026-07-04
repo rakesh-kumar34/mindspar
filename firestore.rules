@@ -1,10 +1,70 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // v1: any signed-in player can read/write game docs.
-    // Tighten per-collection before opening to strangers.
-    match /{document=**} {
-      allow read, write: if request.auth != null;
+
+    // Every request must come from a signed-in user WHOSE EMAIL IS VERIFIED.
+    // This is the server-side gate: an unverified (or fake) account can read and
+    // write nothing, so clicking the email link is mandatory to use anything.
+    function verified() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+    function myEmail() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.email;
+    }
+    // The other participant in a "uidA__uidB" chat id.
+    function chatPeer(chatId) {
+      return chatId.split('__')[0] == request.auth.uid
+        ? chatId.split('__')[1] : chatId.split('__')[0];
+    }
+
+    match /users/{uid} {
+      // Single-doc reads are fine (friend info, email lookup). Bulk listing is
+      // capped at one result so nobody can harvest the whole user/email table.
+      allow get: if verified();
+      allow list: if verified() && request.query.limit <= 1;
+      allow write: if verified() && request.auth.uid == uid;
+
+      // Friend list: owner reads; owner writes their own; the invited person may
+      // write into the inviter's list ONLY if a matching request exists.
+      match /friends/{fid} {
+        allow read: if verified() && request.auth.uid == uid;
+        allow write: if verified() && (
+          request.auth.uid == uid ||
+          (request.auth.uid == fid &&
+           exists(/databases/$(database)/documents/friendRequests/$(uid + '__' + fid)))
+        );
+      }
+    }
+
+    match /friendRequests/{id} {
+      allow read, delete: if verified() &&
+        (resource.data.fromId == request.auth.uid || resource.data.toId == request.auth.uid);
+      allow create: if verified() && request.resource.data.fromId == request.auth.uid;
+    }
+
+    match /invites/{id} {
+      allow read, update, delete: if verified() &&
+        (resource.data.fromId == request.auth.uid || resource.data.toEmail == myEmail());
+      allow create: if verified() && request.resource.data.fromId == request.auth.uid;
+    }
+
+    match /lobby/{uid} {
+      allow read, update: if verified();
+      allow create, delete: if verified() && request.auth.uid == uid;
+    }
+
+    match /matches/{id} {
+      allow read, update: if verified() && request.auth.uid in resource.data.players;
+      allow create: if verified() && request.auth.uid in request.resource.data.players;
+    }
+
+    // Chat: both must be participants of the id AND actually friends. Bodies are
+    // E2E-encrypted ciphertext, and only friends can even fetch them. Messages
+    // are immutable (no update/delete).
+    match /chats/{chatId}/messages/{msgId} {
+      allow read, create: if verified()
+        && request.auth.uid in chatId.split('__')
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid)/friends/$(chatPeer(chatId)));
     }
   }
 }
