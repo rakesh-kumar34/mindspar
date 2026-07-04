@@ -156,6 +156,10 @@ async function makeFirebaseBackend(config) {
       // Not verified yet → tell the app to show the verification gate rather
       // than a usable profile (the security rules would block it anyway).
       if (!user.emailVerified) return { pendingVerification: true, uid: user.uid, email: user.email };
+      // Force a token refresh so its email_verified claim matches the account
+      // (the two can diverge right after verifying, which the rules would
+      // otherwise reject).
+      await user.getIdToken(true);
       const snap = await getDoc(doc(db, "users", user.uid));
       return snap.exists() ? snap.data() : null;
     },
