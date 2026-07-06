@@ -117,6 +117,7 @@ const localBackend = {
   async listFriends() { return []; }, listenFriends() { return () => {}; },
   sendMessage() {}, listenMessages() { return () => {}; },
   markRead() {}, listenChatMeta() { return () => {}; }, listenLatest() { return () => {}; },
+  async getPubKey() { return null; },
 };
 
 function newProfile(id, { name, email, dob, country }) {
@@ -402,6 +403,12 @@ async function makeFirebaseBackend(config) {
       const stop = onSnapshot(collection(db, "users", P.id, "friends"),
         async () => onChange(await this.listFriends(P)));
       sessionSubs.push(stop);
+    },
+    // The friend's CURRENT public key — fetched fresh when opening a chat, since
+    // it can change (a re-key on their device) without our friends list seeing it.
+    async getPubKey(uid) {
+      const s = await getDoc(doc(db, "users", uid));
+      return s.exists() ? (s.get("pubKey") || null) : null;
     },
 
     // --- encrypted chat (payloads are ciphertext; see e2e.js) ---
@@ -1062,7 +1069,7 @@ function renderFriends() {
       <span class="fmeta"><b>${flagOf(f.country)} ${esc(f.name)}</b>
         <span>${unread ? `<b style="color:var(--iris)">New message</b> · ` : ""}${tier(f.rating)} · ${f.rating}</span></span>
       <span class="fbtns">
-        <button class="chalbtn" data-chal="${f.id}">Challenge</button>
+        <button class="smallbtn" data-chal="${f.id}">Challenge</button>
         <button class="smallbtn" data-chat="${f.id}">Message</button>
       </span></div>`;
   }).join("")
@@ -1158,11 +1165,13 @@ async function openChat(friend) {
   if (!friend) return;
   // Chat keys not set up on this device yet → confirm password to enable, then reopen.
   if (!myKeys) return enableSecureChat(() => openChat(friend));
-  if (!friend.pubKey) return toast(`${friend.name} hasn't set up secure chat yet — ask them to sign in on Mindspar.`);
+  // Always use the friend's latest published key (it may have changed on a re-key).
+  const theirPub = (await backend.getPubKey(friend.id)) || friend.pubKey;
+  if (!theirPub) return toast(`${friend.name} hasn't set up secure chat yet — ask them to sign in on Mindspar.`);
   chatFriend = friend; chatMeta = {};
   requestNotifyPermission();
   try {
-    chatChannel = await makeChannel(myKeys.priv, friend.pubKey);
+    chatChannel = await makeChannel(myKeys.priv, theirPub);
   } catch (e) { console.error(e); return toast("Couldn't set up the secure channel."); }
   chatEl.classList.add("on");
   renderChatShell(friend);
@@ -1342,7 +1351,7 @@ function renderProfile() {
           <span class="fav sm">${f.photo ? `<img src="${f.photo}" alt="">` : esc((f.name || "?")[0].toUpperCase())}${unreadBy.get(f.id) ? `<i class="undot"></i>` : ""}</span>
           <span class="fmeta"><b>${flagOf(f.country)} ${esc(f.name)}</b><span>${unreadBy.get(f.id) ? `<b style="color:var(--iris)">New message</b> · ` : ""}${tier(f.rating)} · ${f.rating}</span></span>
           <span class="fbtns">
-            <button class="chalbtn" data-pchal="${f.id}">Challenge</button>
+            <button class="smallbtn" data-pchal="${f.id}">Challenge</button>
             <button class="smallbtn" data-pchat="${f.id}">Message</button>
           </span></div>`).join("")
         : `<div style="font-size:12.5px;color:var(--ink2)">No friends yet — add someone from the Friends tab.</div>`}
