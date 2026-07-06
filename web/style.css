@@ -251,6 +251,35 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
   transition:transform .12s ease;font-family:inherit;}
 .iconbtn:active{transform:scale(.9)}
 .iconbtn:disabled{opacity:.35;cursor:default}
+/* tappable friend row (opens their profile) */
+.fpeek{display:flex;align-items:center;gap:12px;flex:1;min-width:0;background:none;border:none;
+  font-family:inherit;color:inherit;cursor:pointer;text-align:left;padding:0;}
+.fpeek:active{opacity:.55}
+
+/* leaderboard */
+.lb-row{display:flex;align-items:center;gap:11px;}
+.lb-rank{width:24px;text-align:center;font-size:15px;font-variant-numeric:tabular-nums;flex-shrink:0;}
+.lb-num{font-size:13px;font-weight:700;color:var(--ink2);}
+.lb-name{flex:1;min-width:0;display:flex;flex-direction:column;}
+.lb-name b{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lb-name span{font-size:11px;color:var(--ink2);}
+.lb-rating{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;
+  font-family:ui-rounded,-apple-system,sans-serif;}
+.lb-row.me .lb-rating{color:var(--iris);}
+.lb-you{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;
+  background:var(--iris);border-radius:6px;padding:1px 5px;}
+
+/* match history */
+.hist-row{display:flex;align-items:center;gap:10px;font-size:13px;}
+.hist-res{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:11px;
+  font-weight:700;color:#fff;flex-shrink:0;}
+.hist-res.w{background:var(--good)} .hist-res.l{background:var(--bad)} .hist-res.d{background:var(--ink2)}
+.hist-opp{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hist-score{font-variant-numeric:tabular-nums;color:var(--ink2);font-size:12.5px;}
+.hist-delta{width:40px;text-align:right;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;}
+.hist-delta.up{color:var(--good)} .hist-delta.down{color:var(--bad)}
+
+/* chips */
 
 /* chat */
 .chat{position:absolute;inset:0;background:var(--porcelain);z-index:25;display:none;

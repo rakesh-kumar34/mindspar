@@ -63,6 +63,13 @@ service cloud.firestore {
       allow create: if verified() && request.auth.uid in request.resource.data.players;
     }
 
+    // Daily challenge scores: a per-day leaderboard. Any verified player can read
+    // the scores; you may only write your own.
+    match /daily/{date}/scores/{uid} {
+      allow read: if verified();
+      allow write: if verified() && request.auth.uid == uid;
+    }
+
     // Chat read receipts live on the chat doc as read_<uid> timestamps.
     // Same friends-only gate as the messages themselves.
     match /chats/{chatId} {

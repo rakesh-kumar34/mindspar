@@ -85,6 +85,28 @@ function buildDeck({ domain = null, targetDifficulty = 2, seen = new Set() } = {
   return shuffle(deck);
 }
 
+// Daily challenge: one deck per (UTC) day, identical for everyone, so scores are
+// comparable. Seeded from the date via a deterministic RNG.
+const todayKey = () => new Date().toISOString().slice(0, 10);
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function dailyDeck() {
+  const seed = [...todayKey()].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+  const rng = mulberry32(seed);
+  const arr = QUESTIONS.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr.slice(0, N);
+}
+
 // ---------------- backends ----------------
 // Common surface: signUp, signIn, signOut, save, findMatch, cancelSearch,
 // sendInvite, listenInvites, acceptInvite, submitAnswer, listenOpponent, stopMatch.
@@ -98,6 +120,7 @@ const localBackend = {
     return profile;
   },
   async signIn() { throw new Error("Offline mode has a single local profile — sign up to create it."); },
+  async resetPassword() { throw new Error("Password reset needs online mode."); },
   // Offline has no email to verify — sign-up creates the profile directly.
   async resendVerification() {}, async refreshVerified() { return true; },
   async completeSignup() { return JSON.parse(localStorage.getItem("mindspar-web")); },
@@ -116,7 +139,8 @@ const localBackend = {
   async listFriends() { return []; }, listenFriends() { return () => {}; },
   sendMessage() {}, listenMessages() { return () => {}; },
   markRead() {}, listenChatMeta() { return () => {}; }, listenLatest() { return () => {}; },
-  async getPubKey() { return null; },
+  async getPubKey() { return null; }, async getProfile() { return null; },
+  async submitDaily() {}, async getDailyScores() { return []; },
 };
 
 function newProfile(id, { name, email, dob, country }) {
@@ -130,7 +154,7 @@ function newProfile(id, { name, email, dob, country }) {
 async function makeFirebaseBackend(config) {
   const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js");
   const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-          signOut, onAuthStateChanged, sendEmailVerification } =
+          signOut, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail } =
     await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js");
   const { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, getDocs,
           collection, query, where, orderBy, limit, onSnapshot, arrayUnion, serverTimestamp } =
@@ -177,6 +201,9 @@ async function makeFirebaseBackend(config) {
     },
     async resendVerification() {
       if (auth.currentUser) await sendEmailVerification(auth.currentUser);
+    },
+    async resetPassword(email) {
+      await sendPasswordResetEmail(auth, email.toLowerCase().trim());
     },
     // Re-check verification; refresh the ID token so its email_verified claim
     // updates for the security rules. Returns true once verified.
@@ -401,6 +428,20 @@ async function makeFirebaseBackend(config) {
       const s = await getDoc(doc(db, "users", uid));
       return s.exists() ? (s.get("pubKey") || null) : null;
     },
+    async getProfile(uid) {
+      const s = await getDoc(doc(db, "users", uid));
+      return s.exists() ? s.data() : null;
+    },
+
+    // --- daily challenge ---
+    async submitDaily(date, P, score, correct) {
+      await setDoc(doc(db, "daily", date, "scores", P.id),
+        { name: P.name, country: P.country || "", score, correct, createdAt: serverTimestamp() });
+    },
+    async getDailyScores(date, ids) {
+      const docs = await Promise.all(ids.map(id => getDoc(doc(db, "daily", date, "scores", id))));
+      return docs.filter(d => d.exists()).map(d => ({ id: d.id, ...d.data() }));
+    },
 
     // --- encrypted chat (payloads are ciphertext; see e2e.js) ---
     sendMessage(a, b, payload) {
@@ -447,6 +488,8 @@ let myKeys = null, friends = [], friendReqs = [];       // friends + E2E chat
 let chatFriend = null, chatUnsub = null, chatMetaUnsub = null, chatChannel = null, chatCache = new Map();
 let chatMeta = {};                                       // read receipts for the open chat
 const latestStops = new Map(), unreadBy = new Map(), lastSeenMsg = new Map();
+let viewingFriend = null;                                // friend profile being viewed
+let lastMatch = null;                                    // for the Rematch button
 let pending = null;                                     // awaiting email verification
 
 const PENDING_KEY = "mindspar-pending";
@@ -497,6 +540,7 @@ $("t-friends").onclick = () => setTab("friends");
 $("t-prof").onclick = () => setTab("prof");
 function setTab(t) {
   tab = t;
+  viewingFriend = null;
   $("t-play").classList.toggle("on", t === "play");
   $("t-friends").classList.toggle("on", t === "friends");
   $("t-prof").classList.toggle("on", t === "prof");
@@ -569,31 +613,41 @@ function watchUnread() {
 // we can unwrap the stored key or mint one; on a silent restore we rely on the
 // key cached on this device. The published public key never changes per device,
 // so messages stay readable everywhere you log in.
-async function setupIdentity(password) {
+// `trusted` = the password was just verified by Firebase (sign-in). Only then do
+// we mint a fresh identity if the wrapped key won't unwrap — that's the
+// password-was-reset case. On the untrusted enable-chat prompt a bad password
+// simply fails (we don't want a typo to nuke the key).
+async function setupIdentity(password, trusted = false) {
   if (!backend.isLive || !P) { myKeys = null; return; }
   let cache = cachedPriv(P.id);
-  // If the published public key no longer matches the locally cached one, this
-  // device's key is stale (e.g. the identity was re-established elsewhere) —
-  // drop it and re-unwrap from the password so all devices converge.
+  // Stale local key (identity re-established elsewhere) → re-derive from password.
   if (cache && P.pubKey && JSON.stringify(cache.pub) !== JSON.stringify(P.pubKey)) cache = null;
   try {
-    if (P.encPriv && P.pubKey) {
-      if (!cache && password) {
+    if (P.encPriv && P.pubKey && !cache && password) {
+      try {
         const priv = await unwrapIdentity(password, P);
         cache = { pub: P.pubKey, priv };
         cachePriv(P.id, cache);
+      } catch (e) {
+        // Wrapped key won't open with this password. After a verified sign-in
+        // that means the password changed/reset → re-establish a new identity.
+        if (trusted) cache = await mintIdentity(password);
       }
-    } else if (password) {
-      // No wrapped identity yet (new or legacy account) — create one now.
-      const idn = await createIdentity(password);
-      P.pubKey = idn.pub; P.encPriv = idn.encPriv;
-      P.encPrivIv = idn.encPrivIv; P.encPrivSalt = idn.encPrivSalt;
-      await backend.publishIdentity(P.id, idn);
-      cache = { pub: idn.pub, priv: idn.priv };
-      cachePriv(P.id, cache);
+    } else if (!P.encPriv && password) {
+      cache = await mintIdentity(password);      // new or legacy account
     }
   } catch (e) { console.error("Chat identity setup failed", e); }
   myKeys = cache && cache.priv ? { pub: cache.pub, priv: cache.priv } : null;
+}
+
+async function mintIdentity(password) {
+  const idn = await createIdentity(password);
+  P.pubKey = idn.pub; P.encPriv = idn.encPriv;
+  P.encPrivIv = idn.encPrivIv; P.encPrivSalt = idn.encPrivSalt;
+  await backend.publishIdentity(P.id, idn);
+  const c = { pub: idn.pub, priv: idn.priv };
+  cachePriv(P.id, c);
+  return c;
 }
 
 const cachedPriv = uid => { try { return JSON.parse(localStorage.getItem("mindspar-e2e-" + uid)); } catch { return null; } };
@@ -664,6 +718,7 @@ function renderAuth() {
     </div>` : ""}
     <div class="err" id="a-err"></div>
     <button class="primary" id="a-go">${signup ? "Create Account" : "Sign In"}</button>
+    ${!signup && backend.isLive ? `<button class="ghost" id="a-forgot">Forgot password?</button>` : ""}
     <button class="ghost" id="a-switch">${signup ? "Already have an account? Sign in" : "New here? Create an account"}</button>
     ${backend.isLive
       ? (signup ? `<div class="fine">We'll email you a link to confirm your address — you'll verify it before playing.</div>` : "")
@@ -673,7 +728,39 @@ function renderAuth() {
   </div>`;
   $("a-switch").onclick = () => { authMode = signup ? "signin" : "signup"; renderAuth(); };
   $("a-go").onclick = submitAuth;
+  const forgot = $("a-forgot");
+  if (forgot) forgot.onclick = () => forgotPassword($("a-email").value.trim());
   wireInstallBanner();
+}
+
+// Send a password-reset email. Because chat keys are wrapped with the password,
+// resetting means the old chat key can't be unwrapped — the next sign-in with
+// the new password re-establishes a fresh chat identity automatically
+// (setupIdentity's trusted path), so old messages become unreadable but new
+// ones work. We tell the user that.
+function forgotPassword(prefill) {
+  overlay.classList.add("on");
+  overlay.innerHTML = `<div class="panel">
+    <b>Reset your password</b>
+    <span style="font-size:12.5px;color:var(--ink2);line-height:1.5">We'll email you a reset link.
+      Heads up: because your chats are end-to-end encrypted with your password, resetting it starts
+      a fresh chat key — past messages won't be readable, but new chats work normally.</span>
+    <input id="fp-email" type="email" placeholder="Your email" value="${esc(prefill || "")}">
+    <div class="err" id="fp-err"></div>
+    <button class="primary" id="fp-go">Send reset link</button>
+    <button class="ghost" id="fp-close">Cancel</button></div>`;
+  $("fp-close").onclick = () => overlay.classList.remove("on");
+  const go = async () => {
+    const email = $("fp-email").value.trim();
+    if (!email) return $("fp-err").textContent = "Enter your email.";
+    try {
+      await backend.resetPassword(email);
+      overlay.classList.remove("on");
+      toast("Reset link sent — check your email.");
+    } catch (e) { $("fp-err").textContent = e.message.replace("Firebase: ", ""); }
+  };
+  $("fp-go").onclick = go;
+  $("fp-email").addEventListener("keydown", e => { if (e.key === "Enter") go(); });
 }
 
 async function submitAuth() {
@@ -682,7 +769,7 @@ async function submitAuth() {
   try {
     if (authMode === "signin") {
       P = await backend.signIn(email, password);
-      if (backend.isLive) await setupIdentity(password);
+      if (backend.isLive) await setupIdentity(password, true);
     } else {
       const name = $("a-name").value.trim(), dob = $("a-dob").value;
       const country = $("a-country").value;
@@ -761,6 +848,11 @@ function renderHome() {
           <span style="color:var(--ink2)">· ${inv.fromRating}</span></span>
         <button class="smallbtn" data-inv="${inv.id}">Accept</button>
       </div></div>`).join("")}
+    <button class="playrow" id="h-daily">
+      <span class="sig" style="background:linear-gradient(135deg,#f6b73c,#ea5f2d);color:#fff">☀︎</span>
+      <span><b>Daily Challenge</b><span>${P.dailyDone === todayKey()
+        ? `Done — you scored ${P.dailyScore}. Tap for the leaderboard`
+        : "Everyone plays the same 8 today — compare with friends"}</span></span></button>
     <button class="playrow" id="h-quick">
       <span class="sig hot">⚔︎</span>
       <span><b>Quick Match</b><span>${backend.isLive
@@ -788,6 +880,7 @@ function renderHome() {
     </div>
   </div>`;
   wireInstallBanner();
+  $("h-daily").onclick = startDaily;
   $("h-quick").onclick = quickMatch;
   $("h-invite").onclick = inviteFlow;
   screen.querySelectorAll("[data-dom]").forEach(el =>
@@ -879,14 +972,24 @@ async function acceptInvite(id) {
 }
 
 // ---------------- duel engine ----------------
-let cards, idx, my, opp, timer, t0, botTimers, OPP, liveMatch;
+let cards, idx, my, opp, timer, t0, botTimers, OPP, liveMatch, dailyRun = false;
 
 // A short "flag / bot" tag shown before the opponent's name.
 const oppTag = o => o && o.isBot ? "🤖" : (o && o.country ? flagOf(o.country) : "");
 
+// Daily challenge: a solo, timed run through today's shared deck.
+function startDaily() {
+  if (P.dailyDone === todayKey()) return showDailyResults();
+  dailyRun = true; OPP = null; liveMatch = null; lastMatch = null;
+  cards = dailyDeck();
+  beginDuel(() => {});
+}
+
 function startBotDuel(botId) {
+  dailyRun = false;
   const bot = BOTS.find(b => b.id === botId);
   OPP = { name: bot.name, rating: bot.rating, isBot: true };
+  lastMatch = { bot: botId };
   liveMatch = null;
   cards = buildDeck({ domain: subject, targetDifficulty: ladder(P.rating), seen: freshSeen(P) });
   beginDuel(() => { // simulated feed: the bot races the deck on its own clock
@@ -901,7 +1004,9 @@ function startBotDuel(botId) {
 }
 
 function startHumanDuel(human) {
+  dailyRun = false;
   OPP = { name: human.oppName, rating: human.oppRating, country: human.oppCountry || "" };
+  lastMatch = { friendId: human.oppId };
   liveMatch = human;
   cards = human.deckIds.map(id => qById[id]).filter(Boolean);
   if (cards.length === 0) return toast("Match deck failed to load.");
@@ -918,7 +1023,7 @@ function beginDuel(startFeed) {
   let n = 3;
   const countdown = () => {
     arena.innerHTML = `<div class="center">
-      <div class="vs">vs ${oppTag(OPP)} ${esc(OPP.name)} · ${OPP.rating}</div>
+      <div class="vs">${dailyRun ? "Today's Challenge" : `vs ${oppTag(OPP)} ${esc(OPP.name)} · ${OPP.rating}`}</div>
       <div class="big">${n}</div></div>`;
     if (n-- > 1) setTimeout(countdown, 800); else setTimeout(ask, 800);
   };
@@ -966,7 +1071,7 @@ function pick(i) {
     else el.classList.add("dim");
   });
   paintBoard();
-  setTimeout(() => { idx++; idx < cards.length ? ask() : waitOrEnd(); }, 1100);
+  setTimeout(() => { idx++; idx < cards.length ? ask() : (dailyRun ? endDaily() : waitOrEnd()); }, 1100);
 }
 
 function waitOrEnd() {
@@ -984,9 +1089,9 @@ const total = list => list.reduce((s, x) => s + x.pts, 0);
 function paintBoard() {
   const board = $("board");
   if (!board) return;
-  board.innerHTML = `
-    <div class="side me"><div class="nm">YOU</div><div class="sc">${total(my)}</div>
-      <div class="pg">${my.length}/${cards.length}</div></div>
+  const meSide = `<div class="side me"><div class="nm">YOU</div><div class="sc">${total(my)}</div>
+      <div class="pg">${my.length}/${cards.length}</div></div>`;
+  board.innerHTML = dailyRun ? meSide : meSide + `
     <div class="side"><div class="nm">${oppTag(OPP)} ${esc(OPP.name.toUpperCase())}</div><div class="sc">${total(opp)}</div>
       <div class="pg">${opp.length}/${cards.length}</div></div>`;
 }
@@ -1014,6 +1119,9 @@ function end() {
     const e = seenEntry(P.seen[k]);
     if (e.t < cutoff && e.n < 3) delete P.seen[k];
   });
+  // Match history (last 20).
+  P.history = [{ opp: OPP.name, country: OPP.country || "", bot: !!OPP.isBot,
+                 mine, theirs, delta, ts: Date.now() }, ...(P.history || [])].slice(0, 20);
   persist();
 
   const headline = actual === 1 ? "Victory" : actual === 0 ? "Defeat" : "Draw";
@@ -1034,9 +1142,69 @@ function end() {
       : "color:#f29b9c;background:rgba(219,69,71,.15)"}">
       ${delta >= 0 ? "+" : ""}${delta} rating · now ${P.rating} · ${tier(P.rating)}</div>
     <div class="dots">${dots}</div>
-    <button class="lightbtn" id="d-done">Continue</button>
+    <div style="display:flex;gap:10px;width:100%;max-width:300px">
+      <button class="lightbtn" id="d-rematch" style="flex:1;background:rgba(255,255,255,.14);color:#fff">Rematch</button>
+      <button class="lightbtn" id="d-done" style="flex:1">Continue</button>
+    </div>
   </div>`;
   $("d-done").onclick = () => { arena.classList.remove("on"); render(); };
+  $("d-rematch").onclick = rematch;
+}
+
+function rematch() {
+  arena.classList.remove("on");
+  if (lastMatch?.bot) return startBotDuel(lastMatch.bot);
+  if (lastMatch?.friendId) {
+    const f = friends.find(x => x.id === lastMatch.friendId);
+    if (f) return startInvite(f.email, f.name);
+    toast("Add them as a friend to rematch.");
+  }
+  render();
+}
+
+// Daily challenge finished: fold the answers into stats (accuracy/speed count,
+// but not rating), record today's score, and show the friends leaderboard.
+function endDaily() {
+  const mine = total(my);
+  let correct = 0;
+  cards.forEach((q, i) => {
+    P.dA[q[1]] = (P.dA[q[1]] || 0) + 1;
+    if (my[i]?.ok) { P.dC[q[1]] = (P.dC[q[1]] || 0) + 1; P.sfSum += speedF(my[i].ms); P.sfN++; correct++; }
+    const prev = P.seen[q[0]] ? seenEntry(P.seen[q[0]]) : { t: 0, n: 0 };
+    P.seen[q[0]] = { t: Date.now(), n: prev.n + 1 };
+  });
+  P.dailyDone = todayKey();
+  P.dailyScore = mine;
+  persist();
+  if (backend.isLive) backend.submitDaily(todayKey(), P, mine, correct).catch(() => {});
+  showDailyResults();
+}
+
+async function showDailyResults() {
+  arena.classList.add("on");
+  arena.innerHTML = `<div class="center"><div class="spin"></div></div>`;
+  const ids = [P.id, ...friends.map(f => f.id)];
+  let scores = [];
+  try { if (backend.isLive) scores = await backend.getDailyScores(todayKey(), ids); } catch { /* offline */ }
+  if (!scores.find(s => s.id === P.id) && P.dailyDone === todayKey())
+    scores.push({ id: P.id, name: P.name, country: P.country || "", score: P.dailyScore || 0 });
+  scores.sort((a, b) => b.score - a.score);
+  const rows = scores.map((s, i) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 0">
+      <span style="width:26px;text-align:center">${["🥇", "🥈", "🥉"][i] || `<b style="color:rgba(255,255,255,.5)">${i + 1}</b>`}</span>
+      <span style="flex:1;color:#fff;font-weight:${s.id === P.id ? 700 : 500};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${flagOf(s.country)} ${esc(s.name)}${s.id === P.id ? ` <span style="font-size:9px;background:var(--iris);padding:1px 5px;border-radius:5px;vertical-align:middle">YOU</span>` : ""}</span>
+      <span style="font-weight:700;font-variant-numeric:tabular-nums;color:#9a9cfb">${s.score}</span></div>`).join("");
+  arena.innerHTML = `<div class="center">
+    <div class="headline">Daily Challenge</div>
+    <div style="font-size:12.5px;color:rgba(255,255,255,.5);margin-top:-8px">${todayKey()}</div>
+    <div class="fs win" style="margin:6px 0"><div class="v">${P.dailyScore ?? "—"}</div>
+      <div class="n">YOUR SCORE</div></div>
+    <div style="width:280px;max-height:280px;overflow-y:auto">${scores.length ? rows
+      : `<div style="color:rgba(255,255,255,.55);font-size:13px;text-align:center;line-height:1.5">
+           You're first today — invite friends to play the same 8 and compare.</div>`}</div>
+    <button class="lightbtn" id="dl-done">Done</button>
+  </div>`;
+  $("dl-done").onclick = () => { arena.classList.remove("on"); render(); };
 }
 
 // ---------------- friends ----------------
@@ -1049,6 +1217,20 @@ function renderFriends() {
         running in offline mode — see web/README.md to switch it on.</div></div>`;
     return;
   }
+  if (viewingFriend) return renderFriendProfile(viewingFriend);
+
+  // Leaderboard: me + friends ranked by rating.
+  const board = [{ id: P.id, name: P.name, rating: P.rating, country: P.country, photo: P.photo, me: true },
+    ...friends.map(f => ({ ...f, me: false }))].sort((a, b) => b.rating - a.rating);
+  const medal = i => ["🥇", "🥈", "🥉"][i] || `<span class="lb-num">${i + 1}</span>`;
+  const lbRows = board.map((p, i) => `
+    <div class="lb-row ${p.me ? "me" : ""}">
+      <span class="lb-rank">${medal(i)}</span>
+      <span class="fav sm">${p.photo ? `<img src="${p.photo}" alt="">` : esc((p.name || "?")[0].toUpperCase())}</span>
+      <span class="lb-name"><b>${flagOf(p.country)} ${esc(p.name)}${p.me ? ` <span class="lb-you">you</span>` : ""}</b>
+        <span>${tier(p.rating)}</span></span>
+      <span class="lb-rating">${p.rating}</span></div>`).join("");
+
   const reqRows = friendReqs.map(r => `
     <div class="frow"><span class="fav">${esc((r.fromName || "?")[0].toUpperCase())}</span>
       <span class="fmeta"><b>${flagOf(r.fromCountry)} ${esc(r.fromName)}</b><span>wants to be friends · ${r.fromRating ?? 1000}</span></span>
@@ -1059,10 +1241,12 @@ function renderFriends() {
   const friendRows = friends.length ? friends.map(f => {
     const unread = unreadBy.get(f.id);
     return `<div class="frow ${unread ? "unread" : ""}">
-      <span class="fav">${f.photo
-        ? `<img src="${f.photo}" alt="">` : esc((f.name || "?")[0].toUpperCase())}${unread ? `<i class="undot"></i>` : ""}</span>
-      <span class="fmeta"><b>${flagOf(f.country)} ${esc(f.name)}</b>
-        <span>${unread ? `<b style="color:var(--iris)">New message</b> · ` : ""}${tier(f.rating)} · ${f.rating}</span></span>
+      <button class="fpeek" data-fprof="${f.id}">
+        <span class="fav">${f.photo
+          ? `<img src="${f.photo}" alt="">` : esc((f.name || "?")[0].toUpperCase())}${unread ? `<i class="undot"></i>` : ""}</span>
+        <span class="fmeta"><b>${flagOf(f.country)} ${esc(f.name)}</b>
+          <span>${unread ? `<b style="color:var(--iris)">New message</b> · ` : ""}${tier(f.rating)} · ${f.rating}</span></span>
+      </button>
       <span class="fbtns">
         <button class="smallbtn" data-chal="${f.id}">Challenge</button>
         <button class="smallbtn" data-chat="${f.id}">Message</button>
@@ -1073,6 +1257,8 @@ function renderFriends() {
 
   screen.innerHTML = `<div class="pad" style="gap:14px">
     <div class="serif" style="font-size:24px;font-weight:600">Friends</div>
+    ${friends.length ? `<div class="cardbox" style="padding:16px;display:flex;flex-direction:column;gap:10px">
+      <div class="eyebrow">LEADERBOARD</div>${lbRows}</div>` : ""}
     <div class="cardbox" style="padding:16px;display:flex;flex-direction:column;gap:10px">
       <div class="eyebrow">ADD A FRIEND</div>
       <div style="display:flex;gap:8px">
@@ -1098,6 +1284,64 @@ function renderFriends() {
     el.onclick = () => { const f = friends.find(x => x.id === el.dataset.chal); startInvite(f.email, f.name); });
   screen.querySelectorAll("[data-chat]").forEach(el =>
     el.onclick = () => openChat(friends.find(x => x.id === el.dataset.chat)));
+  screen.querySelectorAll("[data-fprof]").forEach(el =>
+    el.onclick = () => openFriendProfile(friends.find(x => x.id === el.dataset.fprof)));
+}
+
+// A read-only look at a friend's stats + Mindspar Score.
+async function openFriendProfile(friend) {
+  if (!friend) return;
+  viewingFriend = { ...friend, loading: true };
+  renderFriends();
+  try {
+    const full = await backend.getProfile(friend.id);
+    viewingFriend = { ...friend, full };
+  } catch { viewingFriend = { ...friend, full: null }; }
+  if (tab === "friends") renderFriends();
+}
+
+function renderFriendProfile(v) {
+  const f = v.full || {};
+  const score = v.full ? sparScore(f) : null;
+  const answered = f.dA ? Object.values(f.dA).reduce((a, b) => a + b, 0) : 0;
+  const bars = v.full ? Object.entries(DOMAINS).map(([k, [t, c, g]]) => {
+    const n = (f.dA || {})[k] || 0;
+    const pct = n ? Math.round(((f.dC || {})[k] || 0) / n * 100) : null;
+    return `<div class="srow"><span style="color:${c};width:20px">${g}</span><span class="sl">${t}</span>
+      <span class="bar"><i style="width:${pct ?? 0}%;background:${c}"></i></span>
+      <span class="pv">${pct === null ? "—" : pct + "%"}</span></div>`;
+  }).join("") : "";
+  screen.innerHTML = `<div class="pad" style="gap:14px">
+    <button class="ghost" id="fp-back" style="align-self:flex-start;padding:4px 0">‹ Friends</button>
+    <div style="text-align:center">
+      <div class="avatar" style="cursor:default">${v.photo
+        ? `<img src="${v.photo}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+        : esc((v.name || "?")[0].toUpperCase())}</div>
+      <div class="serif" style="font-size:24px;font-weight:600;margin-top:8px">${flagOf(v.country)} ${esc(v.name)}</div>
+      <div style="margin-top:8px"><span class="tierpill">${tier(v.rating).toUpperCase()} <i>${v.rating}${
+        v.full?.country ? " · " + countryName(v.full.country) : ""}</i></span></div>
+    </div>
+    ${v.loading ? `<div class="cardbox" style="padding:24px;text-align:center;color:var(--ink2)">Loading…</div>` : `
+    <div class="cardbox" style="padding:22px;text-align:center">
+      <div class="eyebrow">MINDSPAR SCORE</div>
+      ${score !== null ? `<div class="score">${score}</div>`
+        : `<div class="serif" style="font-size:22px;font-weight:600;margin-top:8px">Not calibrated yet</div>`}
+    </div>
+    <div class="cardbox rec">
+      <div><div class="v">${f.played ?? 0}</div><div class="l">Duels</div></div>
+      <div><div class="v">${f.won ?? 0}</div><div class="l">Wins</div></div>
+      <div><div class="v">${f.played ? Math.round((f.won || 0) / f.played * 100) + "%" : "—"}</div><div class="l">Win rate</div></div>
+      <div><div class="v">${f.best ?? 0}</div><div class="l">Best streak</div></div>
+    </div>
+    ${answered ? `<div class="cardbox strengths"><div class="eyebrow">DOMAIN ACCURACY</div>${bars}</div>` : ""}`}
+    <div style="display:flex;gap:8px">
+      <button class="smallbtn" id="fp-chal" style="flex:1;padding:13px">Challenge</button>
+      <button class="smallbtn" id="fp-msg" style="flex:1;padding:13px">Message</button>
+    </div>
+  </div>`;
+  $("fp-back").onclick = () => { viewingFriend = null; renderFriends(); };
+  $("fp-chal").onclick = () => startInvite(v.email, v.name);
+  $("fp-msg").onclick = () => openChat(friends.find(x => x.id === v.id) || v);
 }
 
 async function addFriend() {
@@ -1337,6 +1581,18 @@ function renderProfile() {
     </div>` : ""}
 
     <div class="cardbox strengths"><div class="eyebrow">DOMAIN ACCURACY</div>${bars}</div>
+
+    ${P.history?.length ? `<div class="cardbox" style="padding:16px;display:flex;flex-direction:column;gap:9px">
+      <div class="eyebrow">RECENT DUELS</div>
+      ${P.history.slice(0, 8).map(h => {
+        const win = h.mine > h.theirs, draw = h.mine === h.theirs;
+        return `<div class="hist-row">
+          <span class="hist-res ${win ? "w" : draw ? "d" : "l"}">${win ? "W" : draw ? "D" : "L"}</span>
+          <span class="hist-opp">${h.bot ? "🤖" : flagOf(h.country)} ${esc(h.opp)}</span>
+          <span class="hist-score">${h.mine}–${h.theirs}</span>
+          <span class="hist-delta ${h.delta >= 0 ? "up" : "down"}">${h.delta >= 0 ? "+" : ""}${h.delta}</span></div>`;
+      }).join("")}
+    </div>` : ""}
 
     ${backend.isLive ? `<div class="cardbox" style="padding:16px;display:flex;flex-direction:column;gap:12px">
       <div class="rank-top"><span class="eyebrow">FRIENDS</span>
