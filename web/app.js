@@ -1846,13 +1846,12 @@ function installBanner() {
         <button class="ghost" id="pwa-x">Not now</button></div></div>`;
   }
   if (isIOS()) {
-    return `<div class="cardbox install-card" style="display:block">
+    return `<div class="cardbox install-card ios">
       <b>Add Mindspar to your home screen</b>
-      <div style="font-size:12px;color:var(--ink2);line-height:1.6;margin-top:5px">
-        Must be in <b style="color:var(--ink)">Safari</b> (not Chrome or an in-app browser). Tap the
-        Share button <span class="ios-share">􀈂</span> at the bottom, <b style="color:var(--ink)">scroll down</b>
-        the list, then choose “Add to Home Screen.”</div>
-      <button class="ghost" id="pwa-x" style="padding:6px 0 0">Got it</button></div>`;
+      <div class="install-note">Open this page in <em>Safari</em> (not Chrome or an in-app browser),
+        tap the <em>Share</em> button — the square with an up arrow — then scroll down and choose
+        “Add to Home Screen.”</div>
+      <button class="ghost" id="pwa-x" style="padding:8px 0 0">Got it</button></div>`;
   }
   return "";
 }

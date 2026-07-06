@@ -95,7 +95,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 .install-card b{font-size:14px;display:block;}
 .install-card span{font-size:12px;color:var(--ink2);line-height:1.45;}
 .install-actions{display:flex;align-items:center;gap:4px;flex-shrink:0;}
-.ios-share{display:inline-block;color:var(--iris);font-weight:700;}
+/* iOS variant is a single stacked block (no side buttons) */
+.install-card.ios{display:block;}
+.install-note{font-size:12.5px;color:var(--ink2);line-height:1.6;margin-top:5px;}
+.install-note em{font-style:normal;font-weight:600;color:var(--ink);}
 
 /* chips */
 .chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px;}
