@@ -37,7 +37,12 @@ service cloud.firestore {
     }
 
     match /friendRequests/{id} {
-      allow read, delete: if verified() &&
+      // get: a read of a NON-existent request must return not-found, not denied
+      // (resource is null there) — the client's dup/reverse checks rely on that.
+      allow get: if verified() && (resource == null ||
+        resource.data.fromId == request.auth.uid || resource.data.toId == request.auth.uid);
+      // list/delete stay scoped to the two parties so queries can't enumerate.
+      allow list, delete: if verified() &&
         (resource.data.fromId == request.auth.uid || resource.data.toId == request.auth.uid);
       allow create: if verified() && request.resource.data.fromId == request.auth.uid;
     }
@@ -56,6 +61,14 @@ service cloud.firestore {
     match /matches/{id} {
       allow read, update: if verified() && request.auth.uid in resource.data.players;
       allow create: if verified() && request.auth.uid in request.resource.data.players;
+    }
+
+    // Chat read receipts live on the chat doc as read_<uid> timestamps.
+    // Same friends-only gate as the messages themselves.
+    match /chats/{chatId} {
+      allow read, write: if verified()
+        && request.auth.uid in chatId.split('__')
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid)/friends/$(chatPeer(chatId)));
     }
 
     // Chat: both must be participants of the id AND actually friends. Bodies are

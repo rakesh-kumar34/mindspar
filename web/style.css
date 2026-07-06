@@ -34,6 +34,12 @@ input{width:100%;background:var(--card);border:1px solid var(--hair);
   transition:border-color .15s ease,box-shadow .15s ease;}
 input::placeholder{color:var(--ink2);opacity:.7;}
 input:focus{outline:none;border-color:var(--iris);box-shadow:0 0 0 3px var(--iris-soft);}
+.select{width:100%;background:var(--card);border:1px solid var(--hair);border-radius:14px;
+  padding:14px;font-size:16px;font-family:inherit;color:var(--ink);cursor:pointer;
+  -webkit-appearance:none;appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink2) 50%),linear-gradient(135deg,var(--ink2) 50%,transparent 50%);
+  background-position:calc(100% - 20px) 20px,calc(100% - 15px) 20px;background-size:5px 5px,5px 5px;background-repeat:no-repeat;}
+.select:focus{outline:none;border-color:var(--iris);box-shadow:0 0 0 3px var(--iris-soft);}
 .primary{background:linear-gradient(135deg,var(--iris),var(--violet));color:#fff;border:none;
   border-radius:16px;padding:16px;width:100%;font-size:16px;font-weight:600;cursor:pointer;
   box-shadow:0 8px 20px rgba(84,87,232,.28);transition:transform .12s ease,box-shadow .12s ease;}
@@ -212,6 +218,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
   background:linear-gradient(135deg,var(--iris),var(--violet));}
 .fav.sm{width:34px;height:34px;font-size:15px;}
 .fav img{width:100%;height:100%;object-fit:cover;}
+.fav{position:relative;}
+.undot{position:absolute;top:-1px;right:-1px;width:12px;height:12px;border-radius:50%;
+  background:var(--iris);border:2px solid var(--card);}
+.frow.unread{border-color:color-mix(in srgb,var(--iris) 45%,var(--hair));}
 .fmeta{flex:1;min-width:0;display:flex;flex-direction:column;}
 .fmeta b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .fmeta span{font-size:11.5px;color:var(--ink2);}
@@ -244,6 +254,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
   color:#fff;border-bottom-right-radius:6px;}
 .bubble.them{align-self:flex-start;background:var(--card);border:1px solid var(--hair);
   border-bottom-left-radius:6px;}
+.tick{font-size:10px;margin-left:6px;opacity:.85;color:rgba(255,255,255,.75);
+  letter-spacing:-1px;vertical-align:baseline;}
+.tick.read{color:#8fd3ff;opacity:1;}
 .chat-note{margin:auto;font-size:12.5px;color:var(--ink2);text-align:center;max-width:220px;line-height:1.5;}
 .chat-input{display:flex;gap:8px;padding:10px 12px max(12px,env(safe-area-inset-bottom));
   border-top:1px solid var(--hair);background:var(--tabbar);

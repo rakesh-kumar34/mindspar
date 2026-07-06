@@ -3,7 +3,8 @@
 // firebase-config.js is filled in — same graceful degradation as the iOS app.
 import { QUESTIONS } from "./questions.js";
 import { firebaseConfig } from "./firebase-config.js";
-import { loadOrCreateKeys, makeChannel } from "./e2e.js";
+import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js";
+import { COUNTRIES, flagOf, countryName } from "./countries.js";
 
 // ---------------- game math (mirrors the Swift services) ----------------
 const LIMIT = 18, N = 8, MIN_ANSWERS = 16;
@@ -109,15 +110,17 @@ const localBackend = {
   async acceptInvite() { throw new Error("Online play needs Firebase."); },
   submitAnswer() {}, listenOpponent() {}, stopMatch() {},
   // Friends + chat require accounts, so they're online-only.
-  async publishPublicKey() {},
+  async publishIdentity() {},
   async sendFriendRequest() { throw new Error("Friends need Firebase — see web/README.md."); },
   listenFriendRequests() {}, async acceptFriendRequest() {}, async declineFriendRequest() {},
   async listFriends() { return []; }, listenFriends() { return () => {}; },
   sendMessage() {}, listenMessages() { return () => {}; },
+  markRead() {}, listenChatMeta() { return () => {}; }, listenLatest() { return () => {}; },
 };
 
-function newProfile(id, { name, email, dob }) {
-  return { id, name, email: email.toLowerCase(), dob, photo: null, pubKey: null,
+function newProfile(id, { name, email, dob, country }) {
+  return { id, name, email: email.toLowerCase(), dob, country: country || "", photo: null,
+           pubKey: null, encPriv: null, encPrivIv: null, encPrivSalt: null,
            createdAt: Date.now(),
            rating: 1000, played: 0, won: 0, streak: 0, best: 0,
            dA: {}, dC: {}, sfSum: 0, sfN: 0, seen: {} };
@@ -195,6 +198,7 @@ async function makeFirebaseBackend(config) {
       if (!pending || !pending.name || !pending.dob)
         throw new Error("Let's set up your profile again — please sign up.");
       const profile = newProfile(u.uid, pending);
+      if (pending.identity) Object.assign(profile, pending.identity); // pubKey + wrapped priv
       await setDoc(doc(db, "users", profile.id), profile);
       return profile;
     },
@@ -212,7 +216,10 @@ async function makeFirebaseBackend(config) {
       return snap.data();
     },
     async signOut() { stopSession(); stopMatchSubs(); await signOut(auth); },
-    async publishPublicKey(uid, jwk) { await updateDoc(doc(db, "users", uid), { pubKey: jwk }); },
+    async publishIdentity(uid, idn) {
+      await updateDoc(doc(db, "users", uid), {
+        pubKey: idn.pub, encPriv: idn.encPriv, encPrivIv: idn.encPrivIv, encPrivSalt: idn.encPrivSalt });
+    },
     async save(profile) { await setDoc(doc(db, "users", profile.id), profile); },
 
     // --- random matchmaking, rating-banded (mirrors FirebaseBackend.swift) ---
@@ -231,18 +238,20 @@ async function makeFirebaseBackend(config) {
         const deckIds = buildDeck({ targetDifficulty: target }).map(q => q[0]);
         const matchRef = await addDoc(collection(db, "matches"), {
           deckIds, targetDifficulty: target,
-          players: { [P.id]: { name: P.name, rating: P.rating },
-                     [claim.id]: { name: claim.get("name") ?? "Player", rating: oppRating } },
+          players: { [P.id]: { name: P.name, rating: P.rating, country: P.country || "" },
+                     [claim.id]: { name: claim.get("name") ?? "Player", rating: oppRating,
+                                   country: claim.get("country") ?? "" } },
           createdAt: serverTimestamp(),
         });
         await updateDoc(doc(db, "lobby", claim.id), { matchId: matchRef.id });
         onMatch({ matchId: matchRef.id, oppId: claim.id,
-                  oppName: claim.get("name") ?? "Player", oppRating, deckIds });
+                  oppName: claim.get("name") ?? "Player", oppRating,
+                  oppCountry: claim.get("country") ?? "", deckIds });
         return;
       }
       // Nobody suitable: wait in the lobby to be claimed.
       await setDoc(doc(db, "lobby", P.id), {
-        name: P.name, rating: P.rating, createdAt: serverTimestamp(),
+        name: P.name, rating: P.rating, country: P.country || "", createdAt: serverTimestamp(),
       });
       const stop = onSnapshot(doc(db, "lobby", P.id), async snap => {
         const matchId = snap.get("matchId");
@@ -255,6 +264,7 @@ async function makeFirebaseBackend(config) {
         onMatch({ matchId, oppId,
                   oppName: players[oppId]?.name ?? "Player",
                   oppRating: players[oppId]?.rating ?? 1000,
+                  oppCountry: players[oppId]?.country ?? "",
                   deckIds: match.get("deckIds") ?? [] });
       });
       matchSubs.push(stop);
@@ -267,7 +277,7 @@ async function makeFirebaseBackend(config) {
       const found = await getDocs(query(collection(db, "users"), where("email", "==", key), limit(1)));
       if (found.empty) throw new Error("No player found with that email.");
       const inviteRef = await addDoc(collection(db, "invites"), {
-        fromId: P.id, fromName: P.name, fromRating: P.rating,
+        fromId: P.id, fromName: P.name, fromRating: P.rating, fromCountry: P.country || "",
         toEmail: key, status: "pending", createdAt: serverTimestamp(),
       });
       const stop = onSnapshot(doc(db, "invites", inviteRef.id), async snap => {
@@ -281,6 +291,7 @@ async function makeFirebaseBackend(config) {
         onMatch({ matchId, oppId,
                   oppName: players[oppId]?.name ?? "Player",
                   oppRating: players[oppId]?.rating ?? 1000,
+                  oppCountry: players[oppId]?.country ?? "",
                   deckIds: match.get("deckIds") ?? [] });
       });
       matchSubs.push(stop);
@@ -292,6 +303,7 @@ async function makeFirebaseBackend(config) {
         snap => onChange(snap.docs.map(d => ({
           id: d.id, fromId: d.get("fromId"),
           fromName: d.get("fromName") ?? "Player", fromRating: d.get("fromRating") ?? 1000,
+          fromCountry: d.get("fromCountry") ?? "",
         }))));
       sessionSubs.push(stop);
     },
@@ -300,13 +312,15 @@ async function makeFirebaseBackend(config) {
       const deckIds = buildDeck({ targetDifficulty: target }).map(q => q[0]);
       const matchRef = await addDoc(collection(db, "matches"), {
         deckIds, targetDifficulty: target,
-        players: { [P.id]: { name: P.name, rating: P.rating },
-                   [invite.fromId]: { name: invite.fromName, rating: invite.fromRating } },
+        players: { [P.id]: { name: P.name, rating: P.rating, country: P.country || "" },
+                   [invite.fromId]: { name: invite.fromName, rating: invite.fromRating,
+                                      country: invite.fromCountry || "" } },
         createdAt: serverTimestamp(),
       });
       await updateDoc(doc(db, "invites", invite.id), { status: "accepted", matchId: matchRef.id });
       return { matchId: matchRef.id, oppId: invite.fromId,
-               oppName: invite.fromName, oppRating: invite.fromRating, deckIds };
+               oppName: invite.fromName, oppRating: invite.fromRating,
+               oppCountry: invite.fromCountry || "", deckIds };
     },
 
     // --- live answer sync ---
@@ -371,6 +385,7 @@ async function makeFirebaseBackend(config) {
       const docs = await Promise.all(mine.docs.map(d => getDoc(doc(db, "users", d.id))));
       return docs.filter(d => d.exists()).map(d => ({
         id: d.id, name: d.get("name") ?? "Player", rating: d.get("rating") ?? 1000,
+        country: d.get("country") ?? "",
         photo: d.get("photo") ?? null, email: d.get("email"), pubKey: d.get("pubKey") ?? null,
       })).sort((a, b) => a.name.localeCompare(b.name));
     },
@@ -390,6 +405,28 @@ async function makeFirebaseBackend(config) {
       return onSnapshot(query(collection(db, "chats", chatId(a, b), "messages"), orderBy("createdAt")),
         snap => onMsgs(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
     },
+    // Read receipts: each party records when they last read the chat, on the
+    // chat doc. Used to show ✓✓ and to compute unread counts.
+    markRead(a, b) {
+      return setDoc(doc(db, "chats", chatId(a, b)),
+        { ["read_" + a]: serverTimestamp() }, { merge: true }).catch(() => {});
+    },
+    listenChatMeta(a, b, onMeta) {
+      return onSnapshot(doc(db, "chats", chatId(a, b)), snap => onMeta(snap.data() || {}));
+    },
+    // Latest message + my read time for one friend, to drive unread badges.
+    listenLatest(me, friendId, onUpdate) {
+      const cid = chatId(me, friendId);
+      let latest = null, meta = {};
+      const emit = () => onUpdate({ latest, readAt: meta["read_" + me] ?? null });
+      const s1 = onSnapshot(query(collection(db, "chats", cid, "messages"),
+        orderBy("createdAt", "desc"), limit(1)),
+        snap => { latest = snap.docs[0] ? { id: snap.docs[0].id, ...snap.docs[0].data() } : null; emit(); });
+      const s2 = onSnapshot(doc(db, "chats", cid), snap => { meta = snap.data() || {}; emit(); });
+      const stop = () => { s1(); s2(); };
+      sessionSubs.push(stop);
+      return stop;
+    },
   };
 }
 
@@ -400,7 +437,9 @@ const screen = $("screen"), tabs = $("tabs"), arena = $("arena"), overlay = $("o
 let backend = localBackend, P = null, tab = "play", invites = [], subject = null;
 let toastTimer;
 let myKeys = null, friends = [], friendReqs = [];       // friends + E2E chat
-let chatFriend = null, chatUnsub = null, chatChannel = null, chatCache = new Map();
+let chatFriend = null, chatUnsub = null, chatMetaUnsub = null, chatChannel = null, chatCache = new Map();
+let chatMeta = {};                                       // read receipts for the open chat
+const latestStops = new Map(), unreadBy = new Map(), lastSeenMsg = new Map();
 let pending = null;                                     // awaiting email verification
 
 const PENDING_KEY = "mindspar-pending";
@@ -472,7 +511,7 @@ async function boot() {
       return renderVerify();
     }
     P = restored;
-    if (P && backend.isLive) await startSession();
+    if (P && backend.isLive) { await setupIdentity(null); await startSession(); }
   } catch (e) {
     // A stale or broken session (e.g. a deleted account, or a permissions
     // change) must never leave a blank page: drop the session and show sign-in.
@@ -484,38 +523,91 @@ async function boot() {
   render();
 }
 
-// Bring up everything a signed-in online player needs: their E2E key pair and
-// the live invite/friend feeds.
+// Bring up the live invite/friend feeds and per-friend unread listeners.
 async function startSession() {
-  await ensureKeys();
   backend.listenInvites(P, list => { invites = list; if (tab === "play" && !arena.classList.contains("on")) render(); });
   backend.listenFriendRequests(P, list => { friendReqs = list; updateFriendBadge(); if (tab === "friends") renderFriends(); });
   backend.listenFriends(P, list => {
     friends = list;
+    watchUnread();
     if (tab === "friends" && !chatFriend) renderFriends();
     else if (tab === "prof") renderProfile();
   });
 }
 
-// Make sure this device has an E2E key pair and that the public half is
-// published on the profile so friends can start a secure channel.
-async function ensureKeys() {
+// One "latest message + my read time" listener per friend, so we can show
+// unread badges and pop an alert when a new message lands.
+function watchUnread() {
+  for (const f of friends) {
+    if (latestStops.has(f.id)) continue;
+    const stop = backend.listenLatest(P.id, f.id, ({ latest, readAt }) => {
+      const rMs = readAt?.toMillis ? readAt.toMillis() : 0;
+      const mMs = latest?.createdAt?.toMillis ? latest.createdAt.toMillis() : 0;
+      const unread = !!latest && latest.from === f.id && mMs > rMs;
+      const was = unreadBy.get(f.id);
+      unreadBy.set(f.id, unread);
+      // A newly-arrived unread message from someone we're not chatting with → alert.
+      if (unread && mMs > (lastSeenMsg.get(f.id) || 0) && chatFriend?.id !== f.id) {
+        notifyMessage(f);
+      }
+      if (mMs) lastSeenMsg.set(f.id, mMs);
+      updateFriendBadge();
+      if (tab === "friends" && !chatFriend && (unread !== was)) renderFriends();
+    });
+    latestStops.set(f.id, stop);
+  }
+}
+
+// Establish this session's chat identity. With a password (sign-in / sign-up)
+// we can unwrap the stored key or mint one; on a silent restore we rely on the
+// key cached on this device. The published public key never changes per device,
+// so messages stay readable everywhere you log in.
+async function setupIdentity(password) {
+  if (!backend.isLive || !P) { myKeys = null; return; }
+  let cache = cachedPriv(P.id);
   try {
-    myKeys = await loadOrCreateKeys(P.id);
-    if (!P.pubKey || P.pubKey.x !== myKeys.pub.x || P.pubKey.y !== myKeys.pub.y) {
-      P.pubKey = myKeys.pub;
-      await backend.publishPublicKey(P.id, myKeys.pub);
+    if (P.encPriv && P.pubKey) {
+      if (!cache && password) {
+        const priv = await unwrapIdentity(password, P);
+        cache = { pub: P.pubKey, priv };
+        cachePriv(P.id, cache);
+      }
+    } else if (password) {
+      // No wrapped identity yet (new or legacy account) — create one now.
+      const idn = await createIdentity(password);
+      P.pubKey = idn.pub; P.encPriv = idn.encPriv;
+      P.encPrivIv = idn.encPrivIv; P.encPrivSalt = idn.encPrivSalt;
+      await backend.publishIdentity(P.id, idn);
+      cache = { pub: idn.pub, priv: idn.priv };
+      cachePriv(P.id, cache);
     }
-  } catch (e) { console.error("E2E key setup failed", e); }
+  } catch (e) { console.error("Chat identity setup failed", e); }
+  myKeys = cache && cache.priv ? { pub: cache.pub, priv: cache.priv } : null;
+}
+
+const cachedPriv = uid => { try { return JSON.parse(localStorage.getItem("mindspar-e2e-" + uid)); } catch { return null; } };
+const cachePriv = (uid, obj) => localStorage.setItem("mindspar-e2e-" + uid, JSON.stringify(obj));
+
+// Alert about a new message: an in-app toast, plus a real OS notification if the
+// tab is in the background and the user has granted permission.
+function notifyMessage(friend) {
+  toast(`New message from ${friend.name}`);
+  if (document.visibilityState === "hidden" && "Notification" in window && Notification.permission === "granted") {
+    try { new Notification("Mindspar", { body: `New message from ${friend.name}`, tag: "msg-" + friend.id }); }
+    catch { /* ignore */ }
+  }
 }
 
 function updateFriendBadge() {
+  const anyUnread = [...unreadBy.values()].some(Boolean);
   const badge = $("fr-badge");
-  if (badge) badge.style.display = friendReqs.length ? "block" : "none";
+  if (badge) badge.style.display = (friendReqs.length || anyUnread) ? "block" : "none";
 }
 
 async function doSignOut() {
   leaveChat();
+  latestStops.forEach(s => s()); latestStops.clear();
+  unreadBy.clear(); lastSeenMsg.clear();
   await backend.signOut();
   P = null; invites = []; friends = []; friendReqs = []; myKeys = null;
   setPending(null);
@@ -550,6 +642,10 @@ function renderAuth() {
     <input id="a-email" type="email" placeholder="Email" autocomplete="email">
     <input id="a-pass" type="password" placeholder="Password (6+ characters)">
     ${signup ? `
+    <select id="a-country" class="select">
+      <option value="" disabled selected>Your country</option>
+      ${COUNTRIES.map(([c, n]) => `<option value="${c}">${flagOf(c)}  ${esc(n)}</option>`).join("")}
+    </select>
     <div class="cardbox" style="padding:14px;display:flex;flex-direction:column;gap:10px">
       <label style="font-size:13px;color:var(--ink2)" for="a-dob">Date of birth</label>
       <input id="a-dob" type="date" max="${new Date().toISOString().slice(0, 10)}">
@@ -573,16 +669,24 @@ async function submitAuth() {
   try {
     if (authMode === "signin") {
       P = await backend.signIn(email, password);
+      if (backend.isLive) await setupIdentity(password);
     } else {
       const name = $("a-name").value.trim(), dob = $("a-dob").value;
+      const country = $("a-country").value;
       if (!name) return err.textContent = "Enter your name.";
       if (!email || password.length < 6) return err.textContent = "Enter your email and a 6+ character password.";
+      if (!country) return err.textContent = "Choose your country.";
       if (!dob) return err.textContent = "Enter your date of birth.";
       if (yearsOld(dob) < 18) return err.textContent = "Mindspar is for adults 18 and over.";
       if (!$("a-adult").checked) return err.textContent = "Please confirm you are 18 or older.";
-      const result = await backend.signUp({ name, email, password, dob });
+      const result = await backend.signUp({ name, email, password, dob, country });
       if (result && result.pendingVerification) {   // online: must confirm email first
-        setPending({ uid: result.uid, name, email: email.toLowerCase(), dob });
+        // Build the E2E identity now (we have the password); stash the wrapped
+        // key for completeSignup to store, and cache the private key on-device.
+        const idn = await createIdentity(password);
+        cachePriv(result.uid, { pub: idn.pub, priv: idn.priv });
+        setPending({ uid: result.uid, name, email: email.toLowerCase(), dob, country,
+          identity: { pubKey: idn.pub, encPriv: idn.encPriv, encPrivIv: idn.encPrivIv, encPrivSalt: idn.encPrivSalt } });
         return renderVerify();
       }
       P = result;                                    // offline: profile created directly
@@ -617,7 +721,7 @@ function renderVerify() {
       if (!ok) return err.textContent = "Not verified yet — click the link in your email, then try again.";
       P = await backend.completeSignup(pending);
       setPending(null);
-      if (backend.isLive) await startSession();
+      if (backend.isLive) { await setupIdentity(null); await startSession(); }
       armIdleTimer();
       render();
     } catch (e) { err.textContent = e.message.replace("Firebase: ", ""); }
@@ -639,7 +743,7 @@ function renderHome() {
     <div><span class="tierpill">${tier(P.rating).toUpperCase()} <i>${P.rating}</i></span></div>
     ${invites.map(inv => `
       <div class="invitecard"><div class="row">
-        <span style="font-size:14px"><b>${esc(inv.fromName)}</b> challenged you
+        <span style="font-size:14px"><b>${flagOf(inv.fromCountry)} ${esc(inv.fromName)}</b> challenged you
           <span style="color:var(--ink2)">· ${inv.fromRating}</span></span>
         <button class="smallbtn" data-inv="${inv.id}">Accept</button>
       </div></div>`).join("")}
@@ -762,9 +866,12 @@ async function acceptInvite(id) {
 // ---------------- duel engine ----------------
 let cards, idx, my, opp, timer, t0, botTimers, OPP, liveMatch;
 
+// A short "flag / bot" tag shown before the opponent's name.
+const oppTag = o => o && o.isBot ? "🤖" : (o && o.country ? flagOf(o.country) : "");
+
 function startBotDuel(botId) {
   const bot = BOTS.find(b => b.id === botId);
-  OPP = { name: bot.name, rating: bot.rating };
+  OPP = { name: bot.name, rating: bot.rating, isBot: true };
   liveMatch = null;
   cards = buildDeck({ domain: subject, targetDifficulty: ladder(P.rating), seen: freshSeen(P) });
   beginDuel(() => { // simulated feed: the bot races the deck on its own clock
@@ -779,7 +886,7 @@ function startBotDuel(botId) {
 }
 
 function startHumanDuel(human) {
-  OPP = { name: human.oppName, rating: human.oppRating };
+  OPP = { name: human.oppName, rating: human.oppRating, country: human.oppCountry || "" };
   liveMatch = human;
   cards = human.deckIds.map(id => qById[id]).filter(Boolean);
   if (cards.length === 0) return toast("Match deck failed to load.");
@@ -795,7 +902,8 @@ function beginDuel(startFeed) {
   startFeed();
   let n = 3;
   const countdown = () => {
-    arena.innerHTML = `<div class="center"><div class="vs">vs ${esc(OPP.name)} · ${OPP.rating}</div>
+    arena.innerHTML = `<div class="center">
+      <div class="vs">vs ${oppTag(OPP)} ${esc(OPP.name)} · ${OPP.rating}</div>
       <div class="big">${n}</div></div>`;
     if (n-- > 1) setTimeout(countdown, 800); else setTimeout(ask, 800);
   };
@@ -864,7 +972,7 @@ function paintBoard() {
   board.innerHTML = `
     <div class="side me"><div class="nm">YOU</div><div class="sc">${total(my)}</div>
       <div class="pg">${my.length}/${cards.length}</div></div>
-    <div class="side"><div class="nm">${esc(OPP.name.toUpperCase())}</div><div class="sc">${total(opp)}</div>
+    <div class="side"><div class="nm">${oppTag(OPP)} ${esc(OPP.name.toUpperCase())}</div><div class="sc">${total(opp)}</div>
       <div class="pg">${opp.length}/${cards.length}</div></div>`;
 }
 
@@ -904,7 +1012,7 @@ function end() {
     <div class="finals">
       <div class="fs ${mine >= theirs ? "win" : ""}"><div class="n">YOU</div><div class="v">${mine}</div></div>
       <div style="color:rgba(255,255,255,.4)">–</div>
-      <div class="fs ${theirs > mine ? "win" : ""}"><div class="n">${esc(OPP.name.toUpperCase())}</div><div class="v">${theirs}</div></div>
+      <div class="fs ${theirs > mine ? "win" : ""}"><div class="n">${oppTag(OPP)} ${esc(OPP.name.toUpperCase())}</div><div class="v">${theirs}</div></div>
     </div>
     <div class="delta" style="${delta >= 0
       ? "color:#7de0a8;background:rgba(33,176,107,.15)"
@@ -928,21 +1036,24 @@ function renderFriends() {
   }
   const reqRows = friendReqs.map(r => `
     <div class="frow"><span class="fav">${esc((r.fromName || "?")[0].toUpperCase())}</span>
-      <span class="fmeta"><b>${esc(r.fromName)}</b><span>wants to be friends · ${r.fromRating ?? 1000}</span></span>
+      <span class="fmeta"><b>${flagOf(r.fromCountry)} ${esc(r.fromName)}</b><span>wants to be friends · ${r.fromRating ?? 1000}</span></span>
       <span class="fbtns">
         <button class="smallbtn" data-acc="${r.id}">Accept</button>
         <button class="chip" style="background:var(--iris-soft);color:var(--ink2)" data-dec="${r.id}">Ignore</button>
       </span></div>`).join("");
-  const friendRows = friends.length ? friends.map(f => `
-    <div class="frow">
+  const friendRows = friends.length ? friends.map(f => {
+    const unread = unreadBy.get(f.id);
+    const canChat = !!f.pubKey && !!myKeys;
+    return `<div class="frow ${unread ? "unread" : ""}">
       <span class="fav">${f.photo
-        ? `<img src="${f.photo}" alt="">` : esc((f.name || "?")[0].toUpperCase())}</span>
-      <span class="fmeta"><b>${esc(f.name)}</b>
-        <span>${tier(f.rating)} · ${f.rating}${f.pubKey ? "" : " · chat pending"}</span></span>
+        ? `<img src="${f.photo}" alt="">` : esc((f.name || "?")[0].toUpperCase())}${unread ? `<i class="undot"></i>` : ""}</span>
+      <span class="fmeta"><b>${flagOf(f.country)} ${esc(f.name)}</b>
+        <span>${unread ? `<b style="color:var(--iris)">New message</b> · ` : ""}${tier(f.rating)} · ${f.rating}</span></span>
       <span class="fbtns">
-        <button class="smallbtn" data-chal="${f.id}">Challenge</button>
-        <button class="iconbtn" data-chat="${f.id}" title="Encrypted chat"${f.pubKey ? "" : " disabled"}>🔒</button>
-      </span></div>`).join("")
+        <button class="chip" style="background:var(--iris-soft);color:var(--iris)" data-chal="${f.id}">Challenge</button>
+        <button class="smallbtn" data-chat="${f.id}"${canChat ? "" : " disabled"}>Message</button>
+      </span></div>`;
+  }).join("")
     : `<div class="cardbox" style="padding:18px;font-size:13px;color:var(--ink2);text-align:center">
          No friends yet — add someone by email above to challenge and chat.</div>`;
 
@@ -987,47 +1098,66 @@ async function addFriend() {
 }
 
 // ---------------- encrypted chat ----------------
+let notifyAsked = false;
+function requestNotifyPermission() {
+  if (notifyAsked || !("Notification" in window)) return;
+  notifyAsked = true;
+  if (Notification.permission === "default") Notification.requestPermission().catch(() => {});
+}
+
 async function openChat(friend) {
   if (!friend) return;
-  if (!friend.pubKey) return toast(`${friend.name} hasn't opened Mindspar since secure chat launched.`);
+  if (!friend.pubKey) return toast(`${friend.name} hasn't finished setting up secure chat yet.`);
   if (!myKeys) return toast("Secure chat isn't ready yet — try again in a moment.");
-  chatFriend = friend;
+  chatFriend = friend; chatMeta = {};
+  requestNotifyPermission();
   try {
     chatChannel = await makeChannel(myKeys.priv, friend.pubKey);
   } catch (e) { console.error(e); return toast("Couldn't set up the secure channel."); }
   chatEl.classList.add("on");
-  paintChat([], true);
+  renderChatShell(friend);
+  let msgs = [];
+  const repaint = () => paintMessages(decorateTicks(msgs));
   chatUnsub = backend.listenMessages(P.id, friend.id, async raw => {
-    const rows = await Promise.all(raw.map(async m => {
+    msgs = await Promise.all(raw.map(async m => {
       if (!chatCache.has(m.id)) chatCache.set(m.id, await chatChannel.open(m));
-      return { mine: m.from === P.id, text: chatCache.get(m.id) };
+      return { id: m.id, mine: m.from === P.id, text: chatCache.get(m.id),
+               ts: m.createdAt?.toMillis ? m.createdAt.toMillis() : Date.now() };
     }));
-    paintChat(rows, false);
+    backend.markRead(P.id, friend.id);                  // I've now seen these
+    unreadBy.set(friend.id, false); lastSeenMsg.set(friend.id, Date.now());
+    updateFriendBadge();
+    repaint();
   });
+  chatMetaUnsub = backend.listenChatMeta(P.id, friend.id, meta => { chatMeta = meta || {}; repaint(); });
+}
+
+// Mark my own messages ✓ (sent) or ✓✓ (the friend has read up to that time).
+function decorateTicks(msgs) {
+  const r = chatMeta["read_" + (chatFriend?.id || "")];
+  const readMs = r?.toMillis ? r.toMillis() : 0;
+  return msgs.map(m => ({ ...m, read: m.mine && readMs >= m.ts }));
 }
 
 function leaveChat() {
   if (chatUnsub) { chatUnsub(); chatUnsub = null; }
-  chatFriend = null; chatChannel = null;
+  if (chatMetaUnsub) { chatMetaUnsub(); chatMetaUnsub = null; }
+  chatFriend = null; chatChannel = null; chatMeta = {};
   chatEl.classList.remove("on");
+  if (tab === "friends") renderFriends();
 }
 
-function paintChat(rows, loading) {
-  const f = chatFriend;
+// The chat shell is built once so the input keeps focus while messages stream.
+function renderChatShell(f) {
   chatEl.innerHTML = `
     <div class="chat-head">
       <button class="iconbtn" id="c-back" title="Back">‹</button>
       <span class="fav sm">${f.photo ? `<img src="${f.photo}" alt="">` : esc((f.name || "?")[0].toUpperCase())}</span>
-      <span class="chat-who"><b>${esc(f.name)}</b><span>🔒 End-to-end encrypted</span></span>
+      <span class="chat-who"><b>${flagOf(f.country)} ${esc(f.name)}</b><span>🔒 End-to-end encrypted</span></span>
     </div>
-    <div class="msgs" id="c-msgs">${loading
-      ? `<div class="chat-note">Setting up secure channel…</div>`
-      : rows.length
-        ? rows.map(r => `<div class="bubble ${r.mine ? "me" : "them"}">${r.text === null
-            ? `<i style="opacity:.6">🔒 can't decrypt</i>` : esc(r.text)}</div>`).join("")
-        : `<div class="chat-note">Say hello — messages are encrypted end-to-end.</div>`}</div>
+    <div class="msgs" id="c-msgs"><div class="chat-note">Setting up secure channel…</div></div>
     <div class="chat-input">
-      <input id="c-text" placeholder="Message" autocomplete="off" maxlength="2000">
+      <input id="c-text" placeholder="Message" autocomplete="off" maxlength="2000" enterkeyhint="send">
       <button class="smallbtn" id="c-send">Send</button>
     </div>`;
   $("c-back").onclick = leaveChat;
@@ -1043,7 +1173,20 @@ function paintChat(rows, loading) {
   };
   send.onclick = doSend;
   input.addEventListener("keydown", e => { if (e.key === "Enter") doSend(); });
-  if (!loading) { const m = $("c-msgs"); m.scrollTop = m.scrollHeight; input.focus(); }
+  input.focus();
+}
+
+// Only the message list is re-rendered on updates, so typing isn't interrupted.
+function paintMessages(rows) {
+  const box = $("c-msgs");
+  if (!box) return;
+  const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+  box.innerHTML = rows.length
+    ? rows.map(r => `<div class="bubble ${r.mine ? "me" : "them"}">${
+        r.text === null ? `<i style="opacity:.6">🔒 can't decrypt</i>` : esc(r.text)
+      }${r.mine ? `<span class="tick ${r.read ? "read" : ""}">${r.read ? "✓✓" : "✓"}</span>` : ""}</div>`).join("")
+    : `<div class="chat-note">Say hello — messages are end-to-end encrypted.</div>`;
+  if (nearBottom) box.scrollTop = box.scrollHeight;
 }
 
 // ---------------- profile ----------------
@@ -1089,8 +1232,9 @@ function renderProfile() {
         : esc(P.name[0].toUpperCase())}</div>
       <input type="file" id="p-file" accept="image/*" style="display:none">
       <button class="ghost" id="p-photo" style="margin-top:2px">${P.photo ? "Change photo" : "Add photo"}</button>
-      <div class="serif" style="font-size:25px;font-weight:600">${esc(P.name)}</div>
-      <div style="font-size:12px;color:var(--ink2);margin-top:3px">${esc(P.email || "")}</div>
+      <div class="serif" style="font-size:25px;font-weight:600">${P.country ? flagOf(P.country) + " " : ""}${esc(P.name)}</div>
+      <div style="font-size:12px;color:var(--ink2);margin-top:3px">${esc(P.email || "")}${
+        P.country ? " · " + countryName(P.country) : ""}</div>
       <div style="margin-top:8px"><span class="tierpill">${tName.toUpperCase()}
         <i>${P.rating} · ${ageGroup(P.dob)}</i></span></div>
       ${P.createdAt ? `<div style="font-size:11px;color:var(--ink2);margin-top:7px">Member since ${fmtDate(P.createdAt)}</div>` : ""}
@@ -1145,11 +1289,11 @@ function renderProfile() {
         <button class="ghost" id="p-friends-all" style="padding:0;font-weight:600;color:var(--iris)">Manage</button></div>
       ${friends.length ? friends.map(f => `
         <div class="frow" style="box-shadow:none;padding:0;border:none;background:none">
-          <span class="fav sm">${f.photo ? `<img src="${f.photo}" alt="">` : esc((f.name || "?")[0].toUpperCase())}</span>
-          <span class="fmeta"><b>${esc(f.name)}</b><span>${tier(f.rating)} · ${f.rating}</span></span>
+          <span class="fav sm">${f.photo ? `<img src="${f.photo}" alt="">` : esc((f.name || "?")[0].toUpperCase())}${unreadBy.get(f.id) ? `<i class="undot"></i>` : ""}</span>
+          <span class="fmeta"><b>${flagOf(f.country)} ${esc(f.name)}</b><span>${unreadBy.get(f.id) ? `<b style="color:var(--iris)">New message</b> · ` : ""}${tier(f.rating)} · ${f.rating}</span></span>
           <span class="fbtns">
             <button class="chip" style="background:var(--iris-soft);color:var(--iris)" data-pchal="${f.id}">Challenge</button>
-            <button class="iconbtn" data-pchat="${f.id}" title="Encrypted chat"${f.pubKey ? "" : " disabled"}>🔒</button>
+            <button class="smallbtn" data-pchat="${f.id}"${f.pubKey && myKeys ? "" : " disabled"}>Message</button>
           </span></div>`).join("")
         : `<div style="font-size:12.5px;color:var(--ink2)">No friends yet — add someone from the Friends tab.</div>`}
     </div>` : ""}
