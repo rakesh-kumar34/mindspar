@@ -98,7 +98,6 @@ const localBackend = {
     return profile;
   },
   async signIn() { throw new Error("Offline mode has a single local profile — sign up to create it."); },
-  async reauth() {},
   // Offline has no email to verify — sign-up creates the profile directly.
   async resendVerification() {}, async refreshVerified() { return true; },
   async completeSignup() { return JSON.parse(localStorage.getItem("mindspar-web")); },
@@ -131,8 +130,7 @@ function newProfile(id, { name, email, dob, country }) {
 async function makeFirebaseBackend(config) {
   const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js");
   const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-          signOut, onAuthStateChanged, sendEmailVerification,
-          EmailAuthProvider, reauthenticateWithCredential } =
+          signOut, onAuthStateChanged, sendEmailVerification } =
     await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js");
   const { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, getDocs,
           collection, query, where, orderBy, limit, onSnapshot, arrayUnion, serverTimestamp } =
@@ -219,13 +217,6 @@ async function makeFirebaseBackend(config) {
       return snap.data();
     },
     async signOut() { stopSession(); stopMatchSubs(); await signOut(auth); },
-    // Verify the account password again (used to set up chat keys on a device
-    // without forcing a full sign-out).
-    async reauth(password) {
-      const u = auth.currentUser;
-      if (!u) throw new Error("Not signed in.");
-      await reauthenticateWithCredential(u, EmailAuthProvider.credential(u.email, password));
-    },
     async publishIdentity(uid, idn) {
       await updateDoc(doc(db, "users", uid), {
         pubKey: idn.pub, encPriv: idn.encPriv, encPrivIv: idn.encPrivIv, encPrivSalt: idn.encPrivSalt });
@@ -1124,9 +1115,10 @@ function enableSecureChat(then) {
   overlay.classList.add("on");
   overlay.innerHTML = `<div class="panel">
     <b>Enable secure chat</b>
-    <span style="font-size:12.5px;color:var(--ink2);line-height:1.5">Confirm your password to set up
-      end-to-end encrypted chat on this device. You only do this once per device.</span>
-    <input id="ec-pass" type="password" placeholder="Your password" autocomplete="current-password">
+    <span style="font-size:12.5px;color:var(--ink2);line-height:1.5">Enter your account password to set
+      up end-to-end encrypted chat on this device — use the same password on each device so your
+      messages stay readable everywhere.</span>
+    <input id="ec-pass" type="password" placeholder="Your account password" autocomplete="current-password">
     <div class="err" id="ec-err"></div>
     <button class="primary" id="ec-go">Enable secure chat</button>
     <button class="ghost" id="ec-close">Cancel</button></div>`;
@@ -1136,17 +1128,16 @@ function enableSecureChat(then) {
     if (!pw) return;
     const errEl = $("ec-err");
     errEl.textContent = "Setting up…";
-    try {
-      await backend.reauth(pw);
-      await setupIdentity(pw);
-      if (!myKeys) throw new Error("setup-failed");
+    // Derive the key straight from the password: a first-time device mints the
+    // wrapped identity; a returning device unwraps it (wrong password just fails
+    // to decrypt, leaving myKeys null). No re-auth needed.
+    await setupIdentity(pw);
+    if (myKeys) {
       overlay.classList.remove("on");
       toast("Secure chat is ready.");
       then && then();
-    } catch (e) {
-      const wrong = e.code === "auth/wrong-password" || e.code === "auth/invalid-credential"
-        || /password|credential/i.test(e.message || "");
-      errEl.textContent = wrong ? "That password doesn't match." : "Couldn't enable chat — please try again.";
+    } else {
+      errEl.textContent = "Couldn't unlock chat — if you've chatted before, use that same password.";
     }
   };
   $("ec-go").onclick = go;
