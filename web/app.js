@@ -747,6 +747,7 @@ function renderVerify() {
 // ---------------- home ----------------
 function renderHome() {
   screen.innerHTML = `<div class="pad">
+    ${installBanner()}
     <div>
       <div class="serif" style="font-size:26px;font-weight:600">Ready, ${esc(P.name.split(" ")[0])}?</div>
       <div style="font-size:12.5px;color:var(--ink2);margin-top:4px">${N} questions · six domains · speed counts</div>
@@ -784,6 +785,7 @@ function renderHome() {
           <span>${b.tag}</span></span></button>`).join("")}</div>
     </div>
   </div>`;
+  wireInstallBanner();
   $("h-quick").onclick = quickMatch;
   $("h-invite").onclick = inviteFlow;
   screen.querySelectorAll("[data-dom]").forEach(el =>
@@ -1393,4 +1395,59 @@ function resizePhoto(file) {
   img.src = URL.createObjectURL(file);
 }
 
+// ---------------- installable app (PWA) ----------------
+const isStandalone = () =>
+  window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+let deferredInstall = null;
+
+function initPWA() {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(e => console.warn("SW register failed", e));
+  }
+  // Android/desktop Chrome fires this; stash it so our button can trigger install.
+  window.addEventListener("beforeinstallprompt", e => {
+    e.preventDefault();
+    deferredInstall = e;
+    if (P && tab === "play" && !arena.classList.contains("on")) renderHome();
+  });
+  window.addEventListener("appinstalled", () => { deferredInstall = null; toast("Mindspar installed 🎉"); });
+}
+
+// Home-screen banner: a real Install button where the browser supports it, or
+// iOS "Add to Home Screen" guidance (Safari gives no install prompt). Shown
+// until installed or dismissed.
+function installBanner() {
+  if (isStandalone() || localStorage.getItem("mindspar-install-x") === "1") return "";
+  if (deferredInstall) {
+    return `<div class="cardbox install-card">
+      <div><b>Install Mindspar</b><span>Add it to your home screen — it opens full-screen like an app.</span></div>
+      <div class="install-actions">
+        <button class="smallbtn" id="pwa-install">Install</button>
+        <button class="ghost" id="pwa-x">Not now</button></div></div>`;
+  }
+  if (isIOS()) {
+    return `<div class="cardbox install-card">
+      <div><b>Add Mindspar to your home screen</b>
+        <span>Tap the Share button <span class="ios-share">􀈂</span> in Safari, then “Add to Home Screen.”
+        It opens full-screen and can notify you.</span></div>
+      <div class="install-actions"><button class="ghost" id="pwa-x">Got it</button></div></div>`;
+  }
+  return "";
+}
+
+function wireInstallBanner() {
+  const x = $("pwa-x");
+  if (x) x.onclick = () => { localStorage.setItem("mindspar-install-x", "1"); renderHome(); };
+  const btn = $("pwa-install");
+  if (btn) btn.onclick = async () => {
+    if (!deferredInstall) return;
+    deferredInstall.prompt();
+    await deferredInstall.userChoice.catch(() => {});
+    deferredInstall = null;
+    renderHome();
+  };
+}
+
+initPWA();
 boot();
