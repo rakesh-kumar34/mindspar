@@ -98,6 +98,7 @@ const localBackend = {
     return profile;
   },
   async signIn() { throw new Error("Offline mode has a single local profile — sign up to create it."); },
+  async reauth() {},
   // Offline has no email to verify — sign-up creates the profile directly.
   async resendVerification() {}, async refreshVerified() { return true; },
   async completeSignup() { return JSON.parse(localStorage.getItem("mindspar-web")); },
@@ -129,7 +130,8 @@ function newProfile(id, { name, email, dob, country }) {
 async function makeFirebaseBackend(config) {
   const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js");
   const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-          signOut, onAuthStateChanged, sendEmailVerification } =
+          signOut, onAuthStateChanged, sendEmailVerification,
+          EmailAuthProvider, reauthenticateWithCredential } =
     await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js");
   const { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, getDocs,
           collection, query, where, orderBy, limit, onSnapshot, arrayUnion, serverTimestamp } =
@@ -216,6 +218,13 @@ async function makeFirebaseBackend(config) {
       return snap.data();
     },
     async signOut() { stopSession(); stopMatchSubs(); await signOut(auth); },
+    // Verify the account password again (used to set up chat keys on a device
+    // without forcing a full sign-out).
+    async reauth(password) {
+      const u = auth.currentUser;
+      if (!u) throw new Error("Not signed in.");
+      await reauthenticateWithCredential(u, EmailAuthProvider.credential(u.email, password));
+    },
     async publishIdentity(uid, idn) {
       await updateDoc(doc(db, "users", uid), {
         pubKey: idn.pub, encPriv: idn.encPriv, encPrivIv: idn.encPrivIv, encPrivSalt: idn.encPrivSalt });
@@ -1047,15 +1056,14 @@ function renderFriends() {
       </span></div>`).join("");
   const friendRows = friends.length ? friends.map(f => {
     const unread = unreadBy.get(f.id);
-    const canChat = !!f.pubKey && !!myKeys;
     return `<div class="frow ${unread ? "unread" : ""}">
       <span class="fav">${f.photo
         ? `<img src="${f.photo}" alt="">` : esc((f.name || "?")[0].toUpperCase())}${unread ? `<i class="undot"></i>` : ""}</span>
       <span class="fmeta"><b>${flagOf(f.country)} ${esc(f.name)}</b>
         <span>${unread ? `<b style="color:var(--iris)">New message</b> · ` : ""}${tier(f.rating)} · ${f.rating}</span></span>
       <span class="fbtns">
-        <button class="chip" style="background:var(--iris-soft);color:var(--iris)" data-chal="${f.id}">Challenge</button>
-        <button class="smallbtn" data-chat="${f.id}"${canChat ? "" : " disabled"}>Message</button>
+        <button class="chalbtn" data-chal="${f.id}">Challenge</button>
+        <button class="smallbtn" data-chat="${f.id}">Message</button>
       </span></div>`;
   }).join("")
     : `<div class="cardbox" style="padding:18px;font-size:13px;color:var(--ink2);text-align:center">
@@ -1102,6 +1110,43 @@ async function addFriend() {
 }
 
 // ---------------- encrypted chat ----------------
+// Set up (or recover) this device's chat key by confirming the account
+// password. Needed on a new device, or to upgrade an older account whose key
+// predates cross-device backup. Then run `then` (e.g. open the chat).
+function enableSecureChat(then) {
+  overlay.classList.add("on");
+  overlay.innerHTML = `<div class="panel">
+    <b>Enable secure chat</b>
+    <span style="font-size:12.5px;color:var(--ink2);line-height:1.5">Confirm your password to set up
+      end-to-end encrypted chat on this device. You only do this once per device.</span>
+    <input id="ec-pass" type="password" placeholder="Your password" autocomplete="current-password">
+    <div class="err" id="ec-err"></div>
+    <button class="primary" id="ec-go">Enable secure chat</button>
+    <button class="ghost" id="ec-close">Cancel</button></div>`;
+  $("ec-close").onclick = () => overlay.classList.remove("on");
+  const go = async () => {
+    const pw = $("ec-pass").value;
+    if (!pw) return;
+    const errEl = $("ec-err");
+    errEl.textContent = "Setting up…";
+    try {
+      await backend.reauth(pw);
+      await setupIdentity(pw);
+      if (!myKeys) throw new Error("setup-failed");
+      overlay.classList.remove("on");
+      toast("Secure chat is ready.");
+      then && then();
+    } catch (e) {
+      const wrong = e.code === "auth/wrong-password" || e.code === "auth/invalid-credential"
+        || /password|credential/i.test(e.message || "");
+      errEl.textContent = wrong ? "That password doesn't match." : "Couldn't enable chat — please try again.";
+    }
+  };
+  $("ec-go").onclick = go;
+  $("ec-pass").addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+  $("ec-pass").focus();
+}
+
 let notifyAsked = false;
 function requestNotifyPermission() {
   if (notifyAsked || !("Notification" in window)) return;
@@ -1111,8 +1156,9 @@ function requestNotifyPermission() {
 
 async function openChat(friend) {
   if (!friend) return;
-  if (!friend.pubKey) return toast(`${friend.name} hasn't finished setting up secure chat yet.`);
-  if (!myKeys) return toast("Secure chat isn't ready yet — try again in a moment.");
+  // Chat keys not set up on this device yet → confirm password to enable, then reopen.
+  if (!myKeys) return enableSecureChat(() => openChat(friend));
+  if (!friend.pubKey) return toast(`${friend.name} hasn't set up secure chat yet — ask them to sign in on Mindspar.`);
   chatFriend = friend; chatMeta = {};
   requestNotifyPermission();
   try {
@@ -1296,8 +1342,8 @@ function renderProfile() {
           <span class="fav sm">${f.photo ? `<img src="${f.photo}" alt="">` : esc((f.name || "?")[0].toUpperCase())}${unreadBy.get(f.id) ? `<i class="undot"></i>` : ""}</span>
           <span class="fmeta"><b>${flagOf(f.country)} ${esc(f.name)}</b><span>${unreadBy.get(f.id) ? `<b style="color:var(--iris)">New message</b> · ` : ""}${tier(f.rating)} · ${f.rating}</span></span>
           <span class="fbtns">
-            <button class="chip" style="background:var(--iris-soft);color:var(--iris)" data-pchal="${f.id}">Challenge</button>
-            <button class="smallbtn" data-pchat="${f.id}"${f.pubKey && myKeys ? "" : " disabled"}>Message</button>
+            <button class="chalbtn" data-pchal="${f.id}">Challenge</button>
+            <button class="smallbtn" data-pchat="${f.id}">Message</button>
           </span></div>`).join("")
         : `<div style="font-size:12.5px;color:var(--ink2)">No friends yet — add someone from the Friends tab.</div>`}
     </div>` : ""}

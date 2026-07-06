@@ -75,7 +75,14 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 .smallbtn{background:var(--iris);color:#fff;border:none;border-radius:999px;padding:8px 16px;
   font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:transform .12s ease;}
 .smallbtn:active{transform:scale(.93)}
+.smallbtn:disabled{opacity:.4;cursor:default;}
 .chip:active{transform:scale(.93)}
+/* secondary action button — clearly clickable, not a muted/disabled look */
+.chalbtn{background:transparent;color:var(--iris);border:1.5px solid var(--iris);
+  border-radius:999px;padding:7px 15px;font-size:13px;font-weight:600;cursor:pointer;
+  font-family:inherit;transition:transform .12s ease,background .12s ease;}
+.chalbtn:hover{background:var(--iris-soft)}
+.chalbtn:active{transform:scale(.93)}
 
 /* chips */
 .chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px;}
