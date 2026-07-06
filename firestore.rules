@@ -58,8 +58,13 @@ service cloud.firestore {
       allow create, delete: if verified() && request.auth.uid == uid;
     }
 
+    // Participants (keys of the players map) can read/write. Async duels also
+    // carry a `pids` array so "matches I'm in" can be queried
+    // (where pids array-contains me) — that clause makes the query provably safe.
     match /matches/{id} {
-      allow read, update: if verified() && request.auth.uid in resource.data.players;
+      allow read, update: if verified() && (
+        request.auth.uid in resource.data.players ||
+        request.auth.uid in resource.data.pids);
       allow create: if verified() && request.auth.uid in request.resource.data.players;
     }
 
