@@ -669,9 +669,11 @@ function renderAuth() {
       ? (signup ? `<div class="fine">We'll email you a link to confirm your address — you'll verify it before playing.</div>` : "")
       : `<div class="fine">Running offline — your profile stays in this browser. Online play switches on once Firebase is configured (web/README.md).</div>`}
     <div class="fine">Mindspar is for adults 18 and over.</div>
+    ${installBanner()}
   </div>`;
   $("a-switch").onclick = () => { authMode = signup ? "signin" : "signup"; renderAuth(); };
   $("a-go").onclick = submitAuth;
+  wireInstallBanner();
 }
 
 async function submitAuth() {
@@ -1409,7 +1411,7 @@ function initPWA() {
   window.addEventListener("beforeinstallprompt", e => {
     e.preventDefault();
     deferredInstall = e;
-    if (P && tab === "play" && !arena.classList.contains("on")) renderHome();
+    if (!arena.classList.contains("on") && !chatEl.classList.contains("on")) render();
   });
   window.addEventListener("appinstalled", () => { deferredInstall = null; toast("Mindspar installed 🎉"); });
 }
@@ -1438,14 +1440,14 @@ function installBanner() {
 
 function wireInstallBanner() {
   const x = $("pwa-x");
-  if (x) x.onclick = () => { localStorage.setItem("mindspar-install-x", "1"); renderHome(); };
+  if (x) x.onclick = () => { localStorage.setItem("mindspar-install-x", "1"); render(); };
   const btn = $("pwa-install");
   if (btn) btn.onclick = async () => {
     if (!deferredInstall) return;
     deferredInstall.prompt();
     await deferredInstall.userChoice.catch(() => {});
     deferredInstall = null;
-    renderHome();
+    render();
   };
 }
 
