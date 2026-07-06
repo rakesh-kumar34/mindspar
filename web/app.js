@@ -565,6 +565,10 @@ function watchUnread() {
 async function setupIdentity(password) {
   if (!backend.isLive || !P) { myKeys = null; return; }
   let cache = cachedPriv(P.id);
+  // If the published public key no longer matches the locally cached one, this
+  // device's key is stale (e.g. the identity was re-established elsewhere) —
+  // drop it and re-unwrap from the password so all devices converge.
+  if (cache && P.pubKey && JSON.stringify(cache.pub) !== JSON.stringify(P.pubKey)) cache = null;
   try {
     if (P.encPriv && P.pubKey) {
       if (!cache && password) {
