@@ -18,10 +18,22 @@ const P = {
   sigma: '<path d="M17 4H7l6 8-6 8h10"/>',
 };
 
+// Bold FILLED icons — these sit inside solid colour circles on the home screen,
+// where thin outlines looked weak/weird.
+const FILL = {
+  sun: '<circle cx="12" cy="12" r="4.5"/><g><rect x="11" y="1" width="2" height="4" rx="1"/><rect x="11" y="19" width="2" height="4" rx="1"/><rect x="1" y="11" width="4" height="2" rx="1"/><rect x="19" y="11" width="4" height="2" rx="1"/><rect x="3.6" y="4.2" width="2" height="4" rx="1" transform="rotate(-45 4.6 6.2)"/><rect x="17.4" y="15.8" width="2" height="4" rx="1" transform="rotate(-45 18.4 17.8)"/><rect x="17.4" y="4.2" width="2" height="4" rx="1" transform="rotate(45 18.4 6.2)"/><rect x="3.6" y="15.8" width="2" height="4" rx="1" transform="rotate(45 4.6 17.8)"/></g>',
+  bolt: '<path d="M13.5 1.8 4 13.4a.9.9 0 0 0 .7 1.5H10l-1 7.3a.6.6 0 0 0 1.08.46L20 10.6a.9.9 0 0 0-.7-1.5H14l1-6.9a.6.6 0 0 0-1.5-.4z"/>',
+  send: '<path d="M21.5 2.6a1 1 0 0 0-1.05-.24L3 9.1a1 1 0 0 0 .07 1.88l6.1 1.95 1.95 6.1a1 1 0 0 0 1.88.07l6.74-17.45a1 1 0 0 0-.24-1.05z"/>',
+};
+
 export function ic(name, size = "1em") {
+  if (FILL[name]) {
+    return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="currentColor" `
+      + `aria-hidden="true" style="display:block">${FILL[name]}</svg>`;
+  }
   const p = P[name] || P.bot;
   return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" `
-    + `stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" `
+    + `stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" `
     + `style="display:block">${p}</svg>`;
 }
 
