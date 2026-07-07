@@ -161,7 +161,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 .dots .row{display:flex;align-items:center;gap:8px;}
 .dots .lbl{width:96px;color:rgba(255,255,255,.7);}
 .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px;}
-.lightbtn{background:#fff;color:var(--ink);border:none;border-radius:14px;padding:14px 0;
+/* On the always-dark arena: white button with FIXED dark text (not var(--ink),
+   which flips to light in dark mode and made the text disappear). */
+.lightbtn{background:#fff;color:#14161f;border:none;border-radius:14px;padding:14px 0;
   width:100%;max-width:260px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;}
 
 /* overlay */
@@ -175,8 +177,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
   box-shadow:0 24px 60px rgba(0,0,0,.28);animation:pop .24s cubic-bezier(.2,.9,.3,1.2);}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 .spin{width:26px;height:26px;border:3px solid var(--iris-soft);border-top-color:var(--iris);
-  border-radius:50%;animation:rot 1s linear infinite;}
+  border-radius:50%;animation:rot 1s linear infinite;display:inline-block;}
 @keyframes rot{to{transform:rotate(360deg)}}
+/* full-area loading state (boot, friends, etc.) */
+.loading{flex:1;display:flex;align-items:center;justify-content:center;min-height:55vh;}
 
 /* toast */
 .toast{position:absolute;left:50%;transform:translateX(-50%) translateY(8px);bottom:96px;z-index:40;

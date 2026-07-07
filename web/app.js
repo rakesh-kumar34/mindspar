@@ -139,10 +139,9 @@ const localBackend = {
   async listFriends() { return []; }, listenFriends() { return () => {}; },
   sendMessage() {}, listenMessages() { return () => {}; },
   markRead() {}, listenChatMeta() { return () => {}; }, listenLatest() { return () => {}; },
-  async getPubKey() { return null; }, async getProfile() { return null; },
+  async getPubKey() { return null; }, async getProfile() { return null; }, async heartbeat() {},
   async submitDaily() {}, async getDailyScores() { return []; },
-  async findUser() { return null; }, async createAsyncMatch() { return null; },
-  async submitAsyncResult() {}, async settleAsync() {}, async myAsyncMatches() { return []; },
+  async findUser() { return null; },
 };
 
 function newProfile(id, { name, email, dob, country }) {
@@ -415,7 +414,7 @@ async function makeFirebaseBackend(config) {
       const docs = await Promise.all(mine.docs.map(d => getDoc(doc(db, "users", d.id))));
       return docs.filter(d => d.exists()).map(d => ({
         id: d.id, name: d.get("name") ?? "Player", rating: d.get("rating") ?? 1000,
-        country: d.get("country") ?? "",
+        country: d.get("country") ?? "", lastActive: d.get("lastActive") ?? 0,
         photo: d.get("photo") ?? null, email: d.get("email"), pubKey: d.get("pubKey") ?? null,
       })).sort((a, b) => a.name.localeCompare(b.name));
     },
@@ -434,6 +433,10 @@ async function makeFirebaseBackend(config) {
       const s = await getDoc(doc(db, "users", uid));
       return s.exists() ? s.data() : null;
     },
+    // Presence heartbeat: mark myself active now (used to decide live vs async).
+    async heartbeat(uid) {
+      await updateDoc(doc(db, "users", uid), { lastActive: Date.now() }).catch(() => {});
+    },
 
     // --- daily challenge ---
     async submitDaily(date, P, score, correct) {
@@ -445,33 +448,15 @@ async function makeFirebaseBackend(config) {
       return docs.filter(d => d.exists()).map(d => ({ id: d.id, ...d.data() }));
     },
 
-    // --- async ("play-by-mail") duels ---
+    // Look up a player by email (to challenge them live).
     async findUser(email) {
       const key = email.toLowerCase().trim();
       const found = await getDocs(query(collection(db, "users"), where("email", "==", key), limit(1)));
       if (found.empty) return null;
       const d = found.docs[0];
       return { id: d.id, name: d.get("name") ?? "Player", rating: d.get("rating") ?? 1000,
-               country: d.get("country") ?? "", photo: d.get("photo") ?? null, email: key };
-    },
-    async createAsyncMatch(P, opp, deckIds, result) {
-      const ref = await addDoc(collection(db, "matches"), {
-        async: true, deckIds, pids: [P.id, opp.id], from: P.id, to: opp.id,
-        players: { [P.id]: { name: P.name, rating: P.rating, country: P.country || "", photo: P.photo || null },
-                   [opp.id]: { name: opp.name, rating: opp.rating, country: opp.country || "", photo: opp.photo || null } },
-        ["result_" + P.id]: result, createdAt: serverTimestamp(),
-      });
-      return ref.id;
-    },
-    async submitAsyncResult(matchId, uid, result) {
-      await updateDoc(doc(db, "matches", matchId), { ["result_" + uid]: result });
-    },
-    async settleAsync(matchId, uid) {
-      await updateDoc(doc(db, "matches", matchId), { ["settled_" + uid]: true });
-    },
-    async myAsyncMatches(uid) {
-      const snap = await getDocs(query(collection(db, "matches"), where("pids", "array-contains", uid)));
-      return snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(m => m.async);
+               country: d.get("country") ?? "", photo: d.get("photo") ?? null, email: key,
+               lastActive: d.get("lastActive") ?? 0 };
     },
 
     // --- encrypted chat (payloads are ciphertext; see e2e.js) ---
@@ -515,13 +500,12 @@ const screen = $("screen"), tabs = $("tabs"), arena = $("arena"), overlay = $("o
       chatEl = $("chat");
 let backend = localBackend, P = null, tab = "play", invites = [], subject = null;
 let toastTimer;
-let myKeys = null, friends = [], friendReqs = [];       // friends + E2E chat
+let myKeys = null, friends = [], friendReqs = [], friendsLoaded = false;  // friends + E2E chat
 let chatFriend = null, chatUnsub = null, chatMetaUnsub = null, chatChannel = null, chatCache = new Map();
 let chatMeta = {};                                       // read receipts for the open chat
 const latestStops = new Map(), unreadBy = new Map(), lastSeenMsg = new Map();
 let viewingFriend = null;                                // friend profile being viewed
 let lastMatch = null;                                    // for the Rematch button
-let asyncCtx = null, asyncPending = [];                  // async ("play-by-mail") duels
 let pending = null;                                     // awaiting email verification
 
 const PENDING_KEY = "mindspar-pending";
@@ -546,7 +530,10 @@ const IDLE_MS = 30 * 60 * 1000;
 let idleTimer;
 function armIdleTimer() {
   clearTimeout(idleTimer);
-  if (!P) return;
+  // Installed (home-screen) app stays signed in until you explicitly sign out —
+  // it's your personal device. The idle timeout only guards browser sessions,
+  // which may be on a shared/public computer.
+  if (!P || isStandalone()) return;
   idleTimer = setTimeout(async () => {
     if (!P) return;
     await doSignOut();
@@ -612,20 +599,23 @@ async function startSession() {
   backend.listenFriendRequests(P, list => { friendReqs = list; updateFriendBadge(); if (tab === "friends") renderFriends(); });
   backend.listenFriends(P, list => {
     friends = list;
+    friendsLoaded = true;
     watchUnread();
     if (tab === "friends" && !chatFriend) renderFriends();
     else if (tab === "prof") renderProfile();
   });
-  await processAsyncResults();
+  startHeartbeat();
 }
 
-// Re-check async duels when the app comes back to the foreground (a friend may
-// have responded while it was closed).
-document.addEventListener("visibilitychange", async () => {
-  if (document.visibilityState !== "visible" || !P || !backend.isLive) return;
-  await processAsyncResults();
-  if (tab === "play" && !arena.classList.contains("on") && !overlay.classList.contains("on")) render();
-});
+let heartbeatTimer;
+function startHeartbeat() {
+  if (!backend.isLive || !P) return;
+  backend.heartbeat(P.id);
+  clearInterval(heartbeatTimer);
+  heartbeatTimer = setInterval(() => {
+    if (P && document.visibilityState === "visible") backend.heartbeat(P.id);
+  }, 25000);
+}
 
 // One "latest message + my read time" listener per friend, so we can show
 // unread badges and pop an alert when a new message lands.
@@ -712,10 +702,11 @@ function updateFriendBadge() {
 
 async function doSignOut() {
   leaveChat();
+  clearInterval(heartbeatTimer);
   latestStops.forEach(s => s()); latestStops.clear();
   unreadBy.clear(); lastSeenMsg.clear();
   await backend.signOut();
-  P = null; invites = []; friends = []; friendReqs = []; myKeys = null;
+  P = null; invites = []; friends = []; friendReqs = []; friendsLoaded = false; myKeys = null;
   setPending(null);
   chatCache.clear();
   clearTimeout(idleTimer);
@@ -735,7 +726,9 @@ function render() {
 }
 
 // ---------------- auth ----------------
-let authMode = "signup";
+// Default to sign-in (most opens are returning players); new players tap the
+// "Create an account" link. Standard for mainstream apps.
+let authMode = "signin";
 function renderAuth() {
   const signup = authMode === "signup";
   screen.innerHTML = `<div class="pad" style="justify-content:center;gap:13px">
@@ -889,15 +882,6 @@ function renderHome() {
           <span style="color:var(--ink2)">· ${inv.fromRating}</span></span>
         <button class="smallbtn" data-inv="${inv.id}">Accept</button>
       </div></div>`).join("")}
-    ${asyncPending.map(m => {
-      const o = m.players?.[m.from] || {};
-      const s = m["result_" + m.from]?.score;
-      return `<div class="invitecard"><div class="row">
-        <span style="font-size:14px"><b>${flagOf(o.country)} ${esc(o.name || "A friend")}</b> challenged you${
-          s != null ? ` <span style="color:var(--ink2)">· scored ${s}</span>` : ""}</span>
-        <button class="smallbtn" data-async="${m.id}">Play</button>
-      </div></div>`;
-    }).join("")}
     <button class="playrow" id="h-daily">
       <span class="sig" style="background:linear-gradient(135deg,#f6b73c,#ea5f2d);color:#fff">☀︎</span>
       <span><b>Daily Challenge</b><span>${P.dailyDone === todayKey()
@@ -939,8 +923,6 @@ function renderHome() {
     el.onclick = () => startBotDuel(el.dataset.bot));
   screen.querySelectorAll("[data-inv]").forEach(el =>
     el.onclick = () => acceptInvite(el.dataset.inv));
-  screen.querySelectorAll("[data-async]").forEach(el =>
-    el.onclick = () => respondAsync(asyncPending.find(x => x.id === el.dataset.async)));
 }
 
 // ---------------- matchmaking ----------------
@@ -987,7 +969,7 @@ function inviteFlow() {
       if (!opp) return $("inv-err").textContent = "No player found with that email.";
       if (opp.id === P.id) return $("inv-err").textContent = "That's your own email.";
       overlay.classList.remove("on");
-      challengeAsync(opp);
+      challengeFriend(opp);
     } catch (e) { $("inv-err").textContent = e.message; }
   };
 }
@@ -1191,7 +1173,7 @@ function rematch() {
   if (lastMatch?.bot) return startBotDuel(lastMatch.bot);
   if (lastMatch?.friendId) {
     const f = friends.find(x => x.id === lastMatch.friendId);
-    if (f) return challengeAsync(f);
+    if (f) return challengeFriend(f);
     toast("Add them as a friend to rematch.");
   }
   render();
@@ -1246,126 +1228,43 @@ async function showDailyResults() {
 // You play your run of a shared deck now; your friend plays theirs whenever
 // they're free. Scores are compared when both have played — no need to be
 // online at the same time.
-function challengeAsync(opp) {
+// Live head-to-head only: a challenge works when the friend is online (heartbeat
+// under ~70s old). If they're offline, we say so — no async fallback.
+async function challengeFriend(opp) {
   if (!backend.isLive) return toast("Online play needs Firebase — duel a bot meanwhile!");
   if (!opp) return;
   if (opp.id === P.id) return toast("You can't challenge yourself.");
-  const ids = buildDeck({ targetDifficulty: ladder(Math.round((P.rating + (opp.rating || 1000)) / 2)) }).map(q => q[0]);
-  asyncCtx = { mode: "challenge", opp, deckIds: ids };
-  startSoloOverDeck(ids, `vs ${opp.name}`, endAsync);
-}
-
-function respondAsync(match) {
-  if (!match) return;
-  const otherId = match.pids.find(x => x !== P.id);
-  asyncCtx = { mode: "respond", matchId: match.id, opp: { id: otherId, ...(match.players[otherId] || {}) }, match };
-  startSoloOverDeck(match.deckIds, `vs ${match.players[otherId]?.name || "Player"}`, endAsync);
-}
-
-function startSoloOverDeck(deckIds, title, endFn) {
-  const deck = deckIds.map(id => qById[id]).filter(Boolean);
-  if (!deck.length) return toast("Deck failed to load.");
-  solo = true; soloTitle = title; soloEnd = endFn;
-  OPP = null; liveMatch = null; lastMatch = null;
-  cards = deck;
-  beginDuel(() => {});
-}
-
-async function endAsync() {
-  const mine = total(my);
-  let correct = 0;
-  cards.forEach((q, i) => {
-    P.dA[q[1]] = (P.dA[q[1]] || 0) + 1;
-    if (my[i]?.ok) { P.dC[q[1]] = (P.dC[q[1]] || 0) + 1; P.sfSum += speedF(my[i].ms); P.sfN++; correct++; }
-    const prev = P.seen[q[0]] ? seenEntry(P.seen[q[0]]) : { t: 0, n: 0 };
-    P.seen[q[0]] = { t: Date.now(), n: prev.n + 1 };
-  });
-  const result = { score: mine, correct, rating: P.rating };
-  await persist();
-  const ctx = asyncCtx; asyncCtx = null;
-  if (!ctx) { arena.classList.remove("on"); return render(); }
+  const first = esc((opp.name || "They").split(" ")[0]);
+  overlay.classList.add("on");
+  overlay.innerHTML = `<div class="panel"><div class="spin"></div><b>Reaching ${first}…</b></div>`;
+  let online = false;
   try {
-    if (ctx.mode === "challenge") {
-      await backend.createAsyncMatch(P, ctx.opp, ctx.deckIds, result);
-      asyncSent(ctx.opp, mine);
-    } else {
-      await backend.submitAsyncResult(ctx.matchId, P.id, result);
-      const theirs = ctx.match["result_" + ctx.opp.id];
-      if (theirs) await finishAsyncDuel(ctx.matchId, ctx.opp, result, theirs);
-      else asyncSent(ctx.opp, mine);
-    }
-  } catch (e) { console.error(e); toast("Couldn't send your duel — try again."); arena.classList.remove("on"); render(); }
+    const prof = await backend.getProfile(opp.id);
+    online = !!(prof && prof.lastActive && Date.now() - prof.lastActive < 70000);
+  } catch { /* treat as offline */ }
+  if (online) liveChallenge(opp);
+  else { overlay.classList.remove("on"); toast(`${first} isn't online right now — try when they're on Mindspar.`); }
 }
 
-// Apply my Elo for a finished async duel (both sides settle their own rating).
-async function finishAsyncDuel(matchId, opp, mine, theirs) {
-  const actual = mine.score > theirs.score ? 1 : mine.score < theirs.score ? 0 : .5;
-  const delta = eloDelta(mine.rating, theirs.rating, actual);
-  P.rating += delta; P.played++;
-  if (actual === 1) { P.won++; P.streak++; P.best = Math.max(P.best, P.streak); }
-  else if (actual === 0) P.streak = 0;
-  P.history = [{ opp: opp.name, country: opp.country || "", bot: false,
-                 mine: mine.score, theirs: theirs.score, delta, ts: Date.now() }, ...(P.history || [])].slice(0, 20);
-  await persist();
-  await backend.settleAsync(matchId, P.id).catch(() => {});
-  showAsyncResult(opp, mine.score, theirs.score, delta);
-}
-
-function asyncSent(opp, myScore) {
-  arena.classList.add("on");
-  arena.innerHTML = `<div class="center">
-    <div class="headline">Challenge sent</div>
-    <div class="fs win" style="margin:6px 0"><div class="v">${myScore}</div><div class="n">YOUR SCORE</div></div>
-    <div style="font-size:13.5px;color:rgba(255,255,255,.7);max-width:270px;text-align:center;line-height:1.55">
-      ${esc(opp.name)} will play the same 8 whenever they're free. You'll see the result the next
-      time you open Mindspar after they do.</div>
-    <button class="lightbtn" id="as-done">Done</button></div>`;
-  $("as-done").onclick = () => { arena.classList.remove("on"); render(); };
-}
-
-function showAsyncResult(opp, mine, theirs, delta) {
-  const headline = mine > theirs ? "Victory" : mine < theirs ? "Defeat" : "Draw";
-  arena.classList.add("on");
-  arena.innerHTML = `<div class="center">
-    <div class="headline">${headline}</div>
-    <div class="finals">
-      <div class="fs ${mine >= theirs ? "win" : ""}"><div class="n">YOU</div><div class="v">${mine}</div></div>
-      <div style="color:rgba(255,255,255,.4)">–</div>
-      <div class="fs ${theirs > mine ? "win" : ""}"><div class="n">${flagOf(opp.country)} ${esc((opp.name || "").toUpperCase())}</div><div class="v">${theirs}</div></div>
-    </div>
-    <div class="delta" style="${delta >= 0
-      ? "color:#7de0a8;background:rgba(33,176,107,.15)" : "color:#f29b9c;background:rgba(219,69,71,.15)"}">
-      ${delta >= 0 ? "+" : ""}${delta} rating · now ${P.rating} · ${tier(P.rating)}</div>
-    <button class="lightbtn" id="as-done">Continue</button></div>`;
-  $("as-done").onclick = () => { arena.classList.remove("on"); render(); };
-}
-
-// On load / foreground: settle any completed async duels (challenger's side) and
-// collect challenges waiting for me to play.
-async function processAsyncResults() {
-  if (!backend.isLive || !P) return;
-  let matches = [];
-  try { matches = await backend.myAsyncMatches(P.id); } catch { return; }
-  const pending = [];
-  for (const m of matches) {
-    const other = m.pids.find(x => x !== P.id);
-    const mine = m["result_" + P.id], theirs = m["result_" + other];
-    if (!mine) { pending.push(m); continue; }           // a challenge awaiting my play
-    if (mine && theirs && !m["settled_" + P.id]) {
-      const actual = mine.score > theirs.score ? 1 : mine.score < theirs.score ? 0 : .5;
-      const delta = eloDelta(mine.rating, theirs.rating, actual);
-      P.rating += delta; P.played++;
-      if (actual === 1) { P.won++; P.streak++; P.best = Math.max(P.best, P.streak); }
-      else if (actual === 0) P.streak = 0;
-      const oi = m.players[other] || {};
-      P.history = [{ opp: oi.name || "Player", country: oi.country || "", bot: false,
-                     mine: mine.score, theirs: theirs.score, delta, ts: Date.now() }, ...(P.history || [])].slice(0, 20);
-      await backend.settleAsync(m.id, P.id).catch(() => {});
-      await persist();
-      toast(`${actual === 1 ? "You beat" : actual === 0 ? "You lost to" : "Draw with"} ${oi.name}: ${mine.score}–${theirs.score}`);
-    }
-  }
-  asyncPending = pending;
+// Send an invite the online friend accepts, then both play the same deck in
+// real time.
+function liveChallenge(opp) {
+  const first = esc((opp.name || "They").split(" ")[0]);
+  let timeout;
+  searchingPanel(`Challenging ${first}…`, "They're online — waiting for them to accept",
+    () => { clearTimeout(timeout); overlay.classList.remove("on"); backend.stopMatch(); });
+  backend.sendInvite(opp.email, P, human => {
+    clearTimeout(timeout);
+    if (!overlay.classList.contains("on")) return;
+    overlay.classList.remove("on");
+    startHumanDuel(human);
+  }).catch(e => { clearTimeout(timeout); overlay.classList.remove("on"); toast(e.message); });
+  timeout = setTimeout(() => {
+    if (!overlay.classList.contains("on")) return;
+    overlay.classList.remove("on");
+    backend.stopMatch();
+    toast(`${first} didn't accept in time.`);
+  }, 25000);
 }
 
 // ---------------- friends ----------------
@@ -1379,6 +1278,11 @@ function renderFriends() {
     return;
   }
   if (viewingFriend) return renderFriendProfile(viewingFriend);
+  if (!friendsLoaded) {
+    screen.innerHTML = `<div class="pad"><div class="serif" style="font-size:24px;font-weight:600">Friends</div>
+      <div class="loading"><span class="spin"></span></div></div>`;
+    return;
+  }
 
   // Leaderboard: me + friends ranked by rating.
   const board = [{ id: P.id, name: P.name, rating: P.rating, country: P.country, photo: P.photo, me: true },
@@ -1442,7 +1346,7 @@ function renderFriends() {
   screen.querySelectorAll("[data-dec]").forEach(el =>
     el.onclick = () => backend.declineFriendRequest({ id: el.dataset.dec }));
   screen.querySelectorAll("[data-chal]").forEach(el =>
-    el.onclick = () => challengeAsync(friends.find(x => x.id === el.dataset.chal)));
+    el.onclick = () => challengeFriend(friends.find(x => x.id === el.dataset.chal)));
   screen.querySelectorAll("[data-chat]").forEach(el =>
     el.onclick = () => openChat(friends.find(x => x.id === el.dataset.chat)));
   screen.querySelectorAll("[data-fprof]").forEach(el =>
@@ -1501,7 +1405,7 @@ function renderFriendProfile(v) {
     </div>
   </div>`;
   $("fp-back").onclick = () => { viewingFriend = null; renderFriends(); };
-  $("fp-chal").onclick = () => challengeAsync(friends.find(x => x.id === v.id) || v);
+  $("fp-chal").onclick = () => challengeFriend(friends.find(x => x.id === v.id) || v);
   $("fp-msg").onclick = () => openChat(friends.find(x => x.id === v.id) || v);
 }
 
@@ -1789,7 +1693,7 @@ function renderProfile() {
   const allBtn = $("p-friends-all");
   if (allBtn) allBtn.onclick = () => setTab("friends");
   screen.querySelectorAll("[data-pchal]").forEach(el =>
-    el.onclick = () => challengeAsync(friends.find(x => x.id === el.dataset.pchal)));
+    el.onclick = () => challengeFriend(friends.find(x => x.id === el.dataset.pchal)));
   screen.querySelectorAll("[data-pchat]").forEach(el =>
     el.onclick = () => openChat(friends.find(x => x.id === el.dataset.pchat)));
   $("p-out").onclick = doSignOut;
