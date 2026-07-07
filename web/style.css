@@ -39,6 +39,11 @@ input[type="date"]{-webkit-appearance:none;appearance:none;display:block;
 input[type="date"]::-webkit-date-and-time-value{text-align:left;}
 input::placeholder{color:var(--ink2);opacity:.7;}
 input:focus{outline:none;border-color:var(--iris);box-shadow:0 0 0 3px var(--iris-soft);}
+.pw-wrap{position:relative;width:100%;}
+.pw-wrap input{padding-right:46px;}
+.pw-eye{position:absolute;right:5px;top:50%;transform:translateY(-50%);background:none;border:none;
+  color:var(--ink2);cursor:pointer;padding:9px;display:grid;place-items:center;line-height:0;}
+.pw-eye:active{color:var(--iris);}
 .select{width:100%;background:var(--card);border:1px solid var(--hair);border-radius:14px;
   padding:14px;font-size:16px;font-family:inherit;color:var(--ink);cursor:pointer;
   -webkit-appearance:none;appearance:none;

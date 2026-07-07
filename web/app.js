@@ -728,6 +728,24 @@ function render() {
   else renderHome();
 }
 
+// A password input with a show/hide eye toggle.
+function pwField(id, ph, ac = "current-password") {
+  return `<div class="pw-wrap">
+    <input id="${id}" type="password" placeholder="${ph}" autocomplete="${ac}">
+    <button type="button" class="pw-eye" id="${id}-eye" aria-label="Show password">${ic("eye", "20px")}</button>
+  </div>`;
+}
+function wirePwEye(id) {
+  const inp = $(id), btn = $(id + "-eye");
+  if (!inp || !btn) return;
+  btn.onclick = () => {
+    const show = inp.type === "password";
+    inp.type = show ? "text" : "password";
+    btn.innerHTML = ic(show ? "eyeOff" : "eye", "20px");
+    btn.setAttribute("aria-label", show ? "Hide password" : "Show password");
+  };
+}
+
 // ---------------- auth ----------------
 // Default to sign-in (most opens are returning players); new players tap the
 // "Create an account" link. Standard for mainstream apps.
@@ -742,7 +760,7 @@ function renderAuth() {
     </div>
     ${signup ? `<input id="a-name" placeholder="Your name" autocomplete="name">` : ""}
     <input id="a-email" type="email" placeholder="Email" autocomplete="email">
-    <input id="a-pass" type="password" placeholder="Password (6+ characters)">
+    ${pwField("a-pass", "Password (6+ characters)", signup ? "new-password" : "current-password")}
     ${signup ? `
     <select id="a-country" class="select">
       <option value="" disabled selected>Your country</option>
@@ -765,6 +783,7 @@ function renderAuth() {
   </div>`;
   $("a-switch").onclick = () => { authMode = signup ? "signin" : "signup"; renderAuth(); };
   $("a-go").onclick = submitAuth;
+  wirePwEye("a-pass");
   const forgot = $("a-forgot");
   if (forgot) forgot.onclick = () => forgotPassword($("a-email").value.trim());
   wireInstallBanner();
@@ -1431,7 +1450,7 @@ function enableSecureChat(then) {
     <span style="font-size:12.5px;color:var(--ink2);line-height:1.5">Enter your account password to set
       up end-to-end encrypted chat on this device — use the same password on each device so your
       messages stay readable everywhere.</span>
-    <input id="ec-pass" type="password" placeholder="Your account password" autocomplete="current-password">
+    ${pwField("ec-pass", "Your account password")}
     <div class="err" id="ec-err"></div>
     <button class="primary" id="ec-go">Enable secure chat</button>
     <button class="ghost" id="ec-close">Cancel</button></div>`;
@@ -1455,6 +1474,7 @@ function enableSecureChat(then) {
   };
   $("ec-go").onclick = go;
   $("ec-pass").addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+  wirePwEye("ec-pass");
   $("ec-pass").focus();
 }
 
