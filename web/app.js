@@ -5,6 +5,7 @@ import { QUESTIONS } from "./questions.js";
 import { firebaseConfig } from "./firebase-config.js";
 import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js";
 import { COUNTRIES, flagOf, countryName } from "./countries.js";
+import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js";
 
 // ---------------- game math (mirrors the Swift services) ----------------
 const LIMIT = 18, N = 8, MIN_ANSWERS = 16;
@@ -145,7 +146,7 @@ const localBackend = {
 };
 
 function newProfile(id, { name, email, dob, country }) {
-  return { id, name, email: email.toLowerCase(), dob, country: country || "", photo: null,
+  return { id, name, email: email.toLowerCase(), dob, country: country || "", photo: null, avatarSeed: null,
            pubKey: null, encPriv: null, encPrivIv: null, encPrivSalt: null,
            createdAt: Date.now(),
            rating: 1000, played: 0, won: 0, streak: 0, best: 0,
@@ -415,7 +416,8 @@ async function makeFirebaseBackend(config) {
       return docs.filter(d => d.exists()).map(d => ({
         id: d.id, name: d.get("name") ?? "Player", rating: d.get("rating") ?? 1000,
         country: d.get("country") ?? "", lastActive: d.get("lastActive") ?? 0,
-        photo: d.get("photo") ?? null, email: d.get("email"), pubKey: d.get("pubKey") ?? null,
+        photo: d.get("photo") ?? null, avatarSeed: d.get("avatarSeed") ?? null,
+        email: d.get("email"), pubKey: d.get("pubKey") ?? null,
       })).sort((a, b) => a.name.localeCompare(b.name));
     },
     listenFriends(P, onChange) {
@@ -883,21 +885,21 @@ function renderHome() {
         <button class="smallbtn" data-inv="${inv.id}">Accept</button>
       </div></div>`).join("")}
     <button class="playrow" id="h-daily">
-      <span class="sig" style="background:linear-gradient(135deg,#f6b73c,#ea5f2d);color:#fff">☀︎</span>
+      <span class="sig" style="background:linear-gradient(135deg,#f6b73c,#ea5f2d);color:#fff">${ic("sun")}</span>
       <span><b>Daily Challenge</b><span>${P.dailyDone === todayKey()
         ? `Done — you scored ${P.dailyScore}. Tap for the leaderboard`
         : "Everyone plays the same 8 today — compare with friends"}</span></span></button>
     <button class="playrow" id="h-quick">
-      <span class="sig hot">⚔︎</span>
+      <span class="sig hot">${ic("zap")}</span>
       <span><b>Quick Match</b><span>${backend.isLive
         ? `A player near your rating · ${tier(P.rating)} band`
         : "Needs online play — see web/README.md"}</span></span></button>
     <button class="playrow" id="h-invite">
-      <span class="sig">✉︎</span>
-      <span><b>Challenge a Friend</b><span>Invite by email</span></span></button>
+      <span class="sig">${ic("send")}</span>
+      <span><b>Challenge a Friend</b><span>Play live when they're online</span></span></button>
     <div class="cardbox" style="padding:16px;display:flex;flex-direction:column;gap:12px">
       <div style="display:flex;align-items:center;gap:14px">
-        <span class="sig">▣</span>
+        <span class="sig">${ic("bot")}</span>
         <span><b style="font-size:15px">Duel a Bot</b><br>
         <span style="font-size:12.5px;color:var(--ink2)">Pick a mind — and a subject</span></span>
       </div>
@@ -907,7 +909,7 @@ function renderHome() {
           ? `background:${c};color:#fff` : `background:${c}18;color:${c}`}">${t}</button>`).join("")}</div>
       <div style="display:flex;flex-direction:column;gap:8px">${BOTS.map(b => `
         <button class="playrow" style="box-shadow:none;padding:12px 14px" data-bot="${b.id}">
-          <span class="sig" style="width:40px;height:40px">${b.glyph}</span>
+          <span class="sig" style="width:40px;height:40px">${ic(BOT_ICON[b.id])}</span>
           <span><b style="font-size:14px">${b.name}
             <i style="font-style:normal;font-weight:500;font-size:11px;color:var(--ink2)">· ${b.rating}</i></b>
           <span>${b.tag}</span></span></button>`).join("")}</div>
@@ -1285,19 +1287,19 @@ function renderFriends() {
   }
 
   // Leaderboard: me + friends ranked by rating.
-  const board = [{ id: P.id, name: P.name, rating: P.rating, country: P.country, photo: P.photo, me: true },
+  const board = [{ id: P.id, name: P.name, rating: P.rating, country: P.country, photo: P.photo, avatarSeed: P.avatarSeed, me: true },
     ...friends.map(f => ({ ...f, me: false }))].sort((a, b) => b.rating - a.rating);
   const medal = i => ["🥇", "🥈", "🥉"][i] || `<span class="lb-num">${i + 1}</span>`;
   const lbRows = board.map((p, i) => `
     <div class="lb-row ${p.me ? "me" : ""}">
       <span class="lb-rank">${medal(i)}</span>
-      <span class="fav sm">${p.photo ? `<img src="${p.photo}" alt="">` : esc((p.name || "?")[0].toUpperCase())}</span>
+      <span class="fav sm">${avatarHTML(p)}</span>
       <span class="lb-name"><b>${flagOf(p.country)} ${esc(p.name)}${p.me ? ` <span class="lb-you">you</span>` : ""}</b>
         <span>${tier(p.rating)}</span></span>
       <span class="lb-rating">${p.rating}</span></div>`).join("");
 
   const reqRows = friendReqs.map(r => `
-    <div class="frow"><span class="fav">${esc((r.fromName || "?")[0].toUpperCase())}</span>
+    <div class="frow"><span class="fav">${avatarHTML({ name: r.fromName })}</span>
       <span class="fmeta"><b>${flagOf(r.fromCountry)} ${esc(r.fromName)}</b><span>wants to be friends · ${r.fromRating ?? 1000}</span></span>
       <span class="fbtns">
         <button class="smallbtn" data-acc="${r.id}">Accept</button>
@@ -1307,8 +1309,7 @@ function renderFriends() {
     const unread = unreadBy.get(f.id);
     return `<div class="frow ${unread ? "unread" : ""}">
       <button class="fpeek" data-fprof="${f.id}">
-        <span class="fav">${f.photo
-          ? `<img src="${f.photo}" alt="">` : esc((f.name || "?")[0].toUpperCase())}${unread ? `<i class="undot"></i>` : ""}</span>
+        <span class="fav">${avatarHTML(f)}${unread ? `<i class="undot"></i>` : ""}</span>
         <span class="fmeta"><b>${flagOf(f.country)} ${esc(f.name)}</b>
           <span>${unread ? `<b style="color:var(--iris)">New message</b> · ` : ""}${tier(f.rating)} · ${f.rating}</span></span>
       </button>
@@ -1372,16 +1373,14 @@ function renderFriendProfile(v) {
   const bars = v.full ? Object.entries(DOMAINS).map(([k, [t, c, g]]) => {
     const n = (f.dA || {})[k] || 0;
     const pct = n ? Math.round(((f.dC || {})[k] || 0) / n * 100) : null;
-    return `<div class="srow"><span style="color:${c};width:20px">${g}</span><span class="sl">${t}</span>
+    return `<div class="srow"><span style="color:${c};width:18px">${ic(DOMAIN_ICON[k], "16px")}</span><span class="sl">${t}</span>
       <span class="bar"><i style="width:${pct ?? 0}%;background:${c}"></i></span>
       <span class="pv">${pct === null ? "—" : pct + "%"}</span></div>`;
   }).join("") : "";
   screen.innerHTML = `<div class="pad" style="gap:14px">
     <button class="ghost" id="fp-back" style="align-self:flex-start;padding:4px 0">‹ Friends</button>
     <div style="text-align:center">
-      <div class="avatar" style="cursor:default">${v.photo
-        ? `<img src="${v.photo}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
-        : esc((v.name || "?")[0].toUpperCase())}</div>
+      <div class="avatar" style="cursor:default">${avatarHTML(v)}</div>
       <div class="serif" style="font-size:24px;font-weight:600;margin-top:8px">${flagOf(v.country)} ${esc(v.name)}</div>
       <div style="margin-top:8px"><span class="tierpill">${tier(v.rating).toUpperCase()} <i>${v.rating}${
         v.full?.country ? " · " + countryName(v.full.country) : ""}</i></span></div>
@@ -1515,7 +1514,7 @@ function renderChatShell(f) {
   chatEl.innerHTML = `
     <div class="chat-head">
       <button class="iconbtn" id="c-back" title="Back">‹</button>
-      <span class="fav sm">${f.photo ? `<img src="${f.photo}" alt="">` : esc((f.name || "?")[0].toUpperCase())}</span>
+      <span class="fav sm">${avatarHTML(f)}</span>
       <span class="chat-who"><b>${flagOf(f.country)} ${esc(f.name)}</b><span>🔒 End-to-end encrypted</span></span>
     </div>
     <div class="msgs" id="c-msgs"><div class="chat-note">Setting up secure channel…</div></div>
@@ -1552,6 +1551,90 @@ function paintMessages(rows) {
   if (nearBottom) box.scrollTop = box.scrollHeight;
 }
 
+// ---------------- character avatars (original, procedurally drawn) ----------------
+// Little cartoon characters generated from a seed — no external art, nothing
+// copyrighted. Used when a player hasn't uploaded a photo; they can also pick
+// a different one.
+let avCounter = 0;
+function hashStr(s) {
+  let h = 2166136261; s = String(s ?? "x");
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function charAvatar(seed) {
+  if (seed === "wsb") return wsbAvatar();
+  const h = hashStr(seed), id = "av" + (avCounter++);
+  const hue = h % 360;
+  const bg1 = `hsl(${hue} 68% 60%)`, bg2 = `hsl(${(hue + 45) % 360} 70% 52%)`;
+  const face = `hsl(${hue} 45% 95%)`;
+  const dx = ((h >> 3) % 3 - 1) * 3, dy = ((h >> 5) % 2) * 2;
+  const ink = "#4a3b46";
+  const mouths = [
+    `<path d="M39 63q11 11 22 0" stroke="${ink}" stroke-width="4.5" fill="none" stroke-linecap="round"/>`,
+    `<path d="M40 61h20a10 10 0 0 1-20 0z" fill="${ink}"/>`,
+    `<circle cx="50" cy="64" r="4.5" fill="${ink}"/>`,
+    `<path d="M41 63q9 5 18 0" stroke="${ink}" stroke-width="4.5" fill="none" stroke-linecap="round"/>`,
+  ];
+  const accs = ["",
+    `<circle cx="50" cy="12" r="4" fill="${bg2}"/><rect x="48.5" y="14" width="3" height="9" rx="1.5" fill="${bg2}"/>`,
+    `<path d="M33 27q17-17 34 0" stroke="${bg2}" stroke-width="7" fill="none" stroke-linecap="round"/>`,
+    `<circle cx="25" cy="42" r="8" fill="${bg2}"/><circle cx="75" cy="42" r="8" fill="${bg2}"/>`,
+  ];
+  return `<svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block">
+    <defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="${bg1}"/><stop offset="1" stop-color="${bg2}"/></linearGradient></defs>
+    <rect width="100" height="100" fill="url(#${id})"/>
+    ${accs[h % accs.length]}
+    <circle cx="50" cy="53" r="30" fill="${face}"/>
+    <circle cx="${40 + dx}" cy="${49 + dy}" r="5.5" fill="${ink}"/>
+    <circle cx="${60 + dx}" cy="${49 + dy}" r="5.5" fill="${ink}"/>
+    <circle cx="35" cy="60" r="4.5" fill="#ff9db0" opacity=".5"/>
+    <circle cx="65" cy="60" r="4.5" fill="#ff9db0" opacity=".5"/>
+    ${mouths[h % mouths.length]}</svg>`;
+}
+// A WallStreetBets-style degen (original art): sunglasses, suit, tie, stonks
+// arrow. No copyrighted characters.
+function wsbAvatar() {
+  const id = "wsb" + (avCounter++);
+  return `<svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block">
+    <defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1e7d46"/><stop offset="1" stop-color="#0b3d24"/></linearGradient></defs>
+    <rect width="100" height="100" fill="url(#${id})"/>
+    <path d="M16 80l18-22 12 12 24-32" stroke="#4ee38a" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".4"/>
+    <path d="M62 38h10v10" stroke="#4ee38a" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".4"/>
+    <path d="M20 100c0-17 13-25 30-25s30 8 30 25z" fill="#20242e"/>
+    <path d="M42 78l8 11 8-11-8-6z" fill="#eef1f5"/>
+    <path d="M50 89l4.5 13h-9z" fill="#c0392b"/>
+    <circle cx="50" cy="45" r="23" fill="#f0c9a3"/>
+    <path d="M28 40q3-21 22-21t22 21q-7-9-22-9t-22 9z" fill="#3a2b23"/>
+    <rect x="30" y="41" width="16" height="10" rx="3" fill="#15181f"/>
+    <rect x="54" y="41" width="16" height="10" rx="3" fill="#15181f"/>
+    <path d="M46 45h8" stroke="#15181f" stroke-width="3"/>
+    <path d="M30 45l-6-2M70 45l6-2" stroke="#15181f" stroke-width="3" stroke-linecap="round"/>
+    <path d="M42 60q8 5 16 1" stroke="#7a5230" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`;
+}
+
+// Photo if uploaded, otherwise the player's chosen (or default) character.
+function avatarHTML(person) {
+  if (person && person.photo) return `<img src="${person.photo}" alt="">`;
+  return charAvatar((person && (person.avatarSeed || person.id || person.name)) || "x");
+}
+
+function characterPicker() {
+  const seeds = ["wsb", ...Array.from({ length: 23 }, (_, i) => "mindspar-char-" + i)];
+  overlay.classList.add("on");
+  overlay.innerHTML = `<div class="panel" style="width:330px">
+    <b>Pick a character</b>
+    <div class="charwrap">${seeds.map(s =>
+      `<button class="charopt${P.avatarSeed === s ? " on" : ""}" data-seed="${s}">${charAvatar(s)}</button>`).join("")}</div>
+    <button class="ghost" id="cp-close">Close</button></div>`;
+  $("cp-close").onclick = () => overlay.classList.remove("on");
+  overlay.querySelectorAll("[data-seed]").forEach(el => el.onclick = () => {
+    P.avatarSeed = el.dataset.seed; P.photo = null; persist();
+    overlay.classList.remove("on"); renderProfile();
+  });
+}
+
 // ---------------- profile ----------------
 const TIERS = [["Novice", 0, 900], ["Adept", 900, 1050], ["Scholar", 1050, 1200],
                ["Sage", 1200, 1350], ["Luminary", 1350, 1500]];
@@ -1581,7 +1664,7 @@ function renderProfile() {
   const bars = Object.entries(DOMAINS).map(([k, [t, c, g]]) => {
     const n = P.dA[k] || 0;
     const pct = n ? Math.round((P.dC[k] || 0) / n * 100) : null;
-    return `<div class="srow"><span style="color:${c};width:20px">${g}</span>
+    return `<div class="srow"><span style="color:${c};width:18px">${ic(DOMAIN_ICON[k], "16px")}</span>
       <span class="sl">${t}</span>
       <span class="bar"><i style="width:${pct ?? 0}%;background:${c}"></i></span>
       <span class="pv">${pct === null ? "—" : pct + "%"}</span>
@@ -1590,11 +1673,12 @@ function renderProfile() {
 
   screen.innerHTML = `<div class="pad" style="gap:14px">
     <div style="text-align:center;padding-top:6px">
-      <div class="avatar" id="p-avatar" style="cursor:pointer" title="Add a photo">${P.photo
-        ? `<img src="${P.photo}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
-        : esc(P.name[0].toUpperCase())}</div>
+      <div class="avatar" id="p-avatar" style="cursor:pointer" title="Change your picture">${avatarHTML(P)}</div>
       <input type="file" id="p-file" accept="image/*" style="display:none">
-      <button class="ghost" id="p-photo" style="margin-top:2px">${P.photo ? "Change photo" : "Add photo"}</button>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:3px">
+        <button class="ghost" id="p-char">Pick character</button>
+        <button class="ghost" id="p-photo">${P.photo ? "Change photo" : "Upload photo"}</button>
+      </div>
       <div class="serif" style="font-size:25px;font-weight:600">${P.country ? flagOf(P.country) + " " : ""}${esc(P.name)}</div>
       <div style="font-size:12px;color:var(--ink2);margin-top:3px">${esc(P.email || "")}${
         P.country ? " · " + countryName(P.country) : ""}</div>
@@ -1664,7 +1748,7 @@ function renderProfile() {
         <button class="ghost" id="p-friends-all" style="padding:0;font-weight:600;color:var(--iris)">Manage</button></div>
       ${friends.length ? friends.map(f => `
         <div class="frow" style="box-shadow:none;padding:0;border:none;background:none">
-          <span class="fav sm">${f.photo ? `<img src="${f.photo}" alt="">` : esc((f.name || "?")[0].toUpperCase())}${unreadBy.get(f.id) ? `<i class="undot"></i>` : ""}</span>
+          <span class="fav sm">${avatarHTML(f)}${unreadBy.get(f.id) ? `<i class="undot"></i>` : ""}</span>
           <span class="fmeta"><b>${flagOf(f.country)} ${esc(f.name)}</b><span>${unreadBy.get(f.id) ? `<b style="color:var(--iris)">New message</b> · ` : ""}${tier(f.rating)} · ${f.rating}</span></span>
           <span class="fbtns">
             <button class="smallbtn" data-pchal="${f.id}">Challenge</button>
@@ -1685,7 +1769,8 @@ function renderProfile() {
   </div>`;
 
   const fileInput = $("p-file");
-  $("p-avatar").onclick = () => fileInput.click();
+  $("p-avatar").onclick = characterPicker;
+  $("p-char").onclick = characterPicker;
   $("p-photo").onclick = () => fileInput.click();
   fileInput.onchange = () => resizePhoto(fileInput.files[0]);
   screen.querySelectorAll("[data-th]").forEach(el =>
@@ -1772,6 +1857,9 @@ function wireInstallBanner() {
     render();
   };
 }
+
+// Fill the bottom-tab icons (SVG, not glyphs).
+document.querySelectorAll(".tico").forEach(el => { el.innerHTML = ic(el.dataset.ic, "23px"); });
 
 initPWA();
 boot();
