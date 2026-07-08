@@ -130,21 +130,21 @@ const localBackend = {
   async completeSignup() { return JSON.parse(localStorage.getItem("mindspar-web")); },
   async signOut() { localStorage.removeItem("mindspar-web"); },
   async save(profile) { localStorage.setItem("mindspar-web", JSON.stringify(profile)); },
-  async findMatch() { throw new Error("Online play needs Firebase — see web/README.md. Bots are ready!"); },
+  async findMatch() { throw new Error("Online play isn't enabled on this copy — bots are always ready!"); },
   async cancelSearch() {},
-  async sendInvite() { throw new Error("Online play needs Firebase — see web/README.md."); },
+  async sendInvite() { throw new Error("Online play isn't available offline."); },
   async cancelInvite() {},
   listenInvites() {},
   async acceptInvite() { throw new Error("Online play needs Firebase."); },
   submitAnswer() {}, listenOpponent() {}, stopMatch() {},
-  async createAsyncDuel() { throw new Error("Async duels need Firebase — see web/README.md."); },
+  async createAsyncDuel() { throw new Error("Async duels need an online account."); },
   listenAsyncDuels() {}, async submitAsyncResult() {}, async markAsyncApplied() {},
   async deleteAsyncDuel() {},
   async reportQuestion() {},
   async deleteAccount() { localStorage.removeItem("mindspar-web"); },
   // Friends + chat require accounts, so they're online-only.
   async publishIdentity() {},
-  async sendFriendRequest() { throw new Error("Friends need Firebase — see web/README.md."); },
+  async sendFriendRequest() { throw new Error("Friends need an online account."); },
   listenFriendRequests() {}, async acceptFriendRequest() {}, async declineFriendRequest() {},
   async listFriends() { return []; }, listenFriends() { return () => {}; },
   sendMessage() {}, listenMessages() { return () => {}; },
@@ -638,12 +638,14 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c =>
 $("t-play").onclick = () => setTab("play");
 $("t-friends").onclick = () => setTab("friends");
 $("t-prof").onclick = () => setTab("prof");
+let animateNext = false;                     // one-shot slide-in on tab switches
 function setTab(t) {
   tab = t;
   viewingFriend = null;
   $("t-play").classList.toggle("on", t === "play");
   $("t-friends").classList.toggle("on", t === "friends");
   $("t-prof").classList.toggle("on", t === "prof");
+  animateNext = true;
   render();
 }
 
@@ -810,6 +812,10 @@ function render() {
   if (tab === "friends") renderFriends();
   else if (tab === "prof") renderProfile();
   else renderHome();
+  if (animateNext) {                          // only on explicit tab switches,
+    animateNext = false;                      // never on live-listener repaints
+    screen.firstElementChild?.classList.add("tabin");
+  }
 }
 
 // A password input with a show/hide eye toggle.
@@ -861,7 +867,7 @@ function renderAuth() {
     <button class="ghost" id="a-switch">${signup ? "Already have an account? Sign in" : "New here? Create an account"}</button>
     ${backend.isLive
       ? (signup ? `<div class="fine">We'll email you a link to confirm your address — you'll verify it before playing.</div>` : "")
-      : `<div class="fine">Running offline — your profile stays in this browser. Online play switches on once Firebase is configured (web/README.md).</div>`}
+      : `<div class="fine">Running offline — your profile stays in this browser. Bot duels and the daily challenge work fully.</div>`}
     <div class="fine">Mindspar is for adults 18 and over.</div>
     ${installBanner()}
   </div>`;
@@ -976,7 +982,6 @@ function renderVerify() {
 // ---------------- home ----------------
 function renderHome() {
   screen.innerHTML = `<div class="pad">
-    ${installBanner()}
     <div>
       <div class="serif" style="font-size:26px;font-weight:600">Ready, ${esc(P.name.split(" ")[0])}?</div>
       <div style="font-size:12.5px;color:var(--ink2);margin-top:4px">${N} questions · 8 domains · speed counts</div>
@@ -998,7 +1003,7 @@ function renderHome() {
       <span class="sig hot">${ic("bolt")}</span>
       <span><b>Quick Match</b><span>${backend.isLive
         ? `A player near your rating · ${tier(P.rating)} band`
-        : "Needs online play — see web/README.md"}</span></span></button>
+        : "Not available offline — duel a bot instead"}</span></span></button>
     <button class="playrow" id="h-invite">
       <span class="sig">${ic("send")}</span>
       <span><b>Challenge a Friend</b><span>Play live when they're online</span></span></button>
@@ -1019,8 +1024,10 @@ function renderHome() {
             <i style="font-style:normal;font-weight:500;font-size:11px;color:var(--ink2)">· ${b.rating}</i></b>
           <span>${b.tag}</span></span></button>`).join("")}</div>
     </div>
+    ${P.played >= 1 ? installBanner() : ""}
   </div>`;
   wireInstallBanner();
+  maybeIntro();
   $("h-daily").onclick = startDaily;
   $("h-quick").onclick = quickMatch;
   $("h-invite").onclick = inviteFlow;
@@ -1036,6 +1043,24 @@ function renderHome() {
     el.onclick = async () => { await backend.deleteAsyncDuel(el.dataset.asyncCancel); toast("Challenge withdrawn."); });
 }
 
+// One-time welcome: what a duel is, what the rating means, what unlocks.
+// Shown once per browser, the first time the home screen renders.
+function maybeIntro() {
+  if (!P || localStorage.getItem("mindspar-intro")) return;
+  localStorage.setItem("mindspar-intro", "1");
+  overlay.classList.add("on");
+  overlay.innerHTML = `<div class="panel" style="width:330px;align-items:stretch;text-align:left">
+    <div class="serif" style="font-size:24px;font-weight:600;text-align:center">Welcome to Mindspar</div>
+    <div class="intro-row"><span class="intro-ic">${ic("bolt", "18px")}</span>
+      <span><b>Duel in ${N} questions</b>8 domains, 18 seconds each — accuracy and speed both score.</span></div>
+    <div class="intro-row"><span class="intro-ic">${ic("play", "18px")}</span>
+      <span><b>Your rating is your level</b>Every duel — bot or human — moves your Elo rating through the tiers, Novice to Luminary.</span></div>
+    <div class="intro-row"><span class="intro-ic">${ic("bulb", "18px")}</span>
+      <span><b>Unlock your Mindspar Score</b>${MIN_ANSWERS} answers calibrate an IQ-style score, normalized for your age group.</span></div>
+    <button class="primary" id="in-go">Let's duel</button></div>`;
+  $("in-go").onclick = () => overlay.classList.remove("on");
+}
+
 // ---------------- matchmaking ----------------
 function searchingPanel(text, sub, onCancel) {
   overlay.classList.add("on");
@@ -1046,7 +1071,7 @@ function searchingPanel(text, sub, onCancel) {
 }
 
 async function quickMatch() {
-  if (!backend.isLive) return toast("Online play needs Firebase — duel a bot meanwhile!");
+  if (!backend.isLive) return toast("Online play isn't available offline — duel a bot!");
   searchingPanel("Finding an opponent…",
     `Searching the ${tier(P.rating)} band (${P.rating - 200}–${P.rating + 200})`,
     async () => { overlay.classList.remove("on"); await backend.cancelSearch(P); });
@@ -1073,7 +1098,7 @@ function inviteFlow() {
   $("inv-send").onclick = async () => {
     const email = $("inv-email").value.trim();
     if (!email) return;
-    if (!backend.isLive) return $("inv-err").textContent = "Online play needs Firebase — see web/README.md.";
+    if (!backend.isLive) return $("inv-err").textContent = "Online play isn't available offline.";
     $("inv-err").textContent = "Finding player…";
     try {
       const opp = await backend.findUser(email);
@@ -1117,7 +1142,7 @@ function startDaily() {
 function startBotDuel(botId) {
   solo = false;
   const bot = BOTS.find(b => b.id === botId);
-  OPP = { name: bot.name, rating: bot.rating, isBot: true };
+  OPP = { name: bot.name, rating: bot.rating, isBot: true, botId };
   lastMatch = { bot: botId };
   liveMatch = null;
   cards = buildDeck({ domain: subject, targetDifficulty: ladder(P.rating), seen: freshSeen(P) });
@@ -1134,7 +1159,7 @@ function startBotDuel(botId) {
 
 function startHumanDuel(human) {
   solo = false;
-  OPP = { name: human.oppName, rating: human.oppRating, country: human.oppCountry || "" };
+  OPP = { id: human.oppId, name: human.oppName, rating: human.oppRating, country: human.oppCountry || "" };
   lastMatch = { friendId: human.oppId };
   liveMatch = human;
   cards = human.deckIds.map(id => qById[id]).filter(Boolean);
@@ -1145,15 +1170,28 @@ function startHumanDuel(human) {
   });
 }
 
+// The pre-duel screen: a proper face-off (avatars, names, ratings) rather
+// than a line of text — solo runs (daily/async) keep their simple title.
+function faceOffHTML() {
+  if (solo) return `<div class="vs">${esc(soloTitle)}</div>`;
+  const oppAv = OPP.isBot
+    ? `<span class="favBig ic">${ic(BOT_ICON[OPP.botId] || "bot", "30px")}</span>`
+    : `<span class="favBig">${characterAvatar(OPP.id || OPP.name)}</span>`;
+  return `<div class="face">
+    <div class="fp"><span class="favBig">${avatarHTML(P)}</span><b>You</b><span>${P.rating}</span></div>
+    <div class="vsbig">vs</div>
+    <div class="fp">${oppAv}<b>${oppTag(OPP)} ${esc(OPP.name)}</b><span>${OPP.rating}</span></div>
+  </div>`;
+}
+
 function beginDuel(startFeed) {
   idx = 0; my = []; opp = []; botTimers = [];
   arena.classList.add("on");
   startFeed();
   let n = 3;
+  const face = faceOffHTML();
   const countdown = () => {
-    arena.innerHTML = `<div class="center">
-      <div class="vs">${solo ? esc(soloTitle) : `vs ${oppTag(OPP)} ${esc(OPP.name)} · ${OPP.rating}`}</div>
-      <div class="big">${n}</div></div>`;
+    arena.innerHTML = `<div class="center">${face}<div class="big">${n}</div></div>`;
     if (n-- > 1) { sfx.count(); setTimeout(countdown, 800); }
     else { sfx.go(); setTimeout(ask, 800); }
   };
@@ -1212,6 +1250,16 @@ function pick(i) {
     else el.classList.add("dim");
   });
   paintBoard();
+  if (ok) {                                   // floating "+points" over your panel
+    const side = $("board")?.querySelector(".side.me");
+    if (side) {
+      const pop = document.createElement("span");
+      pop.className = "scorepop";
+      pop.textContent = "+" + answer.pts;
+      side.appendChild(pop);
+      setTimeout(() => pop.remove(), 900);
+    }
+  }
   setTimeout(() => { idx++; idx < cards.length ? ask() : (solo ? soloEnd() : waitOrEnd()); }, 1100);
 }
 
@@ -1227,14 +1275,18 @@ function waitOrEnd() {
 }
 
 const total = list => list.reduce((s, x) => s + x.pts, 0);
+// Per-question pips: both players' hits and misses fill in live, so a duel
+// reads as a race you can watch, not just two counters.
+const pips = list => cards.map((_, i) =>
+  `<i class="pip${list[i] ? (list[i].ok ? " ok" : " no") : ""}"></i>`).join("");
 function paintBoard() {
   const board = $("board");
   if (!board) return;
   const meSide = `<div class="side me"><div class="nm">YOU</div><div class="sc">${total(my)}</div>
-      <div class="pg">${my.length}/${cards.length}</div></div>`;
+      <div class="pips">${pips(my)}</div></div>`;
   board.innerHTML = solo ? meSide : meSide + `
     <div class="side"><div class="nm">${oppTag(OPP)} ${esc(OPP.name.toUpperCase())}</div><div class="sc">${total(opp)}</div>
-      <div class="pg">${opp.length}/${cards.length}</div></div>`;
+      <div class="pips">${pips(opp)}</div></div>`;
 }
 
 function end() {
@@ -1474,7 +1526,7 @@ async function showDailyResults() {
 // Live head-to-head only: a challenge works when the friend is online (heartbeat
 // under ~70s old). If they're offline, we say so — no async fallback.
 async function challengeFriend(opp) {
-  if (!backend.isLive) return toast("Online play needs Firebase — duel a bot meanwhile!");
+  if (!backend.isLive) return toast("Online play isn't available offline — duel a bot!");
   if (!opp) return;
   if (opp.id === P.id) return toast("You can't challenge yourself.");
   const first = esc((opp.name || "They").split(" ")[0]);
@@ -1640,8 +1692,8 @@ function renderFriends() {
     screen.innerHTML = `<div class="pad">
       <div class="serif" style="font-size:24px;font-weight:600">Friends</div>
       <div class="cardbox" style="padding:20px;font-size:13.5px;color:var(--ink2);line-height:1.6">
-        Adding friends and encrypted chat need an online account. This browser is
-        running in offline mode — see web/README.md to switch it on.</div></div>`;
+        Adding friends and end-to-end encrypted chat need an online account. This copy is
+        running offline — bot duels and the daily challenge still work fully.</div></div>`;
     return;
   }
   if (viewingFriend) return renderFriendProfile(viewingFriend);
