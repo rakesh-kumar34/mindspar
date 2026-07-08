@@ -54,29 +54,49 @@ service cloud.firestore {
     }
 
     match /lobby/{uid} {
-      allow read, update: if verified();
+      allow read: if verified();
+      // Anyone verified may CLAIM a waiting player (that's the matchmaking
+      // handshake), but only by writing the claim fields — not by rewriting
+      // the waiter's name/rating.
+      allow update: if verified() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(
+          ['matchId', 'seed', 'targetDifficulty',
+           'opponentID', 'opponentName', 'opponentRating']);
       allow create, delete: if verified() && request.auth.uid == uid;
     }
 
     // Participants (keys of the players map) can read/write. Async duels also
     // carry a `pids` array so "matches I'm in" can be queried
     // (where pids array-contains me) — that clause makes the query provably safe.
+    function inMatch() {
+      return request.auth.uid in resource.data.players ||
+             request.auth.uid in resource.data.pids;
+    }
     match /matches/{id} {
-      allow read, update: if verified() && (
-        request.auth.uid in resource.data.players ||
-        request.auth.uid in resource.data.pids);
+      allow read: if verified() && inMatch();
+      // A participant may only ever write their OWN answer/result/applied
+      // fields — never the opponent's, and never the deck or the rating
+      // snapshots. This is what makes score forgery impossible server-side.
+      allow update: if verified() && inMatch() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(
+          ['answers_' + request.auth.uid,
+           'result_' + request.auth.uid,
+           'applied_' + request.auth.uid]);
       allow create: if verified() && request.auth.uid in request.resource.data.players;
       // Participants may clean up finished/withdrawn matches (async duels
       // delete themselves once both sides have applied the result).
-      allow delete: if verified() && (
-        request.auth.uid in resource.data.players ||
-        request.auth.uid in resource.data.pids);
+      allow delete: if verified() && inMatch();
     }
 
     // Question-quality flags from the answer-review screen. Write-only for
-    // clients (reviewed in the console); you can only file as yourself.
+    // clients (reviewed in the console); you can only file as yourself, and
+    // only the expected fields — this can't be used as free-form storage.
     match /reports/{id} {
-      allow create: if verified() && request.resource.data.by == request.auth.uid;
+      allow create: if verified()
+        && request.resource.data.by == request.auth.uid
+        && request.resource.data.keys().hasOnly(['qid', 'by', 'createdAt'])
+        && request.resource.data.qid is string
+        && request.resource.data.qid.size() < 12;
     }
 
     // Daily challenge scores: a per-day leaderboard. Any verified player can read

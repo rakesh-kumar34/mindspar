@@ -36,6 +36,10 @@ const eloDelta = (mine, theirs, actual) => Math.round(32 * (actual - 1 / (1 + 10
 const AGEREF = { "18–24": .63, "25–34": .64, "35–44": .62, "45–54": .60, "55+": .58 };
 const yearsOld = dob => (Date.now() - new Date(dob)) / 31557600000;
 const ageGroup = dob => { const y = yearsOld(dob); return y < 25 ? "18–24" : y < 35 ? "25–34" : y < 45 ? "35–44" : y < 55 ? "45–54" : "55+"; };
+// Online profiles store only the coarse age band ("25–34"), never the exact
+// date of birth — the DOB is used once at signup for the 18+ check. Older
+// docs that still carry a dob are migrated on sign-in (see the backend).
+const ageBand = p => p.age || (p.dob ? ageGroup(p.dob) : "25–34");
 const speedF = ms => Math.max(0, Math.min(1, 1 - ms / 1000 / LIMIT));
 const scoreFor = (ok, ms) => ok ? 100 + Math.round(50 * speedF(ms)) : 0;
 const qById = Object.fromEntries(QUESTIONS.map(q => [q[0], q]));
@@ -45,7 +49,7 @@ function sparScore(P) {
   if (answered < MIN_ANSWERS) return null;
   const acc = Object.values(P.dC).reduce((a, b) => a + b, 0) / answered;
   const speed = P.sfN ? P.sfSum / P.sfN : .5;
-  const z = ((acc * .7 + speed * .3) - AGEREF[ageGroup(P.dob)]) / .14;
+  const z = ((acc * .7 + speed * .3) - (AGEREF[ageBand(P)] ?? .62)) / .14;
   return Math.max(70, Math.min(145, Math.round(100 + 15 * z)));
 }
 
@@ -155,7 +159,8 @@ const localBackend = {
 };
 
 function newProfile(id, { name, email, dob, country }) {
-  return { id, name, email: email.toLowerCase(), dob, country: country || "", photo: null, avatarSeed: null,
+  return { id, name, email: email.toLowerCase(), dob, age: ageGroup(dob),
+           country: country || "", photo: null, avatarSeed: null,
            pubKey: null, encPriv: null, encPrivIv: null, encPrivSalt: null,
            createdAt: Date.now(),
            rating: 1000, played: 0, won: 0, streak: 0, best: 0,
@@ -169,7 +174,8 @@ async function makeFirebaseBackend(config) {
           EmailAuthProvider, reauthenticateWithCredential, deleteUser } =
     await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js");
   const { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, getDocs,
-          collection, query, where, orderBy, limit, onSnapshot, arrayUnion, serverTimestamp } =
+          collection, query, where, orderBy, limit, onSnapshot, arrayUnion,
+          serverTimestamp, deleteField } =
     await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js");
 
   const app = initializeApp(config);
@@ -188,6 +194,20 @@ async function makeFirebaseBackend(config) {
     const stop = onAuthStateChanged(auth, user => { stop(); resolve(user); });
   });
 
+  // Privacy migration: profiles used to store the exact date of birth; only
+  // the coarse age band belongs in a doc other players can fetch. Runs once
+  // per old account, on its own sign-in (only the owner may write the doc).
+  async function scrubDob(profile) {
+    if (!profile || !profile.dob) return profile;
+    const age = profile.age || ageGroup(profile.dob);
+    await updateDoc(doc(db, "users", profile.id), { age, dob: deleteField() })
+      .catch(() => {});
+    const { dob, ...rest } = profile;
+    return { ...rest, age };
+  }
+  // Never let a dob reach Firestore, whatever path a profile object took.
+  const publicDoc = profile => { const { dob, ...pub } = profile; return pub; };
+
   return {
     isLive: true,
     async restore() {
@@ -201,7 +221,7 @@ async function makeFirebaseBackend(config) {
       // otherwise reject).
       await user.getIdToken(true);
       const snap = await getDoc(doc(db, "users", user.uid));
-      return snap.exists() ? snap.data() : null;
+      return snap.exists() ? await scrubDob(snap.data()) : null;
     },
     // Create the account and send the verification email, but DON'T create the
     // profile doc yet — that happens once the email is confirmed. Real, owned
@@ -234,12 +254,12 @@ async function makeFirebaseBackend(config) {
       if (!u || !u.emailVerified) throw new Error("Email not verified yet.");
       await u.getIdToken(true);
       const existing = await getDoc(doc(db, "users", u.uid));
-      if (existing.exists()) return existing.data();
+      if (existing.exists()) return await scrubDob(existing.data());
       if (!pending || !pending.name || !pending.dob)
         throw new Error("Let's set up your profile again — please sign up.");
       const profile = newProfile(u.uid, pending);
       if (pending.identity) Object.assign(profile, pending.identity); // pubKey + wrapped priv
-      await setDoc(doc(db, "users", profile.id), profile);
+      await setDoc(doc(db, "users", profile.id), publicDoc(profile));
       return profile;
     },
     async signIn(email, password) {
@@ -253,14 +273,14 @@ async function makeFirebaseBackend(config) {
       await cred.user.getIdToken(true);
       const snap = await getDoc(doc(db, "users", cred.user.uid));
       if (!snap.exists()) throw new Error("Profile not found — please sign up again.");
-      return snap.data();
+      return await scrubDob(snap.data());
     },
     async signOut() { stopSession(); stopMatchSubs(); await signOut(auth); },
     async publishIdentity(uid, idn) {
       await updateDoc(doc(db, "users", uid), {
         pubKey: idn.pub, encPriv: idn.encPriv, encPrivIv: idn.encPrivIv, encPrivSalt: idn.encPrivSalt });
     },
-    async save(profile) { await setDoc(doc(db, "users", profile.id), profile); },
+    async save(profile) { await setDoc(doc(db, "users", profile.id), publicDoc(profile)); },
 
     // --- random matchmaking, rating-banded (mirrors FirebaseBackend.swift) ---
     async findMatch(P, onMatch) {
@@ -868,7 +888,7 @@ function renderAuth() {
     ${backend.isLive
       ? (signup ? `<div class="fine">We'll email you a link to confirm your address — you'll verify it before playing.</div>` : "")
       : `<div class="fine">Running offline — your profile stays in this browser. Bot duels and the daily challenge work fully.</div>`}
-    <div class="fine">Mindspar is for adults 18 and over.</div>
+    <div class="fine">Mindspar is for adults 18 and over · <a href="privacy.html" style="color:inherit">Privacy</a></div>
     ${installBanner()}
   </div>`;
   $("a-switch").onclick = () => { authMode = signup ? "signin" : "signup"; renderAuth(); };
@@ -2070,7 +2090,7 @@ function renderProfile() {
       <div style="font-size:12px;color:var(--ink2);margin-top:3px">${esc(P.email || "")}${
         P.country ? " · " + countryName(P.country) : ""}</div>
       <div style="margin-top:8px"><span class="tierpill">${tName.toUpperCase()}
-        <i>${P.rating} · ${ageGroup(P.dob)}</i></span></div>
+        <i>${P.rating} · ${ageBand(P)}</i></span></div>
       ${P.createdAt ? `<div style="font-size:11px;color:var(--ink2);margin-top:7px">Member since ${fmtDate(P.createdAt)}</div>` : ""}
     </div>
 
@@ -2078,7 +2098,7 @@ function renderProfile() {
       <div class="eyebrow">MINDSPAR SCORE</div>
       ${score !== null
         ? `<div class="score">${score}</div>
-           <div style="font-size:11.5px;color:var(--ink2)">Normalized within ${ageGroup(P.dob)} · mean 100</div>`
+           <div style="font-size:11.5px;color:var(--ink2)">Normalized within ${ageBand(P)} · mean 100</div>`
         : `<div class="serif" style="font-size:27px;font-weight:600;margin:10px 0 2px">Calibrating</div>
            <div class="cal"><i style="width:${Math.min(100, answered / MIN_ANSWERS * 100)}%"></i></div>
            <div style="font-size:11.5px;color:var(--ink2)">${MIN_ANSWERS} answers unlock your score —
@@ -2160,7 +2180,8 @@ function renderProfile() {
     </div>
 
     <div class="fine">The Mindspar Score reflects your relative performance in this game, normalized by
-      age group. It is an entertainment estimate — not a clinical or psychometric IQ assessment.</div>
+      age group. It is an entertainment estimate — not a clinical or psychometric IQ assessment
+      · <a href="privacy.html" style="color:inherit">Privacy</a></div>
     <button class="signout" id="p-out">Sign out</button>
     <button class="ghost" id="p-del" style="color:var(--bad);opacity:.75">Delete account…</button>
   </div>`;

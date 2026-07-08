@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy — Mindspar</title>
+  <meta name="referrer" content="no-referrer">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+  <style>
+    :root{color-scheme:light dark}
+    body{margin:0;background:#0e0f15;color:#eceef4;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+      line-height:1.65;font-size:15px;}
+    main{max-width:640px;margin:0 auto;padding:48px 22px 80px;}
+    h1{font-family:ui-serif,"New York",Georgia,serif;font-size:34px;margin:0 0 4px;}
+    .sub{color:#9298a8;font-size:13px;margin-bottom:34px;}
+    h2{font-size:17px;margin:30px 0 8px;}
+    p,li{color:#c6cad6;}
+    a{color:#9a9cfb;}
+    .card{background:#181b24;border:1px solid #272b39;border-radius:16px;padding:16px 18px;
+      font-size:13.5px;color:#9298a8;margin-top:36px;}
+  </style>
+</head>
+<body>
+<main>
+  <h1>Privacy</h1>
+  <div class="sub">Mindspar · last updated July 2026</div>
+
+  <p>Mindspar is a free game with no ads, no analytics, no tracking pixels, and
+  nothing sold to anyone. This page describes everything the game stores and why.</p>
+
+  <h2>What is stored when you create an account</h2>
+  <ul>
+    <li><b>Email address</b> — your sign-in identity; also how friends find you to
+      send challenges and friend requests. Verified once by a confirmation link.</li>
+    <li><b>Display name and country</b> — shown to the people you play.</li>
+    <li><b>Age band</b> (for example “25–34”) — used to normalize the Mindspar
+      Score within your age group. Your exact date of birth is used once, on
+      your device, to confirm you're 18 or over; it is not kept.</li>
+    <li><b>Avatar</b> — your chosen character or an uploaded picture.</li>
+    <li><b>Gameplay data</b> — rating, wins, per-domain accuracy, recent duels,
+      daily-challenge scores, and which questions you've seen recently.</li>
+    <li><b>Friends and challenges</b> — who you've added, and open invitations.</li>
+  </ul>
+
+  <h2>Chat is end-to-end encrypted</h2>
+  <p>Messages between friends are encrypted on your device (ECDH&nbsp;+&nbsp;AES-GCM
+  via your browser's Web&nbsp;Crypto). The server stores only ciphertext it cannot
+  read. Your chat key is protected by your account password; resetting the
+  password starts a fresh key, and old messages become unreadable.</p>
+
+  <h2>Where the data lives</h2>
+  <p>Accounts and game data are stored in Google Firebase (Authentication and
+  Cloud Firestore), hosted in the United States, under
+  <a href="https://firebase.google.com/support/privacy">Google's data-processing
+  terms</a>. The game itself is a static site; it sets no advertising cookies and
+  loads no third-party trackers or fonts.</p>
+
+  <h2>What other players can see</h2>
+  <p>People you play or befriend see your display name, country, avatar, rating,
+  stats, and age band — never your date of birth or password. Your email is only
+  discoverable by someone who already knows it (that's how invitations work).</p>
+
+  <h2>Deleting your data</h2>
+  <p>Profile → <b>Delete account</b> removes your profile, stats, rating and
+  friend links, and deletes your sign-in account. Encrypted chat ciphertext may
+  persist in your friends' conversations but is unreadable without your key.</p>
+
+  <h2>Questions</h2>
+  <p>Open an issue at
+  <a href="https://github.com/rakesh-kumar34/mindspar">github.com/rakesh-kumar34/mindspar</a>.</p>
+
+  <div class="card">Mindspar is for adults 18 and over. The Mindspar Score is an
+  entertainment estimate, not a clinical or psychometric assessment. This page is
+  a plain-language description of the app's behavior, not legal advice.</div>
+
+  <p style="margin-top:30px"><a href="./">← Back to Mindspar</a></p>
+</main>
+</body>
+</html>

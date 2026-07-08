@@ -3,6 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+  <!-- Defense-in-depth: even if an escape were ever missed, injected markup
+       can't load foreign scripts or exfiltrate to arbitrary hosts. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com; connect-src 'self' https://*.googleapis.com; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'">
+  <meta name="referrer" content="no-referrer">
   <title>Mindspar</title>
   <meta name="description" content="Head-to-head thinking duels. Reasoning, math, verbal, knowledge, science, patterns, history and geography.">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +40,6 @@
     <div class="overlay" id="overlay"></div>
     <div class="toast" id="toast" role="status"></div>
   </main>
-  <script type="module" src="app.js?v=21"></script>
+  <script type="module" src="app.js?v=22"></script>
 </body>
 </html>
