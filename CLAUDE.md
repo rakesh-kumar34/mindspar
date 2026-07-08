@@ -47,8 +47,9 @@ rename before any App Store submission.
   this in `freshSeen()` (`P.seen[id] = {t, n}`). Keep both sides in sync.
 - **Question bank is generated**: `tools/generate_questions.py` is the single
   source — it writes both `Mindspar/Resources/questions.json` and
-  `web/questions.js` (1,200 questions — 150 per each of the 8 domains). Never
-  hand-edit the outputs; change the generator and re-run.
+  `web/questions.js` (1,360 text questions — 170 per each of the 8 domains — plus
+  140 generated SVG visual puzzles, web-only, 1,500 total). Never hand-edit the
+  outputs; change the generator and re-run.
 
 ## Content rules
 

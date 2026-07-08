@@ -158,6 +158,15 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 .dchip{padding:4px 12px;border-radius:999px;font-weight:600;font-size:12px;}
 .prompt{flex:1;display:grid;place-items:center;text-align:center;font-size:21px;
   font-weight:600;line-height:1.45;padding:0 4px;}
+/* visual questions: figure above a smaller prompt line */
+.prompt.has-fig{display:flex;flex-direction:column;justify-content:center;gap:14px;
+  font-size:15.5px;}
+.fig{display:flex;justify-content:center;color:#fff;}
+.fig svg{width:min(84vw,340px);height:auto;display:block;}
+.opt.vopt{justify-content:center;padding:8px;}
+.opt.vopt svg{height:52px;width:auto;display:block;}
+.rv-fig svg{width:200px;}
+.rv-opt svg{height:36px;width:auto;display:inline-block;vertical-align:middle;}
 .opts{display:flex;flex-direction:column;gap:10px;}
 .opt{background:var(--arena-card);border:1px solid rgba(255,255,255,.05);color:#fff;
   border-radius:14px;padding:14px 16px;font-size:15px;font-weight:500;text-align:left;
@@ -197,6 +206,34 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 .dots .row{display:flex;align-items:center;gap:8px;}
 .dots .lbl{width:96px;color:rgba(255,255,255,.7);}
 .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px;}
+/* quiet text actions on the dark arena (review / share) */
+.arena-link{background:none;border:none;color:rgba(255,255,255,.6);font-size:13px;font-weight:600;
+  cursor:pointer;font-family:inherit;padding:6px;text-decoration:underline;
+  text-underline-offset:3px;text-decoration-color:rgba(255,255,255,.25);}
+.arena-link:active{opacity:.5}
+
+/* answer review */
+.rv-head{display:flex;align-items:center;justify-content:space-between;padding-top:6px;}
+.rv-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;
+  padding:12px 0 20px;scrollbar-width:none;}
+.rv-list::-webkit-scrollbar{display:none}
+.rv-card{background:var(--arena-card);border-radius:16px;padding:14px;display:flex;
+  flex-direction:column;gap:8px;}
+.rv-top{display:flex;align-items:center;gap:8px;}
+.rv-meta{flex:1;text-align:right;font-size:11.5px;color:rgba(255,255,255,.5);
+  font-variant-numeric:tabular-nums;}
+.rv-flag{background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;
+  padding:4px;line-height:0;}
+.rv-flag:disabled{color:rgba(255,255,255,.15)}
+.rv-q{font-size:14.5px;font-weight:600;line-height:1.45;color:#fff;}
+.rv-opt{font-size:13px;padding:8px 11px;border-radius:10px;
+  background:rgba(255,255,255,.05);color:rgba(255,255,255,.75);}
+.rv-opt.good{background:rgba(33,176,107,.25);color:#c9f3dd;font-weight:600;}
+.rv-opt.bad{background:rgba(219,69,71,.25);color:#ffd9d9;}
+
+/* rating sparkline */
+.spark{width:100%;height:48px;display:block;}
+
 /* On the always-dark arena: white button with FIXED dark text (not var(--ink),
    which flips to light in dark mode and made the text disappear). */
 .lightbtn{background:#fff;color:#14161f;border:none;border-radius:14px;padding:14px 0;

@@ -18,7 +18,7 @@ Two clients, one backend:
   ciphertext), **email verification** at signup, and a **30-minute idle
   sign-out**. These are web-only for now — see the iOS parity note below.
 
-All 1,200 questions, bot personalities, names, and visuals are original — the game
+All 1,500 questions, bot personalities, names, and visuals are original — the game
 shares a *genre* with titles like Brain Wars and QuizUp, but no content, assets,
 or trademarks from them.
 
@@ -77,7 +77,8 @@ same Firebase project (add a *web app* in project settings; see web/README.md).
   speed range). No LLM, no cost.
 - `Services/IQModel.swift` — Mindspar Score: accuracy/speed skill index → z-score
   against an age-group reference → mean-100/SD-15 scale. Unlocks after 16 answers.
-- `Resources/questions.json` — 1,200 original questions (150 per domain), difficulty-tagged.
+- `Resources/questions.json` — 1,360 original text questions (170 per domain),
+  difficulty-tagged. The web bank adds 140 generated SVG visual puzzles (1,500 total).
   **Generated**: edit `tools/generate_questions.py` and re-run it (writes both
   this file and `web/questions.js`). Don't hand-edit the outputs.
 - `web/` — the browser client (own README).

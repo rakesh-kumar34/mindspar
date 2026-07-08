@@ -7,6 +7,7 @@ import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js";
 import { COUNTRIES, flagOf, countryName } from "./countries.js";
 import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js";
 import { characterAvatar, PICKER_SEEDS } from "./avatars.js";
+import { sfx, isMuted, setMuted } from "./sound.js";
 
 // ---------------- game math (mirrors the Swift services) ----------------
 const LIMIT = 18, N = 10, MIN_ANSWERS = 16;
@@ -136,6 +137,11 @@ const localBackend = {
   listenInvites() {},
   async acceptInvite() { throw new Error("Online play needs Firebase."); },
   submitAnswer() {}, listenOpponent() {}, stopMatch() {},
+  async createAsyncDuel() { throw new Error("Async duels need Firebase — see web/README.md."); },
+  listenAsyncDuels() {}, async submitAsyncResult() {}, async markAsyncApplied() {},
+  async deleteAsyncDuel() {},
+  async reportQuestion() {},
+  async deleteAccount() { localStorage.removeItem("mindspar-web"); },
   // Friends + chat require accounts, so they're online-only.
   async publishIdentity() {},
   async sendFriendRequest() { throw new Error("Friends need Firebase — see web/README.md."); },
@@ -159,7 +165,8 @@ function newProfile(id, { name, email, dob, country }) {
 async function makeFirebaseBackend(config) {
   const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js");
   const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-          signOut, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail } =
+          signOut, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail,
+          EmailAuthProvider, reauthenticateWithCredential, deleteUser } =
     await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js");
   const { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, getDocs,
           collection, query, where, orderBy, limit, onSnapshot, arrayUnion, serverTimestamp } =
@@ -369,6 +376,55 @@ async function makeFirebaseBackend(config) {
                oppCountry: invite.fromCountry || "", deckIds };
     },
 
+    // --- async duels ---
+    // Challenger plays now, the friend plays whenever they're next on; Elo
+    // settles from the rating snapshots taken at creation. Stored in `matches`
+    // with kind:"async" + a pids array (covered by the rules' array-contains
+    // clause), so no new collection or index is needed.
+    async createAsyncDuel(P, opp, deckIds, target) {
+      const ref = await addDoc(collection(db, "matches"), {
+        kind: "async", pids: [P.id, opp.id], fromId: P.id, toId: opp.id,
+        deckIds, targetDifficulty: target,
+        players: { [P.id]: { name: P.name, rating: P.rating, country: P.country || "" },
+                   [opp.id]: { name: opp.name, rating: opp.rating ?? 1000, country: opp.country || "" } },
+        createdAt: serverTimestamp(),
+      });
+      return ref.id;
+    },
+    listenAsyncDuels(P, onChange) {
+      const stop = onSnapshot(query(collection(db, "matches"), where("pids", "array-contains", P.id)),
+        snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() }))
+          .filter(m => m.kind === "async")));
+      sessionSubs.push(stop);
+    },
+    async submitAsyncResult(id, P, result) {
+      await updateDoc(doc(db, "matches", id), { ["result_" + P.id]: result });
+    },
+    async markAsyncApplied(id, uid) {
+      await updateDoc(doc(db, "matches", id), { ["applied_" + uid]: true });
+    },
+    async deleteAsyncDuel(id) { await deleteDoc(doc(db, "matches", id)).catch(() => {}); },
+
+    // --- question quality reports (write-only; reviewed in the console) ---
+    async reportQuestion(qid, P) {
+      await addDoc(collection(db, "reports"),
+        { qid, by: P.id, createdAt: serverTimestamp() });
+    },
+
+    // --- account deletion: reauth with the password, then remove the profile
+    // doc, own friends links, lobby entry, and finally the auth user. ---
+    async deleteAccount(P, password) {
+      const user = auth.currentUser;
+      if (!user) throw new Error("Not signed in.");
+      await reauthenticateWithCredential(user, EmailAuthProvider.credential(P.email, password));
+      stopSession(); stopMatchSubs();
+      const mine = await getDocs(collection(db, "users", P.id, "friends")).catch(() => null);
+      if (mine) await Promise.all(mine.docs.map(d => deleteDoc(d.ref).catch(() => {})));
+      await deleteDoc(doc(db, "lobby", P.id)).catch(() => {});
+      await deleteDoc(doc(db, "users", P.id));
+      await deleteUser(user);
+    },
+
     // --- live answer sync ---
     submitAnswer(matchId, P, answer) {
       updateDoc(doc(db, "matches", matchId), { ["answers_" + P.id]: arrayUnion(answer) })
@@ -519,6 +575,7 @@ const screen = $("screen"), tabs = $("tabs"), arena = $("arena"), overlay = $("o
 let backend = localBackend, P = null, tab = "play", invites = [], subject = null;
 let toastTimer;
 let myKeys = null, friends = [], friendReqs = [], friendsLoaded = false;  // friends + E2E chat
+let asyncDuels = []; const asyncApplying = new Set();     // play-by-mail duels
 let chatFriend = null, chatUnsub = null, chatMetaUnsub = null, chatChannel = null, chatCache = new Map();
 let chatMeta = {};                                       // read receipts for the open chat
 const latestStops = new Map(), unreadBy = new Map(), lastSeenMsg = new Map();
@@ -620,6 +677,11 @@ async function boot() {
 // Bring up the live invite/friend feeds and per-friend unread listeners.
 async function startSession() {
   backend.listenInvites(P, list => { invites = list; if (tab === "play" && !arena.classList.contains("on")) render(); });
+  backend.listenAsyncDuels(P, list => {
+    asyncDuels = list.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+    settleAsyncDuels();
+    if (tab === "play" && !arena.classList.contains("on")) render();
+  });
   backend.listenFriendRequests(P, list => { friendReqs = list; updateFriendBadge(); if (tab === "friends") renderFriends(); });
   backend.listenFriends(P, list => {
     friends = list;
@@ -731,6 +793,7 @@ async function doSignOut() {
   unreadBy.clear(); lastSeenMsg.clear();
   await backend.signOut();
   P = null; invites = []; friends = []; friendReqs = []; friendsLoaded = false; myKeys = null;
+  asyncDuels = []; asyncApplying.clear(); lastRun = null; lastResults = null;
   setPending(null);
   chatCache.clear();
   clearTimeout(idleTimer);
@@ -925,9 +988,10 @@ function renderHome() {
           <span style="color:var(--ink2)">· ${inv.fromRating}</span></span>
         <button class="smallbtn" data-inv="${inv.id}">Accept</button>
       </div></div>`).join("")}
+    ${asyncCards()}
     <button class="playrow" id="h-daily">
       <span class="sig" style="background:linear-gradient(135deg,#f6b73c,#ea5f2d);color:#fff">${ic("sun")}</span>
-      <span><b>Daily Challenge</b><span>${P.dailyDone === todayKey()
+      <span><b>Daily Challenge${dailyStreakNow() > 1 ? ` <i style="font-style:normal;font-weight:600;font-size:11.5px;color:#e8843c">🔥 ${dailyStreakNow()}</i>` : ""}</b><span>${P.dailyDone === todayKey()
         ? `Done — you scored ${P.dailyScore}. Tap for the leaderboard`
         : `Everyone plays the same ${N} today — compare with friends`}</span></span></button>
     <button class="playrow" id="h-quick">
@@ -966,6 +1030,10 @@ function renderHome() {
     el.onclick = () => startBotDuel(el.dataset.bot));
   screen.querySelectorAll("[data-inv]").forEach(el =>
     el.onclick = () => acceptInvite(el.dataset.inv));
+  screen.querySelectorAll("[data-async-play]").forEach(el =>
+    el.onclick = () => { const d = asyncDuels.find(x => x.id === el.dataset.asyncPlay); if (d) startAsyncRun(d); });
+  screen.querySelectorAll("[data-async-cancel]").forEach(el =>
+    el.onclick = async () => { await backend.deleteAsyncDuel(el.dataset.asyncCancel); toast("Challenge withdrawn."); });
 }
 
 // ---------------- matchmaking ----------------
@@ -1029,6 +1097,7 @@ async function acceptInvite(id) {
 
 // ---------------- duel engine ----------------
 let cards, idx, my, opp, timer, t0, botTimers, OPP, liveMatch;
+let lastRun = null, lastResults = null;   // for the answer-review + share screens
 // Solo runs (daily challenge, async duel) have no live opponent: `solo` on,
 // `soloTitle` for the countdown, `soloEnd` called when the deck is finished.
 let solo = false, soloTitle = "", soloEnd = null;
@@ -1085,7 +1154,8 @@ function beginDuel(startFeed) {
     arena.innerHTML = `<div class="center">
       <div class="vs">${solo ? esc(soloTitle) : `vs ${oppTag(OPP)} ${esc(OPP.name)} · ${OPP.rating}`}</div>
       <div class="big">${n}</div></div>`;
-    if (n-- > 1) setTimeout(countdown, 800); else setTimeout(ask, 800);
+    if (n-- > 1) { sfx.count(); setTimeout(countdown, 800); }
+    else { sfx.go(); setTimeout(ask, 800); }
   };
   countdown();
 }
@@ -1095,24 +1165,34 @@ function receiveOpponent(answer) {
   paintBoard();
 }
 
+// Option strings that start with "<svg" are generator-produced figures
+// (trusted, committed content) and render as-is; everything else is escaped.
+const optHTML = o => String(o).startsWith("<svg") ? o : esc(o);
+
 function ask() {
   const q = cards[idx], [label, color] = DOMAINS[q[1]];
+  const visual = !!q[6];
   arena.innerHTML = `
     <div class="tbar"><i id="tfill"></i></div>
     <div class="meta"><span>Q${idx + 1}/${cards.length}</span>
       <span class="dchip" style="color:${color};background:${color}2e">${label}</span></div>
-    <div class="prompt">${esc(q[3])}</div>
-    <div class="opts">${q[4].map((o, i) => `<button class="opt" data-i="${i}">${esc(o)}</button>`).join("")}</div>
+    <div class="prompt${visual ? " has-fig" : ""}">${visual ? `<div class="fig">${q[6]}</div>` : ""}
+      <div>${esc(q[3])}</div></div>
+    <div class="opts">${q[4].map((o, i) =>
+      `<button class="opt${String(o).startsWith("<svg") ? " vopt" : ""}" data-i="${i}">${optHTML(o)}</button>`).join("")}</div>
     <div class="board" id="board"></div>`;
   arena.querySelectorAll(".opt").forEach(el => el.onclick = () => pick(+el.dataset.i));
   paintBoard();
   t0 = Date.now();
   const fill = $("tfill");
+  let lastTick = 99;
   clearInterval(timer);
   timer = setInterval(() => {
     const left = Math.max(0, LIMIT - (Date.now() - t0) / 1000);
     fill.style.width = (left / LIMIT * 100) + "%";
     fill.style.background = left / LIMIT > .3 ? "var(--iris)" : "var(--bad)";
+    const whole = Math.ceil(left);
+    if (whole <= 3 && whole >= 1 && whole !== lastTick) { lastTick = whole; sfx.tick(); }
     if (left <= 0) pick(null);
   }, 50);
 }
@@ -1120,7 +1200,8 @@ function ask() {
 function pick(i) {
   clearInterval(timer);
   const q = cards[idx], ms = Math.min(Date.now() - t0, LIMIT * 1000), ok = i === q[5];
-  const answer = { ok, ms, pts: scoreFor(ok, ms) };
+  const answer = { ok, ms, pts: scoreFor(ok, ms), pick: i };
+  if (ok) sfx.correct(); else if (i === null) sfx.timeout(); else sfx.wrong();
   my.push(answer);
   if (liveMatch) backend.submitAnswer(liveMatch.matchId, P,
     { q: idx, s: i ?? -1, c: ok, t: ms, p: answer.pts });
@@ -1184,10 +1265,18 @@ function end() {
                  mine, theirs, delta, ts: Date.now() }, ...(P.history || [])].slice(0, 20);
   persist();
 
-  const headline = actual === 1 ? "Victory" : actual === 0 ? "Defeat" : "Draw";
+  lastRun = { cards: cards.slice(), my: my.slice() };
+  lastResults = { headline: actual === 1 ? "Victory" : actual === 0 ? "Defeat" : "Draw",
+                  mine, theirs, delta, opp: OPP };
+  if (actual === 1) sfx.win(); else if (actual === 0) sfx.lose(); else sfx.draw();
+  showResults();
+}
+
+function showResults() {
+  const { headline, mine, theirs, delta, opp } = lastResults;
   const dots = Object.keys(DOMAINS).map(d => {
-    const row = cards.map((q, i) => q[1] === d
-      ? `<span class="dot" style="background:${my[i]?.ok ? "var(--good)" : "var(--bad)"}"></span>` : "").join("");
+    const row = lastRun.cards.map((q, i) => q[1] === d
+      ? `<span class="dot" style="background:${lastRun.my[i]?.ok ? "var(--good)" : "var(--bad)"}"></span>` : "").join("");
     return row ? `<div class="row"><span class="lbl" style="color:${DOMAINS[d][1]}">${DOMAINS[d][0]}</span>${row}</div>` : "";
   }).join("");
   arena.innerHTML = `<div class="center">
@@ -1195,7 +1284,7 @@ function end() {
     <div class="finals">
       <div class="fs ${mine >= theirs ? "win" : ""}"><div class="n">YOU</div><div class="v">${mine}</div></div>
       <div style="color:rgba(255,255,255,.4)">–</div>
-      <div class="fs ${theirs > mine ? "win" : ""}"><div class="n">${oppTag(OPP)} ${esc(OPP.name.toUpperCase())}</div><div class="v">${theirs}</div></div>
+      <div class="fs ${theirs > mine ? "win" : ""}"><div class="n">${oppTag(opp)} ${esc(opp.name.toUpperCase())}</div><div class="v">${theirs}</div></div>
     </div>
     <div class="delta" style="${delta >= 0
       ? "color:#7de0a8;background:rgba(33,176,107,.15)"
@@ -1206,9 +1295,92 @@ function end() {
       <button class="lightbtn" id="d-rematch" style="flex:1;background:rgba(255,255,255,.14);color:#fff">Rematch</button>
       <button class="lightbtn" id="d-done" style="flex:1">Continue</button>
     </div>
+    <div style="display:flex;gap:18px">
+      <button class="arena-link" id="d-review">Review answers</button>
+      <button class="arena-link" id="d-share">Share result</button>
+    </div>
   </div>`;
   $("d-done").onclick = () => { arena.classList.remove("on"); render(); };
   $("d-rematch").onclick = rematch;
+  $("d-review").onclick = () => renderReview(showResults);
+  $("d-share").onclick = () => shareCard({
+    headline, line: `You ${mine} — ${theirs} ${opp.name}`,
+    sub: `${delta >= 0 ? "+" : ""}${delta} rating · ${tier(P.rating)} ${P.rating}` });
+}
+
+// ---- answer review: every question from the last run, your pick vs. the
+// correct answer, with a per-question flag for anything that looks wrong. ----
+function renderReview(back) {
+  const rows = lastRun.cards.map((q, i) => {
+    const a = lastRun.my[i];
+    const [label, color] = DOMAINS[q[1]];
+    const opts = q[4].map((o, j) => {
+      const isCorrect = j === q[5];
+      const wasPick = a && a.pick === j;
+      return `<div class="rv-opt ${isCorrect ? "good" : ""} ${!isCorrect && wasPick ? "bad" : ""}">
+        ${optHTML(o)}${isCorrect ? " ✓" : !isCorrect && wasPick ? " ✕" : ""}</div>`;
+    }).join("");
+    const meta = a && a.pick === null ? "no answer"
+      : `${a?.ok ? `+${a.pts}` : "0"} pts · ${(a ? a.ms / 1000 : 0).toFixed(1)}s`;
+    return `<div class="rv-card">
+      <div class="rv-top"><span class="dchip" style="color:${color};background:${color}2e">${label}</span>
+        <span class="rv-meta">${meta}</span>
+        <button class="rv-flag" data-flag="${q[0]}" title="Report this question">${ic("flag", "15px")}</button></div>
+      <div class="rv-q">${esc(q[3])}</div>${q[6] ? `<div class="fig rv-fig">${q[6]}</div>` : ""}${opts}</div>`;
+  }).join("");
+  arena.innerHTML = `
+    <div class="rv-head"><button class="arena-link" id="rv-back">‹ Back</button>
+      <span class="vs">Answer review</span><span style="width:52px"></span></div>
+    <div class="rv-list">${rows}</div>`;
+  $("rv-back").onclick = back;
+  arena.querySelectorAll("[data-flag]").forEach(el => el.onclick = async () => {
+    el.disabled = true;
+    try { await backend.reportQuestion(el.dataset.flag, P); } catch { /* best effort */ }
+    toast("Thanks — question flagged for review.");
+  });
+}
+
+// ---- shareable result card: drawn on a canvas, shared as an image where the
+// browser supports it, downloaded otherwise. ----
+async function shareCard({ headline, line, sub }) {
+  try { await document.fonts.load('700 110px "Fraunces"'); } catch { /* fallback font */ }
+  const c = document.createElement("canvas");
+  c.width = 1080; c.height = 1080;
+  const x = c.getContext("2d");
+  const bg = x.createLinearGradient(0, 0, 0, 1080);
+  bg.addColorStop(0, "#12131c"); bg.addColorStop(1, "#0a0b10");
+  x.fillStyle = bg; x.fillRect(0, 0, 1080, 1080);
+  x.fillStyle = "#7d80f0"; x.fillRect(0, 0, 1080, 10);
+  x.textAlign = "center";
+  x.fillStyle = "rgba(255,255,255,.65)";
+  x.font = '600 52px "Fraunces", Georgia, serif';
+  x.fillText("Mindspar", 540, 200);
+  x.fillStyle = "#fff";
+  x.font = '700 130px "Fraunces", Georgia, serif';
+  x.fillText(headline, 540, 480);
+  x.font = "600 58px -apple-system, 'Segoe UI', sans-serif";
+  x.fillText(line, 540, 620);
+  x.fillStyle = "#9a9cfb";
+  x.font = "600 44px -apple-system, 'Segoe UI', sans-serif";
+  x.fillText(sub, 540, 710);
+  x.fillStyle = "rgba(255,255,255,.45)";
+  x.font = "500 34px -apple-system, 'Segoe UI', sans-serif";
+  x.fillText("Head-to-head thinking duels — play free in your browser", 540, 920);
+  x.fillStyle = "rgba(255,255,255,.6)";
+  x.fillText("rakesh-kumar34.github.io/mindspar", 540, 975);
+  const blob = await new Promise(res => c.toBlob(res, "image/png"));
+  if (!blob) return toast("Couldn't build the share image.");
+  const file = new File([blob], "mindspar-result.png", { type: "image/png" });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: "Mindspar" }); return; }
+    catch { /* user cancelled — fall through to download */ }
+  }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "mindspar-result.png";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+  toast("Result card saved as an image.");
 }
 
 function rematch() {
@@ -1235,9 +1407,25 @@ function endDaily() {
   });
   P.dailyDone = todayKey();
   P.dailyScore = mine;
+  // Streak: consecutive (UTC) days with the daily challenge played.
+  const y = new Date(); y.setUTCDate(y.getUTCDate() - 1);
+  const yesterday = y.toISOString().slice(0, 10);
+  P.dailyStreak = P.dailyLastDay === yesterday ? (P.dailyStreak || 0) + 1 : 1;
+  P.dailyBestStreak = Math.max(P.dailyBestStreak || 0, P.dailyStreak);
+  P.dailyLastDay = todayKey();
+  lastRun = { cards: cards.slice(), my: my.slice() };
   persist();
   if (backend.isLive) backend.submitDaily(todayKey(), P, mine, correct).catch(() => {});
   showDailyResults();
+}
+
+// Current streak counts only if the chain is unbroken (played today, or the
+// last play was yesterday and today is still open).
+function dailyStreakNow() {
+  if (!P || !P.dailyLastDay) return 0;
+  const y = new Date(); y.setUTCDate(y.getUTCDate() - 1);
+  const yesterday = y.toISOString().slice(0, 10);
+  return (P.dailyLastDay === todayKey() || P.dailyLastDay === yesterday) ? (P.dailyStreak || 0) : 0;
 }
 
 async function showDailyResults() {
@@ -1254,17 +1442,29 @@ async function showDailyResults() {
       <span style="width:26px;text-align:center">${["🥇", "🥈", "🥉"][i] || `<b style="color:rgba(255,255,255,.5)">${i + 1}</b>`}</span>
       <span style="flex:1;color:#fff;font-weight:${s.id === P.id ? 700 : 500};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${flagOf(s.country)} ${esc(s.name)}${s.id === P.id ? ` <span style="font-size:9px;background:var(--iris);padding:1px 5px;border-radius:5px;vertical-align:middle">YOU</span>` : ""}</span>
       <span style="font-weight:700;font-variant-numeric:tabular-nums;color:#9a9cfb">${s.score}</span></div>`).join("");
+  const streak = dailyStreakNow();
   arena.innerHTML = `<div class="center">
     <div class="headline">Daily Challenge</div>
-    <div style="font-size:12.5px;color:rgba(255,255,255,.5);margin-top:-8px">${todayKey()}</div>
+    <div style="font-size:12.5px;color:rgba(255,255,255,.5);margin-top:-8px">${todayKey()}${
+      streak > 1 ? ` · 🔥 ${streak}-day streak` : ""}</div>
     <div class="fs win" style="margin:6px 0"><div class="v">${P.dailyScore ?? "—"}</div>
       <div class="n">YOUR SCORE</div></div>
     <div style="width:280px;max-height:280px;overflow-y:auto">${scores.length ? rows
       : `<div style="color:rgba(255,255,255,.55);font-size:13px;text-align:center;line-height:1.5">
            You're first today — invite friends to play the same ${N} and compare.</div>`}</div>
     <button class="lightbtn" id="dl-done">Done</button>
+    <div style="display:flex;gap:18px">
+      ${lastRun ? `<button class="arena-link" id="dl-review">Review answers</button>` : ""}
+      <button class="arena-link" id="dl-share">Share score</button>
+    </div>
   </div>`;
   $("dl-done").onclick = () => { arena.classList.remove("on"); render(); };
+  const rv = $("dl-review");
+  if (rv) rv.onclick = () => renderReview(showDailyResults);
+  $("dl-share").onclick = () => shareCard({
+    headline: "Daily Challenge",
+    line: `${P.dailyScore ?? 0} points · ${todayKey()}`,
+    sub: streak > 1 ? `🔥 ${streak}-day streak` : `${tier(P.rating)} · ${P.rating}` });
 }
 
 // ---------------- async ("play-by-mail") duels ----------------
@@ -1285,8 +1485,33 @@ async function challengeFriend(opp) {
     const prof = await backend.getProfile(opp.id);
     online = !!(prof && prof.lastActive && Date.now() - prof.lastActive < 70000);
   } catch { /* treat as offline */ }
-  if (online) liveChallenge(opp);
-  else { overlay.classList.remove("on"); toast(`${first} isn't online right now — try when they're on Mindspar.`); }
+  if (online) return liveChallenge(opp);
+  // Offline friend → offer an async duel: same deck, played on two schedules.
+  overlay.innerHTML = `<div class="panel">
+    <b>${first} isn't online</b>
+    <span style="font-size:12.5px;color:var(--ink2);line-height:1.5">Send an async duel instead?
+      You play your ${N} questions now; ${first} plays the same deck whenever they're next on,
+      and ratings settle from today's standings.</span>
+    <div class="err" id="as-err"></div>
+    <button class="primary" id="as-send">Send & play now</button>
+    <button class="ghost" id="as-close">Cancel</button></div>`;
+  $("as-close").onclick = () => overlay.classList.remove("on");
+  $("as-send").onclick = async () => {
+    const err = $("as-err");
+    $("as-send").disabled = true;
+    err.textContent = "Setting up the duel…";
+    try {
+      const target = ladder(Math.round((P.rating + (opp.rating ?? 1000)) / 2));
+      const deckIds = buildDeck({ targetDifficulty: target, seen: freshSeen(P) }).map(q => q[0]);
+      const id = await backend.createAsyncDuel(P, opp, deckIds, target);
+      overlay.classList.remove("on");
+      startAsyncRun({ id, pids: [P.id, opp.id], fromId: P.id, deckIds,
+        players: { [P.id]: { name: P.name }, [opp.id]: { name: opp.name, country: opp.country || "" } } });
+    } catch (e) {
+      $("as-send").disabled = false;
+      err.textContent = (e.message || "Couldn't create the duel.").replace("Firebase: ", "");
+    }
+  };
 }
 
 // Send an invite the online friend accepts, then both play the same deck in
@@ -1309,6 +1534,104 @@ function liveChallenge(opp) {
     withdraw();
     toast(`${first} didn't accept in time.`);
   }, 25000);
+}
+
+// ---------------- async ("play-by-mail") duels ----------------
+const asyncOppId = d => (d.pids || []).find(x => x !== P.id);
+
+// Both results are in and I haven't banked my side yet → settle Elo from the
+// rating snapshots taken at creation (deterministic, so both clients agree),
+// record the match, and clean the doc up once both sides have applied it.
+function settleAsyncDuels() {
+  for (const d of asyncDuels) {
+    const oppId = asyncOppId(d);
+    const mine = d["result_" + P.id], theirs = d["result_" + oppId];
+    if (!mine || !theirs || d["applied_" + P.id] || asyncApplying.has(d.id)) continue;
+    asyncApplying.add(d.id);
+    const o = d.players?.[oppId] || {};
+    const me0 = d.players?.[P.id]?.rating ?? 1000, opp0 = o.rating ?? 1000;
+    const actual = mine.score > theirs.score ? 1 : mine.score < theirs.score ? 0 : .5;
+    const delta = eloDelta(me0, opp0, actual);
+    P.rating += delta;
+    P.played++;
+    if (actual === 1) { P.won++; P.streak++; P.best = Math.max(P.best, P.streak); }
+    else if (actual === 0) P.streak = 0;
+    P.history = [{ opp: o.name ?? "Player", country: o.country || "", bot: false,
+                   mine: mine.score, theirs: theirs.score, delta, ts: Date.now() },
+                 ...(P.history || [])].slice(0, 20);
+    persist();
+    backend.markAsyncApplied(d.id, P.id)
+      .then(() => { if (d["applied_" + oppId]) backend.deleteAsyncDuel(d.id); })
+      .catch(() => {});
+    const word = actual === 1 ? "Victory" : actual === 0 ? "Defeat" : "Draw";
+    toast(`Async duel vs ${o.name ?? "friend"} settled: ${word} ${mine.score}–${theirs.score} (${delta >= 0 ? "+" : ""}${delta})`);
+  }
+}
+
+// Play my run of a shared async deck (solo — the opponent plays on their own time).
+function startAsyncRun(duel) {
+  const o = duel.players?.[asyncOppId(duel)] || {};
+  solo = true; soloTitle = `Async vs ${o.name ?? "friend"}`;
+  soloEnd = () => finishAsyncRun(duel);
+  OPP = null; liveMatch = null; lastMatch = null;
+  cards = duel.deckIds.map(id => qById[id]).filter(Boolean);
+  if (!cards.length) return toast("This challenge couldn't load — ask them to re-send it.");
+  beginDuel(() => {});
+}
+
+function finishAsyncRun(duel) {
+  const mine = total(my);
+  let correct = 0;
+  cards.forEach((q, i) => {
+    P.dA[q[1]] = (P.dA[q[1]] || 0) + 1;
+    if (my[i]?.ok) { P.dC[q[1]] = (P.dC[q[1]] || 0) + 1; P.sfSum += speedF(my[i].ms); P.sfN++; correct++; }
+    const prev = P.seen[q[0]] ? seenEntry(P.seen[q[0]]) : { t: 0, n: 0 };
+    P.seen[q[0]] = { t: Date.now(), n: prev.n + 1 };
+  });
+  lastRun = { cards: cards.slice(), my: my.slice() };
+  persist();
+  backend.submitAsyncResult(duel.id, P, { score: mine, correct, at: Date.now() }).catch(() => {});
+  sfx.send();
+  showAsyncSent(duel, mine);
+}
+
+function showAsyncSent(duel, mine) {
+  const name = duel.players?.[asyncOppId(duel)]?.name ?? "your friend";
+  arena.innerHTML = `<div class="center">
+    <div class="headline">Score sent</div>
+    <div class="fs win"><div class="v">${mine}</div><div class="n">YOUR SCORE</div></div>
+    <div class="vs" style="max-width:270px;text-align:center;line-height:1.55">The duel — and your
+      rating — settles as soon as ${esc(name)} plays the same ${N} questions.</div>
+    <button class="lightbtn" id="as-done">Done</button>
+    <button class="arena-link" id="as-review">Review answers</button>
+  </div>`;
+  $("as-done").onclick = () => { arena.classList.remove("on"); render(); };
+  $("as-review").onclick = () => renderReview(() => showAsyncSent(duel, mine));
+}
+
+// Home cards: incoming challenges to play, and sent ones still waiting.
+function asyncCards() {
+  const rows = [];
+  for (const d of asyncDuels) {
+    const oppId = asyncOppId(d);
+    const o = d.players?.[oppId] || {};
+    const mine = d["result_" + P.id], theirs = d["result_" + oppId];
+    if (mine && theirs) continue;                       // settling — no card needed
+    if (!mine) {
+      rows.push(`<div class="invitecard"><div class="row">
+        <span style="font-size:14px"><b>${flagOf(o.country)} ${esc(o.name ?? "Player")}</b> sent an async duel
+          <span style="color:var(--ink2)">· play your ${N} anytime</span></span>
+        <button class="smallbtn" data-async-play="${d.id}">Play</button>
+      </div></div>`);
+    } else {
+      rows.push(`<div class="invitecard" style="background:var(--card);border:1px solid var(--hair)"><div class="row">
+        <span style="font-size:13px;color:var(--ink2)">You scored <b style="color:var(--ink)">${mine.score}</b> —
+          waiting for ${flagOf(o.country)} ${esc(o.name ?? "them")} to play</span>
+        ${d.fromId === P.id ? `<button class="chip" style="background:var(--iris-soft);color:var(--ink2)" data-async-cancel="${d.id}">Cancel</button>` : ""}
+      </div></div>`);
+    }
+  }
+  return rows.join("");
 }
 
 // ---------------- friends ----------------
@@ -1624,6 +1947,34 @@ const TIERS = [["Novice", 0, 900], ["Adept", 900, 1050], ["Scholar", 1050, 1200]
                ["Sage", 1200, 1350], ["Luminary", 1350, 1500]];
 const fmtDate = ms => ms ? new Date(ms).toLocaleDateString(undefined, { month: "short", year: "numeric" }) : "—";
 
+// Rating trajectory reconstructed backwards from the stored per-match deltas —
+// no schema change needed, the history already carries everything.
+function sparklineCard() {
+  if (!P.history || P.history.length < 2) return "";
+  let r = P.rating;
+  const pts = [r];
+  for (const h of P.history) { r -= h.delta; pts.push(r); }
+  pts.reverse();
+  const lo = Math.min(...pts), hi = Math.max(...pts), span = Math.max(hi - lo, 8);
+  const W = 300, H = 44, PAD = 4;
+  const xy = pts.map((v, i) => [
+    PAD + i * (W - 2 * PAD) / (pts.length - 1),
+    H - PAD - (v - lo) / span * (H - 2 * PAD),
+  ]);
+  const line = xy.map(p => p.map(n => n.toFixed(1)).join(",")).join(" ");
+  const [lx, ly] = xy[xy.length - 1];
+  const up = pts[pts.length - 1] >= pts[0];
+  return `<div class="cardbox" style="padding:16px;display:flex;flex-direction:column;gap:8px">
+    <div class="rank-top"><span class="eyebrow">RATING TREND</span>
+      <span style="font-size:12px;color:${up ? "var(--good)" : "var(--bad)"};font-weight:600">
+        ${up ? "▲" : "▼"} ${Math.abs(pts[pts.length - 1] - pts[0])} over ${pts.length - 1} duels</span></div>
+    <svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
+      <polyline points="${line}" fill="none" stroke="var(--iris)" stroke-width="2.2"
+        stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="3.2" fill="var(--iris)"/>
+    </svg></div>`;
+}
+
 function renderProfile() {
   const answered = Object.values(P.dA).reduce((a, b) => a + b, 0);
   const correct = Object.values(P.dC).reduce((a, b) => a + b, 0);
@@ -1690,6 +2041,8 @@ function renderProfile() {
       <div class="ladder-lbl"><span>${tName}</span><span>${next ? next[0] : ""}</span></div>
     </div>
 
+    ${sparklineCard()}
+
     <div class="cardbox rec">
       <div><div class="v">${P.played}</div><div class="l">Duels</div></div>
       <div><div class="v">${P.won}</div><div class="l">Wins</div></div>
@@ -1741,15 +2094,23 @@ function renderProfile() {
         : `<div style="font-size:12.5px;color:var(--ink2)">No friends yet — add someone from the Friends tab.</div>`}
     </div>` : ""}
 
-    <div class="cardbox" style="padding:16px;display:flex;align-items:center;justify-content:space-between">
-      <span style="font-size:14px;font-weight:500">Appearance</span>
-      <div class="seg"><button class="seg-b ${theme === "light" ? "on" : ""}" data-th="light">Light</button>
-        <button class="seg-b ${theme === "dark" ? "on" : ""}" data-th="dark">Dark</button></div>
+    <div class="cardbox" style="padding:16px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:14px;font-weight:500">Appearance</span>
+        <div class="seg"><button class="seg-b ${theme === "light" ? "on" : ""}" data-th="light">Light</button>
+          <button class="seg-b ${theme === "dark" ? "on" : ""}" data-th="dark">Dark</button></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:14px;font-weight:500">Sounds & haptics</span>
+        <div class="seg"><button class="seg-b ${!isMuted() ? "on" : ""}" data-snd="on">On</button>
+          <button class="seg-b ${isMuted() ? "on" : ""}" data-snd="off">Off</button></div>
+      </div>
     </div>
 
     <div class="fine">The Mindspar Score reflects your relative performance in this game, normalized by
       age group. It is an entertainment estimate — not a clinical or psychometric IQ assessment.</div>
     <button class="signout" id="p-out">Sign out</button>
+    <button class="ghost" id="p-del" style="color:var(--bad);opacity:.75">Delete account…</button>
   </div>`;
 
   const fileInput = $("p-file");
@@ -1759,6 +2120,8 @@ function renderProfile() {
   fileInput.onchange = () => resizePhoto(fileInput.files[0]);
   screen.querySelectorAll("[data-th]").forEach(el =>
     el.onclick = () => { applyTheme(el.dataset.th); renderProfile(); });
+  screen.querySelectorAll("[data-snd]").forEach(el =>
+    el.onclick = () => { setMuted(el.dataset.snd === "off"); if (el.dataset.snd === "on") sfx.correct(); renderProfile(); });
   const allBtn = $("p-friends-all");
   if (allBtn) allBtn.onclick = () => setTab("friends");
   screen.querySelectorAll("[data-pchal]").forEach(el =>
@@ -1766,6 +2129,42 @@ function renderProfile() {
   screen.querySelectorAll("[data-pchat]").forEach(el =>
     el.onclick = () => openChat(friends.find(x => x.id === el.dataset.pchat)));
   $("p-out").onclick = doSignOut;
+  $("p-del").onclick = deleteAccountFlow;
+}
+
+// Permanent account deletion. Online it needs the password (Firebase requires a
+// recent sign-in to delete the auth user); offline it just clears the device.
+function deleteAccountFlow() {
+  overlay.classList.add("on");
+  overlay.innerHTML = `<div class="panel">
+    <b>Delete your account?</b>
+    <span style="font-size:12.5px;color:var(--ink2);line-height:1.5">This permanently removes your
+      profile, rating, stats and friends links${backend.isLive ? " — enter your password to confirm" : ""}.
+      It cannot be undone.</span>
+    ${backend.isLive ? pwField("da-pass", "Your password") : ""}
+    <div class="err" id="da-err"></div>
+    <button class="primary" id="da-go" style="background:var(--bad);box-shadow:none">Delete forever</button>
+    <button class="ghost" id="da-close">Keep my account</button></div>`;
+  $("da-close").onclick = () => overlay.classList.remove("on");
+  if (backend.isLive) { wirePwEye("da-pass"); $("da-pass").focus(); }
+  $("da-go").onclick = async () => {
+    const err = $("da-err");
+    const pw = backend.isLive ? $("da-pass").value : null;
+    if (backend.isLive && !pw) return err.textContent = "Enter your password to confirm.";
+    $("da-go").disabled = true;
+    err.textContent = "Deleting…";
+    try {
+      const uid = P.id;
+      await backend.deleteAccount(P, pw);
+      localStorage.removeItem("mindspar-e2e-" + uid);
+      overlay.classList.remove("on");
+      await doSignOut();
+      toast("Your account has been deleted.");
+    } catch (e) {
+      $("da-go").disabled = false;
+      err.textContent = (e.message || "Couldn't delete — try again.").replace("Firebase: ", "");
+    }
+  };
 }
 
 // Downscale to a small square JPEG data URL so the profile doc stays light.

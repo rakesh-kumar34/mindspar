@@ -66,6 +66,17 @@ service cloud.firestore {
         request.auth.uid in resource.data.players ||
         request.auth.uid in resource.data.pids);
       allow create: if verified() && request.auth.uid in request.resource.data.players;
+      // Participants may clean up finished/withdrawn matches (async duels
+      // delete themselves once both sides have applied the result).
+      allow delete: if verified() && (
+        request.auth.uid in resource.data.players ||
+        request.auth.uid in resource.data.pids);
+    }
+
+    // Question-quality flags from the answer-review screen. Write-only for
+    // clients (reviewed in the console); you can only file as yourself.
+    match /reports/{id} {
+      allow create: if verified() && request.resource.data.by == request.auth.uid;
     }
 
     // Daily challenge scores: a per-day leaderboard. Any verified player can read

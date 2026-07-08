@@ -11,7 +11,7 @@ Verbal / knowledge / science / history / geography come from curated, verified
 fact pools with plausible same-category distractors. Deterministic (seeded) so
 the bank is stable across runs; bump SEED to reshuffle parameters.
 
-Eight domains x 150 questions = 1200 total. Each domain generates a little
+Eight domains x 170 text questions (1360) + 140 visual = 1500 total. Each domain generates a little
 more than 150 and is trimmed, so a skipped duplicate never breaks the count.
 
 Run from the repo root:  python3 tools/generate_questions.py
@@ -23,7 +23,7 @@ from pathlib import Path
 SEED = 7
 rng = random.Random(SEED)
 
-PER_DOMAIN = 150
+PER_DOMAIN = 170
 DOMAINS = ["reasoning", "math", "verbal", "knowledge",
            "science", "patterns", "history", "geography"]
 
@@ -235,7 +235,8 @@ def gen_patterns():
                            (4, 5, 3), (2, 7, 4), (10, 2, 2), (1, 5, 5),
                            (6, 2, 4), (3, 8, 2), (7, 1, 3), (2, 10, 5),
                            (12, 3, 3), (1, 9, 6), (8, 4, 4), (5, 6, 3),
-                           (9, 2, 5), (4, 11, 2)]:
+                           (9, 2, 5), (4, 11, 2), (7, 5, 4), (2, 6, 6),
+                           (11, 4, 2), (6, 7, 3)]:
         terms, t, d = [start], start, d0
         for _ in range(4):
             t += d
@@ -280,7 +281,8 @@ def gen_patterns():
     # Alternating add
     for start, a, b in [(1, 4, 2), (2, 5, 3), (10, 3, 6), (4, 7, 1),
                         (6, 2, 8), (3, 9, 4), (5, 6, 2), (1, 8, 3),
-                        (7, 4, 9), (2, 10, 5), (9, 3, 7), (4, 6, 11)]:
+                        (7, 4, 9), (2, 10, 5), (9, 3, 7), (4, 6, 11),
+                        (8, 5, 2), (3, 11, 6), (12, 2, 7)]:
         terms, t = [start], start
         for i in range(5):
             t += a if i % 2 == 0 else b
@@ -349,7 +351,7 @@ def gen_patterns():
 
     # Position products: t(n) = t(n-1) + k*n
     for start, k in [(1, 2), (2, 2), (1, 3), (3, 2), (5, 3), (4, 4), (2, 4),
-                     (6, 2), (7, 3), (3, 5)]:
+                     (6, 2), (7, 3), (3, 5), (8, 2), (4, 5), (9, 4)]:
         terms = [start]
         for i in range(2, 6):
             terms.append(terms[-1] + k * i)
@@ -370,13 +372,13 @@ def gen_patterns():
         add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, abs(da) + 1), 3)
 
     # Powers of 2 with offsets
-    for off in [0, 1, -1, 3, 5, 2, -2, 4]:
+    for off in [0, 1, -1, 3, 5, 2, -2, 4, 6, -3]:
         terms = [2 ** i + off for i in range(1, 6)]
         nxt = 64 + off
         add("patterns", seq_prompt(terms), nxt, [nxt - 16, nxt + 8, nxt + 2], 2)
 
     # Doubling minus position: t(n) = 2*t(n-1) - n
-    for start in [3, 4, 5, 6, 7]:
+    for start in [3, 4, 5, 6, 7, 8, 9, 10, 11]:
         terms, t = [start], start
         for i in range(2, 6):
             t = 2 * t - i
@@ -405,7 +407,13 @@ def gen_reasoning():
               ("printers on Fleet Row", "night workers"),
               ("beekeepers in the valley", "registered farmers"),
               ("surveyors on the project", "licensed engineers"),
-              ("brewers at the cooperative", "trained chemists")]
+              ("brewers at the cooperative", "trained chemists"),
+              ("coopers at the yard", "licensed joiners"),
+              ("scribes at the court", "trained linguists"),
+              ("wardens of the park", "certified naturalists"),
+              ("masons on the site", "bonded craftsmen"),
+              ("clerks of the exchange", "sworn auditors"),
+              ("glaziers in the workshop", "insured tradesmen")]
     for i, (a, b) in enumerate(groups):
         name = NAMES[i % len(NAMES)]
         add("reasoning",
@@ -496,7 +504,7 @@ def gen_reasoning():
             dirs[heading], wrong, 2)
 
     # Ordering puzzles: derive from a random true order
-    for i in range(24):
+    for i in range(30):
         people = rng.sample(NAMES, 4)
         order = people[:]          # order[0] tallest
         rng.shuffle(order)
@@ -559,14 +567,14 @@ def gen_reasoning():
         add("reasoning", f"What relation to you is {rel}?", ans, wrong, diff)
 
     # Handshake counting: n people, everyone shakes hands once
-    for n in [4, 5, 6, 7, 8, 9, 10, 12]:
+    for n in [4, 5, 6, 7, 8, 9, 10, 12, 11, 13, 14, 15]:
         total = n * (n - 1) // 2
         add("reasoning",
             f"{n} people meet and each pair shakes hands exactly once. How many handshakes happen?",
             total, [n * (n - 1), total + n, total - n + 1 if total - n + 1 not in (total, n * (n - 1)) else total + 1], 2)
 
     # Chained comparisons — who is the youngest?
-    for i in range(10):
+    for i in range(16):
         trio = rng.sample(NAMES, 3)
         # trio[0] oldest, trio[2] youngest
         add("reasoning",
@@ -672,6 +680,9 @@ def gen_verbal():
         ("OBSOLETE", "Out of date", ["Forgotten", "Broken", "Rare"], 2),
         ("PRAGMATIC", "Practical", ["Proud", "Talkative", "Idealistic"], 3),
         ("SERENE", "Calm", ["Severe", "Bright", "Solemn"], 2),
+        ("ADEPT", "Skilled", ["Clumsy", "Eager", "Adopted"], 2),
+        ("MUNDANE", "Ordinary", ["Worldly wise", "Boring speech", "Sacred"], 3),
+        ("VILIFY", "Speak ill of", ["Praise", "Verify", "Simplify"], 3),
     ]
     for word, ans, wrong, diff in synonyms:
         add("verbal", f"Which word is closest in meaning to {word}?", ans, wrong, diff)
@@ -706,6 +717,8 @@ def gen_verbal():
         ("HARMONY", "Discord", ["Melody", "Peace", "Rhythm"], 2),
         ("VAGUE", "Precise", ["Blurry", "Empty", "Distant"], 1),
         ("ARTIFICIAL", "Natural", ["Plastic", "Clever", "Decorative"], 1),
+        ("ZENITH", "Nadir", ["Peak", "Horizon", "Summit"], 3),
+        ("BENIGN", "Harmful", ["Gentle", "Blind", "Mild"], 2),
     ]
     for word, ans, wrong, diff in antonyms:
         add("verbal", f"Which word is the opposite of {word}?", ans, wrong, diff)
@@ -736,6 +749,8 @@ def gen_verbal():
         (["Basil", "Thyme", "Oregano"], "Cinnamon", 3),
         (["Sketch", "Doodle", "Drawing"], "Sculpture", 2),
         (["Glance", "Peek", "Glimpse"], "Stare", 2),
+        (["Mango", "Papaya", "Guava"], "Cabbage", 1),
+        (["Cello", "Harp", "Lute"], "Bugle", 3),
     ]
     for group, odd, diff in odd_ones:
         add("verbal", "Pick the odd one out:", odd, group, diff)
@@ -1007,6 +1022,36 @@ def gen_knowledge():
     for prompt, ans, wrong, diff in culture:
         add("knowledge", prompt, ans, wrong, diff)
 
+    extra = [
+        ("Who wrote “The Hobbit”?", "J. R. R. Tolkien", ["C. S. Lewis", "Roald Dahl", "Lewis Carroll"], 1),
+        ("Who wrote “Alice's Adventures in Wonderland”?", "Lewis Carroll", ["J. M. Barrie", "Roald Dahl", "Oscar Wilde"], 2),
+        ("Who wrote “The Trial” and “The Metamorphosis”?", "Franz Kafka", ["Hermann Hesse", "Thomas Mann", "Albert Camus"], 3),
+        ("Who wrote “Faust”?", "Goethe", ["Schiller", "Nietzsche", "Heine"], 3),
+        ("Who wrote the play “A Doll's House”?", "Henrik Ibsen", ["Anton Chekhov", "August Strindberg", "George Bernard Shaw"], 3),
+        ("Who wrote “The Grapes of Wrath”?", "John Steinbeck", ["Ernest Hemingway", "William Faulkner", "Harper Lee"], 2),
+        ("Who wrote “To Kill a Mockingbird”?", "Harper Lee", ["Truman Capote", "John Steinbeck", "Toni Morrison"], 2),
+        ("Sherlock Holmes's loyal companion is Doctor:", "Watson", ["Holmes", "Moriarty", "Lestrade"], 1),
+        ("“Für Elise” is a famous piano piece by:", "Beethoven", ["Mozart", "Chopin", "Schubert"], 2),
+        ("“The Blue Danube” waltz was composed by:", "Johann Strauss II", ["Franz Liszt", "Joseph Haydn", "Franz Schubert"], 3),
+        ("The national anthem of France is:", "La Marseillaise", ["La Traviata", "Frère Jacques", "La Vie en Rose"], 2),
+        ("The saxophone belongs to which instrument family?", "Woodwind", ["Brass", "Percussion", "Strings"], 3),
+        ("Which section of the orchestra is the largest?", "Strings", ["Brass", "Woodwind", "Percussion"], 2),
+        ("The Summer Olympic Games are normally held every:", "Four years", ["Two years", "Three years", "Five years"], 1),
+        ("The FIFA World Cup is held every:", "Four years", ["Two years", "Three years", "Five years"], 1),
+        ("How many players are on a cricket team?", "11", ["9", "10", "12"], 2),
+        ("How many players are on a rugby union team?", "15", ["11", "13", "14"], 3),
+        ("Polo is played while riding:", "Horses", ["Camels", "Bicycles", "Elephants"], 1),
+        ("Sumo wrestling originated in which country?", "Japan", ["China", "Mongolia", "Korea"], 1),
+        ("What does “www” stand for?", "World Wide Web", ["World Web Window", "Wide World Web", "Web World Wide"], 1),
+        ("Braille is read using which sense?", "Touch", ["Sight", "Hearing", "Smell"], 1),
+        ("In Morse code, SOS is:", "Three dots, three dashes, three dots", ["Three dashes, three dots, three dashes", "Six dots", "Six dashes"], 3),
+        ("A dozen is 12; a gross is:", "144", ["100", "120", "72"], 3),
+        ("Which meal is traditionally eaten in the morning?", "Breakfast", ["Supper", "Dinner", "Tea"], 1),
+        ("The word “alphabet” comes from alpha and:", "Beta", ["Omega", "Gamma", "Delta"], 2),
+    ]
+    for prompt, ans, wrong, diff in extra:
+        add("knowledge", prompt, ans, wrong, diff)
+
 
 # -------------------------------------------------------------- SCIENCE ----
 def gen_science():
@@ -1180,6 +1225,29 @@ def gen_science():
         ("Which blood cells help clot wounds?", "Platelets", ["Red blood cells", "White blood cells", "Plasma cells"], 2),
     ]
     for prompt, ans, wrong, diff in more:
+        add("science", prompt, ans, wrong, diff)
+
+    extra = [
+        ("The gas that makes fizzy drinks fizzy is:", "Carbon dioxide", ["Oxygen", "Nitrogen", "Helium"], 1),
+        ("Which common metal is strongly attracted to magnets?", "Iron", ["Copper", "Aluminium", "Gold"], 1),
+        ("The scientific study of weather is called:", "Meteorology", ["Astrology", "Geology", "Ecology"], 2),
+        ("The scientific study of living things is called:", "Biology", ["Botany only", "Chemistry", "Physiology only"], 1),
+        ("The scientific study of earthquakes is called:", "Seismology", ["Volcanology", "Meteorology", "Topology"], 3),
+        ("Plants absorb most of their water through their:", "Roots", ["Leaves", "Flowers", "Bark"], 1),
+        ("The femur is a bone found in the:", "Thigh", ["Forearm", "Chest", "Foot"], 2),
+        ("Bile, which helps digest fats, is produced by the:", "Liver", ["Stomach", "Pancreas", "Kidney"], 2),
+        ("Normal human body temperature is close to:", "37°C", ["35°C", "39°C", "40°C"], 1),
+        ("Which planet has the shortest year?", "Mercury", ["Venus", "Mars", "Jupiter"], 2),
+        ("The Sun is composed mostly of:", "Hydrogen", ["Oxygen", "Carbon", "Iron"], 2),
+        ("A comet's tail always points:", "Away from the Sun", ["Toward the Sun", "Along its orbit", "Toward Earth"], 3),
+        ("Water is unusual because it expands when it:", "Freezes", ["Boils", "Evaporates", "Condenses"], 2),
+        ("One hertz equals one cycle per:", "Second", ["Minute", "Hour", "Metre"], 2),
+        ("Which can travel through the vacuum of space?", "Light", ["Sound", "Both equally", "Neither"], 2),
+        ("Earth's only natural satellite is:", "The Moon", ["Phobos", "Titan", "Europa"], 1),
+        ("An animal that is active mainly at night is called:", "Nocturnal", ["Diurnal", "Dormant", "Migratory"], 1),
+        ("On the Kelvin scale, water boils at about:", "373 K", ["100 K", "273 K", "473 K"], 3),
+    ]
+    for prompt, ans, wrong, diff in extra:
         add("science", prompt, ans, wrong, diff)
 
 
@@ -1363,6 +1431,29 @@ def gen_history():
         ("The first Olympic Games of antiquity were held in:", "Greece", ["Rome", "Egypt", "Persia"], 1),
     ]
     for prompt, ans, wrong, diff in extra:
+        add("history", prompt, ans, wrong, diff)
+
+    extra2 = [
+        ("The Renaissance city ruled by the Medici family was:", "Florence", ["Venice", "Rome", "Milan"], 3),
+        ("Napoleon was born on which island?", "Corsica", ["Elba", "Sardinia", "Sicily"], 3),
+        ("The language of ancient Rome was:", "Latin", ["Greek", "Italian", "Etruscan"], 1),
+        ("The Inca Empire was centred in which mountains?", "The Andes", ["The Rockies", "The Alps", "The Himalayas"], 2),
+        ("The first US president to resign from office was:", "Richard Nixon", ["Andrew Johnson", "Herbert Hoover", "Gerald Ford"], 2),
+        ("The Hundred Years' War actually lasted about:", "116 years", ["100 years", "84 years", "150 years"], 3),
+        ("The Soviet Union was dissolved in:", "1991", ["1985", "1989", "1993"], 2),
+        ("The month of July is named after:", "Julius Caesar", ["Juno", "Jupiter", "Justinian"], 2),
+        ("The month of August is named after:", "Augustus", ["Aurelius", "Agrippa", "Antony"], 3),
+        ("The American war of 1775–1783 is known as the:", "Revolutionary War", ["Civil War", "War of 1812", "French and Indian War"], 2),
+        ("The D-Day fleet crossed which body of water?", "The English Channel", ["The North Sea", "The Bay of Biscay", "The Irish Sea"], 2),
+        ("The “Iron Curtain” described the Cold War divide across:", "Europe", ["Asia", "The Atlantic", "Berlin only"], 2),
+        ("Before Elizabeth II, Britain's longest-reigning monarch was:", "Queen Victoria", ["George III", "Henry VIII", "Elizabeth I"], 3),
+        ("The Wars of the Roses were fought in:", "England", ["France", "Scotland", "Spain"], 3),
+        ("The Colossus, an ancient wonder, stood at:", "Rhodes", ["Athens", "Alexandria", "Ephesus"], 3),
+        ("Alexander the Great was tutored by which philosopher?", "Aristotle", ["Plato", "Socrates", "Epicurus"], 3),
+        ("The plague-carrying fleas of the Black Death travelled mostly on:", "Rats", ["Cats", "Horses", "Pigeons"], 2),
+        ("Which civilization built Chichén Itzá?", "The Maya", ["The Aztec", "The Inca", "The Olmec"], 2),
+    ]
+    for prompt, ans, wrong, diff in extra2:
         add("history", prompt, ans, wrong, diff)
 
 
@@ -1549,6 +1640,171 @@ def gen_geography():
     for prompt, ans, wrong, diff in misc:
         add("geography", prompt, ans, wrong, diff)
 
+    extra = [
+        ("What is the capital of Scotland?", "Edinburgh", ["Glasgow", "Aberdeen", "Dundee"], 2),
+        ("What is the capital of Wales?", "Cardiff", ["Swansea", "Newport", "Bangor"], 3),
+        ("The longest river in Asia is the:", "Yangtze", ["Yellow River", "Mekong", "Ganges"], 3),
+        ("The largest country in South America is:", "Brazil", ["Argentina", "Peru", "Colombia"], 1),
+        ("The largest country in Africa by area is:", "Algeria", ["Sudan", "Nigeria", "Egypt"], 3),
+        ("K2, the world's second-highest peak, is in which range?", "The Karakoram", ["The Himalayas proper", "The Hindu Kush", "The Pamirs"], 3),
+        ("Most of the Amazon rainforest lies in:", "Brazil", ["Peru", "Colombia", "Venezuela"], 1),
+        ("The Outback is a vast interior region of:", "Australia", ["South Africa", "Argentina", "Canada"], 1),
+        ("Fjords are a famous feature of which country's coast?", "Norway", ["Portugal", "Ireland", "Croatia"], 1),
+        ("Which sea lies between Italy and the Balkan peninsula?", "The Adriatic", ["The Aegean", "The Tyrrhenian", "The Ionian only"], 3),
+        ("The semi-arid belt along the Sahara's southern edge is the:", "Sahel", ["Savanna coast", "Maghreb", "Veld"], 3),
+        ("Mount Etna is a volcano on which island?", "Sicily", ["Sardinia", "Crete", "Corsica"], 2),
+        ("The Grand Canyon was carved by which river?", "The Colorado", ["The Rio Grande", "The Mississippi", "The Snake"], 2),
+        ("Niagara Falls sits on the border of the USA and:", "Canada", ["Mexico", "Greenland", "Cuba"], 1),
+        ("The Matterhorn stands on Italy's border with:", "Switzerland", ["France", "Austria", "Slovenia"], 2),
+        ("The Nile flows generally toward the:", "North", ["South", "East", "West"], 3),
+    ]
+    for prompt, ans, wrong, diff in extra:
+        add("geography", prompt, ans, wrong, diff)
+
+
+# ------------------------------------------------------ VISUAL (web only) ----
+# Original SVG figure questions — rotations, counts, mirror images — correct by
+# construction. Emitted ONLY into web/questions.js (extra rows with a 7th
+# "figure" element; option strings may be SVG). The iOS bank stays text-only
+# until the app grows an SVG renderer, so questions.json is untouched.
+VISUAL = []
+
+def _svg(content, w=100, h=100):
+    return (f'<svg viewBox="0 0 {w} {h}" xmlns="http://www.w3.org/2000/svg" '
+            f'fill="none" stroke="currentColor" stroke-width="5" '
+            f'stroke-linejoin="round" stroke-linecap="round">{content}</svg>')
+
+# Chiral / rotation-asymmetric shapes centred on (50,50): every 90° rotation
+# (and the mirror) is visually distinct, so option sets can't collide.
+SHAPES = {
+    "arrow": '<path d="M50 18 L68 50 L56 50 L56 82 L44 82 L44 50 L32 50 Z"/>',
+    "ell":   '<path d="M36 20 H52 V58 H70 V80 H36 Z"/>',
+    "tee":   '<path d="M24 24 H76 V40 H58 V80 H42 V40 H24 Z"/>',
+    "eff":   '<path d="M36 18 H68 V32 H50 V44 H64 V57 H50 V82 H36 Z"/>',
+    "pee":   '<path d="M38 20 H58 A14 14 0 0 1 58 50 H50 V80 H38 Z"/>',
+    "flag":  '<path d="M40 16 V84 M40 22 L74 34 L40 46"/>',
+}
+
+def _shape_at(name, angle, cx, cy, scale=1.0):
+    return (f'<g transform="translate({cx} {cy}) scale({scale}) rotate({angle}) '
+            f'translate(-50 -50)">{SHAPES[name]}</g>')
+
+def _strip(cells):
+    """A 4-cell film strip: three figures and a '?' cell."""
+    parts = []
+    for i, cell in enumerate(cells):
+        x = i * 100
+        parts.append(f'<rect x="{x + 4}" y="4" width="92" height="92" rx="12" '
+                     f'stroke-width="2.5" opacity=".35"/>')
+        parts.append(cell if cell is not None else
+                     f'<text x="{x + 50}" y="64" text-anchor="middle" font-size="44" '
+                     f'fill="currentColor" stroke="none" opacity=".8">?</text>')
+    return _svg("".join(parts), w=400, h=100)
+
+def add_visual(prompt, figure, correct_svg, wrong_svgs, difficulty):
+    options = [correct_svg] + wrong_svgs
+    rng.shuffle(options)
+    VISUAL.append({
+        "id": f"z{len(VISUAL) + 1:03d}", "domain": "patterns", "prompt": prompt,
+        "options": options, "correctIndex": options.index(correct_svg),
+        "difficulty": difficulty, "figure": figure,
+    })
+
+def _dotgrid(n, ox=0):
+    """n dots on a 4-wide grid (fits up to 16 in a 100x100 cell)."""
+    return "".join(
+        f'<circle cx="{ox + 20 + (i % 4) * 20}" cy="{20 + (i // 4) * 20}" r="7" '
+        f'fill="currentColor" stroke="none"/>' for i in range(n))
+
+def _dots(n):
+    return _svg(_dotgrid(n))
+
+def gen_visual():
+    # 1) Rotation sequences: the shape turns the same amount each step.
+    for name in SHAPES:
+        for a0, step in [(0, 90), (0, 45), (45, 90), (90, 45),
+                         (0, 135), (180, 90), (45, 45), (90, 90)]:
+            cells = [_shape_at(name, a0 + step * i, 50 + 100 * i, 50, 0.72) for i in range(3)]
+            fig = _strip(cells + [None])
+            correct = a0 + step * 3
+            add_visual(
+                "The shape turns the same way each step. Which figure comes next?",
+                fig,
+                _svg(_shape_at(name, correct, 50, 50, 0.9)),
+                [_svg(_shape_at(name, w, 50, 50, 0.9)) for w in (correct + 90, correct + 180, correct - 90)],
+                2 if step == 90 else 3)
+
+    # 2) Counting: dots grow by a fixed amount each cell.
+    for n0, k in [(1, 1), (2, 1), (1, 2), (3, 1), (2, 2), (4, 1), (3, 2), (1, 3),
+                  (5, 1), (2, 3), (4, 2), (6, 1), (5, 2), (3, 3), (7, 1), (2, 4)]:
+        counts = [n0, n0 + k, n0 + 2 * k]
+        fig = _strip([_dotgrid(c, ox=i * 100) for i, c in enumerate(counts)] + [None])
+        nxt = n0 + 3 * k
+        wrongs = sorted({nxt + 1, max(1, nxt - 1), nxt + k + 1} - {nxt})
+        add_visual("The dots increase by the same amount each step. Which comes next?",
+                   fig, _dots(nxt), [_dots(w) for w in list(wrongs)[:3]], 1 if k == 1 else 2)
+
+    # 3) Mirror images: chiral shapes, so the mirror never equals a rotation.
+    for name in ["ell", "eff", "pee", "flag"]:
+        for a0 in [0, 90, 180, 270]:
+            base = _shape_at(name, a0, 50, 50, 0.9)
+            fig = _svg(base)
+            mirror = (f'<g transform="translate(100 0) scale(-1 1)">'
+                      f'{_shape_at(name, a0, 50, 50, 0.9)}</g>')
+            add_visual(
+                "Which option is the mirror image (flipped left–right) of this figure?",
+                fig, _svg(mirror),
+                [_svg(_shape_at(name, a0 + r, 50, 50, 0.9)) for r in (180, 90, 0)],
+                3)
+
+    # 4) Size progression: the same figure grows (or shrinks) by a fixed step.
+    for name in SHAPES:
+        for scales, angle in [((0.35, 0.55, 0.75), 0), ((0.95, 0.75, 0.55), 0),
+                              ((0.35, 0.55, 0.75), 90), ((0.95, 0.75, 0.55), 90),
+                              ((0.35, 0.55, 0.75), 180), ((0.95, 0.75, 0.55), 180)]:
+            growing = scales[1] > scales[0]
+            nxt = scales[2] + (0.2 if growing else -0.2)
+            cells = [_shape_at(name, angle, 50 + 100 * i, 50, sc) for i, sc in enumerate(scales)]
+            fig = _strip(cells + [None])
+            wrong_scales = [scales[0], scales[1], scales[2]]
+            add_visual(
+                f"The figure {'grows' if growing else 'shrinks'} by the same amount each step. Which comes next?",
+                fig,
+                _svg(_shape_at(name, angle, 50, 50, nxt)),
+                [_svg(_shape_at(name, angle, 50, 50, w)) for w in wrong_scales],
+                1 if growing else 2)
+
+    # 5) Fill alternation while rotating: solid, outline, solid → outline.
+    for name in ["arrow", "ell", "tee", "eff", "pee", "flag"]:
+        for a0, step in [(0, 90), (45, 90), (0, 45), (90, 90)]:
+            def cell(i, filled, cx):
+                fill = 'fill="currentColor"' if filled else 'fill="none"'
+                body = SHAPES[name].replace("/>", f' {fill}/>').replace("<path ", "<path ")
+                return (f'<g transform="translate({cx} 50) scale(0.72) rotate({a0 + step * i}) '
+                        f'translate(-50 -50)"><g {fill}>{SHAPES[name]}</g></g>')
+            cells = [cell(i, i % 2 == 0, 50 + 100 * i) for i in range(3)]
+            fig = _strip(cells + [None])
+            a3 = a0 + step * 3
+            def opt(filled, ang):
+                fill = 'fill="currentColor"' if filled else 'fill="none"'
+                return _svg(f'<g transform="translate(50 50) scale(0.9) rotate({ang}) '
+                            f'translate(-50 -50)"><g {fill}>{SHAPES[name]}</g></g>')
+            add_visual(
+                "The figure alternates solid and outline while turning. Which comes next?",
+                fig, opt(False, a3),
+                [opt(True, a3), opt(False, a3 + 90), opt(True, a3 - step)],
+                2 if step == 90 else 3)
+
+
+def validate_visual():
+    ids = set()
+    for q in VISUAL:
+        assert q["id"] not in ids, q["id"]
+        ids.add(q["id"])
+        assert len(q["options"]) == 4 and len(set(q["options"])) == 4, f"{q['id']}: options"
+        assert q["options"][q["correctIndex"]], q["id"]
+        assert "<svg" in q["figure"], q["id"]
+
 
 # ------------------------------------------------------------- validate ----
 def finalize():
@@ -1595,6 +1851,8 @@ def main():
     gen_geography()
     finalize()
     validate()
+    gen_visual()
+    validate_visual()
 
     root = Path(__file__).resolve().parent.parent
     ordered = [{"id": q["id"], "domain": q["domain"], "prompt": q["prompt"],
@@ -1607,15 +1865,21 @@ def main():
         json.dumps([q["id"], q["domain"], q["difficulty"], q["prompt"],
                     q["options"], q["correctIndex"]], ensure_ascii=False)
         for q in QS)
+    vrows = ",\n".join(
+        json.dumps([q["id"], q["domain"], q["difficulty"], q["prompt"],
+                    q["options"], q["correctIndex"], q["figure"]], ensure_ascii=False)
+        for q in VISUAL)
     (root / "web/questions.js").write_text(
         "// GENERATED by tools/generate_questions.py — do not edit by hand.\n"
-        "// Format: [id, domain, difficulty(1–3), prompt, options[4], correctIndex]\n"
-        f"export const QUESTIONS = [\n{rows}\n];\n", encoding="utf-8")
+        "// Format: [id, domain, difficulty(1–3), prompt, options[4], correctIndex,\n"
+        "//          figure?] — a 7th element is an SVG figure (visual questions,\n"
+        "//          web only; option strings may also be SVG).\n"
+        f"export const QUESTIONS = [\n{rows},\n{vrows}\n];\n", encoding="utf-8")
 
     by_domain = {}
     for q in QS:
         by_domain.setdefault(q["domain"], []).append(q["difficulty"])
-    print(f"total: {len(QS)}")
+    print(f"total: {len(QS)} text + {len(VISUAL)} visual (web only)")
     for d, diffs in sorted(by_domain.items()):
         print(f"  {d:10s} {len(diffs):4d}  (d1={diffs.count(1)} d2={diffs.count(2)} d3={diffs.count(3)})")
 
