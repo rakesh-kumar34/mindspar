@@ -8,35 +8,40 @@ enum Bots {
             id: "vega", rating: 1150, name: "Vega", tagline: "Numbers move first",
             symbol: "function",
             accuracy: [.math: 0.90, .patterns: 0.85, .reasoning: 0.70,
-                       .verbal: 0.55, .knowledge: 0.55, .science: 0.65],
+                       .verbal: 0.55, .knowledge: 0.55, .science: 0.65,
+                       .history: 0.50, .geography: 0.55],
             minTime: 2.5, maxTime: 7
         ),
         BotProfile(
             id: "lyra", rating: 1100, name: "Lyra", tagline: "Reads between every line",
             symbol: "text.book.closed.fill",
             accuracy: [.verbal: 0.90, .knowledge: 0.80, .reasoning: 0.70,
-                       .math: 0.55, .patterns: 0.55, .science: 0.65],
+                       .math: 0.55, .patterns: 0.55, .science: 0.65,
+                       .history: 0.75, .geography: 0.60],
             minTime: 3, maxTime: 8
         ),
         BotProfile(
             id: "atlas", rating: 1050, name: "Atlas", tagline: "Knows a little about everything",
             symbol: "globe.americas.fill",
             accuracy: [.knowledge: 0.88, .science: 0.80, .verbal: 0.70,
-                       .reasoning: 0.60, .math: 0.60, .patterns: 0.60],
+                       .reasoning: 0.60, .math: 0.60, .patterns: 0.60,
+                       .history: 0.82, .geography: 0.88],
             minTime: 2.5, maxTime: 7.5
         ),
         BotProfile(
             id: "kepler", rating: 1250, name: "Kepler", tagline: "Methodical, rarely wrong, never fast",
             symbol: "atom",
             accuracy: [.science: 0.92, .reasoning: 0.80, .math: 0.75,
-                       .patterns: 0.75, .verbal: 0.65, .knowledge: 0.70],
+                       .patterns: 0.75, .verbal: 0.65, .knowledge: 0.70,
+                       .history: 0.70, .geography: 0.72],
             minTime: 6, maxTime: 12
         ),
         BotProfile(
             id: "dash", rating: 900, name: "Dash", tagline: "Answers before you finish reading",
             symbol: "bolt.fill",
             accuracy: [.reasoning: 0.62, .math: 0.62, .verbal: 0.62,
-                       .knowledge: 0.62, .science: 0.62, .patterns: 0.62],
+                       .knowledge: 0.62, .science: 0.62, .patterns: 0.62,
+                       .history: 0.62, .geography: 0.62],
             minTime: 1.2, maxTime: 3.5
         ),
     ]

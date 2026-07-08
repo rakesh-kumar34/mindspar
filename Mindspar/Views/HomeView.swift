@@ -72,7 +72,7 @@ struct HomeView: View {
                 Text("Ready, \(model.profile?.username ?? "player")?")
                     .font(.system(.title2, design: .serif).weight(.semibold))
                     .foregroundStyle(Theme.ink)
-                Text("\(Scoring.questionsPerMatch) questions · six domains · speed counts")
+                Text("\(Scoring.questionsPerMatch) questions · 8 domains · speed counts")
                     .font(.footnote)
                     .foregroundStyle(Theme.inkSecondary)
             }

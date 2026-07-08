@@ -9,23 +9,24 @@ import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js";
 import { characterAvatar, PICKER_SEEDS } from "./avatars.js";
 
 // ---------------- game math (mirrors the Swift services) ----------------
-const LIMIT = 18, N = 8, MIN_ANSWERS = 16;
+const LIMIT = 18, N = 10, MIN_ANSWERS = 16;
 const DOMAINS = {
   reasoning: ["Reasoning", "#5457e8", "◫"], math: ["Math", "#0f85d4", "∑"],
   verbal: ["Verbal", "#cc5624", "❝"], knowledge: ["Knowledge", "#8c5cd4", "◍"],
   science: ["Science", "#219e78", "⚛"], patterns: ["Patterns", "#c48c1c", "≋"],
+  history: ["History", "#b04458", "◔"], geography: ["Geography", "#0e8f8a", "◈"],
 };
 const BOTS = [
   { id: "vega", name: "Vega", tag: "Numbers move first", glyph: "∑", rating: 1150,
-    acc: { math: .9, patterns: .85, reasoning: .7, verbal: .55, knowledge: .55, science: .65 }, min: 2.5, max: 7 },
+    acc: { math: .9, patterns: .85, reasoning: .7, verbal: .55, knowledge: .55, science: .65, history: .5, geography: .55 }, min: 2.5, max: 7 },
   { id: "lyra", name: "Lyra", tag: "Reads between every line", glyph: "❝", rating: 1100,
-    acc: { verbal: .9, knowledge: .8, reasoning: .7, math: .55, patterns: .55, science: .65 }, min: 3, max: 8 },
+    acc: { verbal: .9, knowledge: .8, reasoning: .7, math: .55, patterns: .55, science: .65, history: .75, geography: .6 }, min: 3, max: 8 },
   { id: "atlas", name: "Atlas", tag: "Knows a little about everything", glyph: "◍", rating: 1050,
-    acc: { knowledge: .88, science: .8, verbal: .7, reasoning: .6, math: .6, patterns: .6 }, min: 2.5, max: 7.5 },
+    acc: { knowledge: .88, science: .8, verbal: .7, reasoning: .6, math: .6, patterns: .6, history: .82, geography: .88 }, min: 2.5, max: 7.5 },
   { id: "kepler", name: "Kepler", tag: "Methodical, rarely wrong, never fast", glyph: "⚛", rating: 1250,
-    acc: { science: .92, reasoning: .8, math: .75, patterns: .75, verbal: .65, knowledge: .7 }, min: 6, max: 12 },
+    acc: { science: .92, reasoning: .8, math: .75, patterns: .75, verbal: .65, knowledge: .7, history: .7, geography: .72 }, min: 6, max: 12 },
   { id: "dash", name: "Dash", tag: "Answers before you finish reading", glyph: "⚡", rating: 900,
-    acc: { reasoning: .62, math: .62, verbal: .62, knowledge: .62, science: .62, patterns: .62 }, min: 1.2, max: 3.5 },
+    acc: { reasoning: .62, math: .62, verbal: .62, knowledge: .62, science: .62, patterns: .62, history: .62, geography: .62 }, min: 1.2, max: 3.5 },
 ];
 
 const tier = r => r < 900 ? "Novice" : r < 1050 ? "Adept" : r < 1200 ? "Scholar" : r < 1350 ? "Sage" : "Luminary";
@@ -131,6 +132,7 @@ const localBackend = {
   async findMatch() { throw new Error("Online play needs Firebase — see web/README.md. Bots are ready!"); },
   async cancelSearch() {},
   async sendInvite() { throw new Error("Online play needs Firebase — see web/README.md."); },
+  async cancelInvite() {},
   listenInvites() {},
   async acceptInvite() { throw new Error("Online play needs Firebase."); },
   submitAnswer() {}, listenOpponent() {}, stopMatch() {},
@@ -170,7 +172,7 @@ async function makeFirebaseBackend(config) {
   // sign-in; match listeners (lobby, opponent feed) are torn down when a duel
   // ends. Keeping them separate means finishing a match no longer kills the
   // invite/friend feeds.
-  let sessionSubs = [], matchSubs = [];
+  let sessionSubs = [], matchSubs = [], pendingInvite = null;
   const stopSession = () => { sessionSubs.forEach(u => u()); sessionSubs = []; };
   const stopMatchSubs = () => { matchSubs.forEach(u => u()); matchSubs = []; };
   const chatId = (a, b) => [a, b].sort().join("__");
@@ -311,8 +313,10 @@ async function makeFirebaseBackend(config) {
         fromId: P.id, fromName: P.name, fromRating: P.rating, fromCountry: P.country || "",
         toEmail: key, status: "pending", createdAt: serverTimestamp(),
       });
+      pendingInvite = inviteRef;
       const stop = onSnapshot(doc(db, "invites", inviteRef.id), async snap => {
         if (snap.get("status") !== "accepted") return;
+        pendingInvite = null;
         stop();
         const matchId = snap.get("matchId");
         const match = await getDoc(doc(db, "matches", matchId));
@@ -337,6 +341,17 @@ async function makeFirebaseBackend(config) {
           fromCountry: d.get("fromCountry") ?? "",
         }))));
       sessionSubs.push(stop);
+    },
+    // Abandon a sent challenge (cancel button / acceptance timeout): stop the
+    // listener AND remove the invite doc, so the friend isn't left with a
+    // ghost challenge that would start a match nobody is waiting in.
+    async cancelInvite() {
+      stopMatchSubs();
+      if (pendingInvite) {
+        const ref = pendingInvite;
+        pendingInvite = null;
+        await deleteDoc(ref).catch(() => {});
+      }
     },
     async acceptInvite(invite, P) {
       const target = ladder(Math.round((P.rating + invite.fromRating) / 2));
@@ -524,6 +539,12 @@ function applyTheme(t) {
   theme = t;
   document.documentElement.setAttribute("data-theme", t);
   localStorage.setItem("mindspar-theme", t);
+  // Keep the browser/OS chrome (status bar, PWA title bar) matched to the
+  // chosen theme, not just the OS preference.
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
+    m.removeAttribute("media");
+    m.setAttribute("content", t === "dark" ? "#0e0f15" : "#f6f6f9");
+  });
 }
 applyTheme(theme);
 
@@ -756,7 +777,7 @@ function renderAuth() {
     <div style="text-align:center;margin-bottom:6px">
       <div class="serif" style="font-size:42px;font-weight:600">Mindspar</div>
       <div style="font-size:13px;color:var(--ink2);margin-top:6px;line-height:1.5">
-        Head-to-head thinking duels.<br>Reasoning · Math · Verbal · Knowledge · Science · Patterns</div>
+        Head-to-head thinking duels.<br>${N} questions · 8 domains · speed counts</div>
     </div>
     ${signup ? `<input id="a-name" placeholder="Your name" autocomplete="name">` : ""}
     <input id="a-email" type="email" placeholder="Email" autocomplete="email">
@@ -895,7 +916,7 @@ function renderHome() {
     ${installBanner()}
     <div>
       <div class="serif" style="font-size:26px;font-weight:600">Ready, ${esc(P.name.split(" ")[0])}?</div>
-      <div style="font-size:12.5px;color:var(--ink2);margin-top:4px">${N} questions · six domains · speed counts</div>
+      <div style="font-size:12.5px;color:var(--ink2);margin-top:4px">${N} questions · 8 domains · speed counts</div>
     </div>
     <div><span class="tierpill">${tier(P.rating).toUpperCase()} <i>${P.rating}</i></span></div>
     ${invites.map(inv => `
@@ -908,7 +929,7 @@ function renderHome() {
       <span class="sig" style="background:linear-gradient(135deg,#f6b73c,#ea5f2d);color:#fff">${ic("sun")}</span>
       <span><b>Daily Challenge</b><span>${P.dailyDone === todayKey()
         ? `Done — you scored ${P.dailyScore}. Tap for the leaderboard`
-        : "Everyone plays the same 8 today — compare with friends"}</span></span></button>
+        : `Everyone plays the same ${N} today — compare with friends`}</span></span></button>
     <button class="playrow" id="h-quick">
       <span class="sig hot">${ic("bolt")}</span>
       <span><b>Quick Match</b><span>${backend.isLive
@@ -974,8 +995,8 @@ function inviteFlow() {
   overlay.classList.add("on");
   overlay.innerHTML = `<div class="panel">
     <b>Challenge a Friend</b>
-    <span style="font-size:12px;color:var(--ink2);line-height:1.5">You'll play the same 8 now; they play
-      whenever they're free and scores are compared.</span>
+    <span style="font-size:12px;color:var(--ink2);line-height:1.5">You'll both play the same ${N} questions
+      live — they just need to be online to accept.</span>
     <input id="inv-email" type="email" placeholder="Friend's email" autocomplete="off">
     <div class="err" id="inv-err"></div>
     <button class="primary" id="inv-send">Start challenge</button>
@@ -1240,7 +1261,7 @@ async function showDailyResults() {
       <div class="n">YOUR SCORE</div></div>
     <div style="width:280px;max-height:280px;overflow-y:auto">${scores.length ? rows
       : `<div style="color:rgba(255,255,255,.55);font-size:13px;text-align:center;line-height:1.5">
-           You're first today — invite friends to play the same 8 and compare.</div>`}</div>
+           You're first today — invite friends to play the same ${N} and compare.</div>`}</div>
     <button class="lightbtn" id="dl-done">Done</button>
   </div>`;
   $("dl-done").onclick = () => { arena.classList.remove("on"); render(); };
@@ -1273,8 +1294,9 @@ async function challengeFriend(opp) {
 function liveChallenge(opp) {
   const first = esc((opp.name || "They").split(" ")[0]);
   let timeout;
+  const withdraw = () => (backend.cancelInvite ? backend.cancelInvite() : backend.stopMatch());
   searchingPanel(`Challenging ${first}…`, "They're online — waiting for them to accept",
-    () => { clearTimeout(timeout); overlay.classList.remove("on"); backend.stopMatch(); });
+    () => { clearTimeout(timeout); overlay.classList.remove("on"); withdraw(); });
   backend.sendInvite(opp.email, P, human => {
     clearTimeout(timeout);
     if (!overlay.classList.contains("on")) return;
@@ -1284,7 +1306,7 @@ function liveChallenge(opp) {
   timeout = setTimeout(() => {
     if (!overlay.classList.contains("on")) return;
     overlay.classList.remove("on");
-    backend.stopMatch();
+    withdraw();
     toast(`${first} didn't accept in time.`);
   }, 25000);
 }
@@ -1574,15 +1596,19 @@ function paintMessages(rows) {
 
 // ---------------- character avatars (original WSB-style, see avatars.js) ------
 // Photo if uploaded, otherwise the player's chosen (or default) character.
+// The photo string comes from OTHER users' profile docs, so treat it as
+// hostile input: only data:image/ URLs, and escaped before hitting the DOM.
 function avatarHTML(person) {
-  if (person && person.photo) return `<img src="${person.photo}" alt="">`;
+  const photo = person && typeof person.photo === "string"
+    && /^data:image\//.test(person.photo) ? person.photo : null;
+  if (photo) return `<img src="${esc(photo)}" alt="">`;
   return characterAvatar((person && (person.avatarSeed || person.id || person.name)) || "x");
 }
 
 function characterPicker() {
   overlay.classList.add("on");
   overlay.innerHTML = `<div class="panel" style="width:330px">
-    <b>Pick your degen</b>
+    <b>Choose your character</b>
     <div class="charwrap">${PICKER_SEEDS.map(s =>
       `<button class="charopt${P.avatarSeed === s ? " on" : ""}" data-seed="${s}">${characterAvatar(s)}</button>`).join("")}</div>
     <button class="ghost" id="cp-close">Close</button></div>`;
@@ -1723,7 +1749,7 @@ function renderProfile() {
 
     <div class="fine">The Mindspar Score reflects your relative performance in this game, normalized by
       age group. It is an entertainment estimate — not a clinical or psychometric IQ assessment.</div>
-    <button class="ghost" id="p-out">Sign out</button>
+    <button class="signout" id="p-out">Sign out</button>
   </div>`;
 
   const fileInput = $("p-file");

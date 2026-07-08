@@ -93,7 +93,7 @@ struct AuthView: View {
             Text("Mindspar")
                 .font(.system(size: 40, weight: .semibold, design: .serif))
                 .foregroundStyle(Theme.ink)
-            Text("Head-to-head thinking duels.\nReasoning · Math · Verbal · Knowledge · Science · Patterns")
+            Text("Head-to-head thinking duels.\n10 questions · 8 domains · speed counts")
                 .font(.footnote)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Theme.inkSecondary)

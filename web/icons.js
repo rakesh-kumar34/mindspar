@@ -16,6 +16,9 @@ const P = {
   bulb: '<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.6c.6.5 1 1.2 1 2V17h6v-.4c0-.8.4-1.5 1-2A7 7 0 0 0 12 2z"/>',
   grid: '<rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/>',
   sigma: '<path d="M17 4H7l6 8-6 8h10"/>',
+  landmark: '<path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M4 7l8-5 8 5v1H4z"/>',
+  compass: '<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
+  grad: '<path d="M2 9.5 12 5l10 4.5L12 14z"/><path d="M6 11.8V16c0 1.4 2.7 2.8 6 2.8s6-1.4 6-2.8v-4.2"/><path d="M22 9.5V14"/>',
   eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
   eyeOff: '<path d="M10 4.2A9.6 9.6 0 0 1 12 4c6.4 0 10 8 10 8a15.5 15.5 0 0 1-2.2 3.2M6.6 6.6A15.5 15.5 0 0 0 2 12s3.6 7 10 7a9.6 9.6 0 0 0 3.9-.8"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/><path d="M2 2l20 20"/>',
 };
@@ -42,4 +45,5 @@ export function ic(name, size = "1em") {
 // Per-bot and per-domain icon names.
 export const BOT_ICON = { vega: "sigma", lyra: "book", atlas: "globe", kepler: "atom", dash: "fast" };
 export const DOMAIN_ICON = { reasoning: "bulb", math: "hash", verbal: "book",
-  knowledge: "globe", science: "atom", patterns: "grid" };
+  knowledge: "grad", science: "atom", patterns: "grid",
+  history: "landmark", geography: "compass" };

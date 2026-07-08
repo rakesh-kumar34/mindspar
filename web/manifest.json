@@ -1,7 +1,7 @@
 {
   "name": "Mindspar",
   "short_name": "Mindspar",
-  "description": "Head-to-head thinking duels. Reasoning, math, verbal, knowledge, science, patterns.",
+  "description": "Head-to-head thinking duels. Reasoning, math, verbal, knowledge, science, patterns, history and geography.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

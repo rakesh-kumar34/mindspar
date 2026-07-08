@@ -26,6 +26,8 @@ enum Theme {
         case .knowledge: return Color(red: 0.55, green: 0.36, blue: 0.83)
         case .science: return Color(red: 0.13, green: 0.62, blue: 0.47)
         case .patterns: return Color(red: 0.77, green: 0.55, blue: 0.11)
+        case .history: return Color(red: 0.69, green: 0.27, blue: 0.35)
+        case .geography: return Color(red: 0.05, green: 0.56, blue: 0.54)
         }
     }
 }

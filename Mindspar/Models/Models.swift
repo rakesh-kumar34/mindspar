@@ -3,7 +3,7 @@ import Foundation
 // MARK: - Domains
 
 enum Domain: String, Codable, CaseIterable, Identifiable {
-    case reasoning, math, verbal, knowledge, science, patterns
+    case reasoning, math, verbal, knowledge, science, patterns, history, geography
 
     var id: String { rawValue }
 
@@ -15,6 +15,8 @@ enum Domain: String, Codable, CaseIterable, Identifiable {
         case .knowledge: return "Knowledge"
         case .science: return "Science"
         case .patterns: return "Patterns"
+        case .history: return "History"
+        case .geography: return "Geography"
         }
     }
 
@@ -23,9 +25,11 @@ enum Domain: String, Codable, CaseIterable, Identifiable {
         case .reasoning: return "puzzlepiece.extension.fill"
         case .math: return "function"
         case .verbal: return "text.book.closed.fill"
-        case .knowledge: return "globe.americas.fill"
+        case .knowledge: return "graduationcap.fill"
         case .science: return "atom"
         case .patterns: return "circle.hexagongrid.fill"
+        case .history: return "building.columns.fill"
+        case .geography: return "globe.americas.fill"
         }
     }
 }
@@ -235,7 +239,7 @@ enum DifficultyLadder {
 // MARK: - Scoring
 
 enum Scoring {
-    static let questionsPerMatch = 8
+    static let questionsPerMatch = 10
     static let basePoints = 100
     static let maxSpeedBonus = 50
 
