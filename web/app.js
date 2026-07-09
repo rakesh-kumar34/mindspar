@@ -735,12 +735,15 @@ function watchUnread() {
       const mMs = latest?.createdAt?.toMillis ? latest.createdAt.toMillis() : 0;
       const unread = !!latest && latest.from === f.id && mMs > rMs;
       const was = unreadBy.get(f.id);
+      // The first callback per friend is the session's baseline: an old unread
+      // gets the badge, but NOT a "new message" toast on every sign-in — only
+      // messages that actually arrive during this session announce themselves.
+      const isBaseline = !lastSeenMsg.has(f.id);
       unreadBy.set(f.id, unread);
-      // A newly-arrived unread message from someone we're not chatting with → alert.
-      if (unread && mMs > (lastSeenMsg.get(f.id) || 0) && chatFriend?.id !== f.id) {
+      if (unread && !isBaseline && mMs > (lastSeenMsg.get(f.id) || 0) && chatFriend?.id !== f.id) {
         notifyMessage(f);
       }
-      if (mMs) lastSeenMsg.set(f.id, mMs);
+      lastSeenMsg.set(f.id, mMs);
       updateFriendBadge();
       if (tab === "friends" && !chatFriend && (unread !== was)) renderFriends();
     });
@@ -1061,6 +1064,8 @@ function renderHome() {
     el.onclick = () => { const d = asyncDuels.find(x => x.id === el.dataset.asyncPlay); if (d) startAsyncRun(d); });
   screen.querySelectorAll("[data-async-cancel]").forEach(el =>
     el.onclick = async () => { await backend.deleteAsyncDuel(el.dataset.asyncCancel); toast("Challenge withdrawn."); });
+  screen.querySelectorAll("[data-news-x]").forEach(el =>
+    el.onclick = () => { (P.asyncNews || []).splice(+el.dataset.newsX, 1); persist(); renderHome(); });
 }
 
 // One-time welcome: what a duel is, what the rating means, what unlocks.
@@ -1092,16 +1097,35 @@ function searchingPanel(text, sub, onCancel) {
 
 async function quickMatch() {
   if (!backend.isLive) return toast("Online play isn't available offline — duel a bot!");
+  let matched = false;
+  // Nobody claimed us within 30s → say so honestly instead of spinning forever.
+  const giveUp = setTimeout(async () => {
+    if (matched || !overlay.classList.contains("on")) return;
+    await backend.cancelSearch(P);
+    const nearest = BOTS.slice().sort((a, b) =>
+      Math.abs(a.rating - P.rating) - Math.abs(b.rating - P.rating))[0];
+    overlay.innerHTML = `<div class="panel">
+      <b>No opponents online right now</b>
+      <span style="font-size:12.5px;color:var(--ink2);line-height:1.5">It's a quiet moment in the
+        ${tier(P.rating)} band. ${esc(nearest.name)} (${nearest.rating}) is closest to your rating
+        and always ready — or challenge a friend to an async duel they can play later.</span>
+      <button class="primary" id="nm-bot">Duel ${esc(nearest.name)}</button>
+      <button class="ghost" id="nm-close">Close</button></div>`;
+    $("nm-close").onclick = () => overlay.classList.remove("on");
+    $("nm-bot").onclick = () => { overlay.classList.remove("on"); startBotDuel(nearest.id); };
+  }, 30000);
   searchingPanel("Finding an opponent…",
     `Searching the ${tier(P.rating)} band (${P.rating - 200}–${P.rating + 200})`,
-    async () => { overlay.classList.remove("on"); await backend.cancelSearch(P); });
+    async () => { clearTimeout(giveUp); overlay.classList.remove("on"); await backend.cancelSearch(P); });
   try {
     await backend.findMatch(P, human => {
+      matched = true;
+      clearTimeout(giveUp);
       if (!overlay.classList.contains("on")) return;
       overlay.classList.remove("on");
       startHumanDuel(human);
     });
-  } catch (e) { overlay.classList.remove("on"); toast(e.message); }
+  } catch (e) { clearTimeout(giveUp); overlay.classList.remove("on"); toast(e.message); }
 }
 
 function inviteFlow() {
@@ -1311,7 +1335,13 @@ function paintBoard() {
 
 function end() {
   botTimers.forEach(clearTimeout);
-  if (liveMatch) backend.stopMatch();
+  if (liveMatch) {
+    backend.stopMatch();
+    // Both sides fully answered → the doc has served its purpose; whoever
+    // finishes second clears it so matches don't pile up forever.
+    if (opp.length >= cards.length && my.length >= cards.length)
+      backend.deleteAsyncDuel?.(liveMatch.matchId);
+  }
   const mine = total(my), theirs = total(opp);
   const actual = mine > theirs ? 1 : mine < theirs ? 0 : .5;
   const delta = eloDelta(P.rating, OPP.rating, actual);
@@ -1339,13 +1369,14 @@ function end() {
 
   lastRun = { cards: cards.slice(), my: my.slice() };
   lastResults = { headline: actual === 1 ? "Victory" : actual === 0 ? "Defeat" : "Draw",
-                  mine, theirs, delta, opp: OPP };
+                  mine, theirs, delta, opp: OPP, now: P.rating };
   if (actual === 1) sfx.win(); else if (actual === 0) sfx.lose(); else sfx.draw();
   showResults();
 }
 
 function showResults() {
   const { headline, mine, theirs, delta, opp } = lastResults;
+  const now = lastResults.now ?? P.rating;
   const dots = Object.keys(DOMAINS).map(d => {
     const row = lastRun.cards.map((q, i) => q[1] === d
       ? `<span class="dot" style="background:${lastRun.my[i]?.ok ? "var(--good)" : "var(--bad)"}"></span>` : "").join("");
@@ -1361,7 +1392,7 @@ function showResults() {
     <div class="delta" style="${delta >= 0
       ? "color:#7de0a8;background:rgba(33,176,107,.15)"
       : "color:#f29b9c;background:rgba(219,69,71,.15)"}">
-      ${delta >= 0 ? "+" : ""}${delta} rating · now ${P.rating} · ${tier(P.rating)}</div>
+      ${delta >= 0 ? "+" : ""}${delta} rating · now ${now} · ${tier(now)}</div>
     <div class="dots">${dots}</div>
     <div style="display:flex;gap:10px;width:100%;max-width:300px">
       <button class="lightbtn" id="d-rematch" style="flex:1;background:rgba(255,255,255,.14);color:#fff">Rematch</button>
@@ -1610,6 +1641,7 @@ function liveChallenge(opp) {
 
 // ---------------- async ("play-by-mail") duels ----------------
 const asyncOppId = d => (d.pids || []).find(x => x !== P.id);
+const asyncShown = new Set();   // duels whose outcome we showed full-screen
 
 // Both results are in and I haven't banked my side yet → settle Elo from the
 // rating snapshots taken at creation (deterministic, so both clients agree),
@@ -1618,7 +1650,8 @@ function settleAsyncDuels() {
   for (const d of asyncDuels) {
     const oppId = asyncOppId(d);
     const mine = d["result_" + P.id], theirs = d["result_" + oppId];
-    if (!mine || !theirs || d["applied_" + P.id] || asyncApplying.has(d.id)) continue;
+    if (!mine || !theirs || d["applied_" + P.id] || asyncApplying.has(d.id)
+        || P.asyncApplied?.[d.id]) continue;
     asyncApplying.add(d.id);
     const o = d.players?.[oppId] || {};
     const me0 = d.players?.[P.id]?.rating ?? 1000, opp0 = o.rating ?? 1000;
@@ -1631,12 +1664,29 @@ function settleAsyncDuels() {
     P.history = [{ opp: o.name ?? "Player", country: o.country || "", bot: false,
                    mine: mine.score, theirs: theirs.score, delta, ts: Date.now() },
                  ...(P.history || [])].slice(0, 20);
+    // Belt-and-braces: remember the settlement on the profile too, so a failed
+    // applied_ write can never double-count the rating on a later session.
+    P.asyncApplied = { ...(P.asyncApplied || {}), [d.id]: 1 };
+    // If we didn't just watch this outcome full-screen (i.e. the opponent
+    // finished while we were away), leave a persistent card on the home
+    // screen — a 3-second toast is too easy to miss.
+    if (!asyncShown.has(d.id)) {
+      P.asyncNews = [{ opp: o.name ?? "Player", country: o.country || "",
+                       mine: mine.score, theirs: theirs.score, delta, ts: Date.now() },
+                     ...(P.asyncNews || [])].slice(0, 3);
+    }
     persist();
     backend.markAsyncApplied(d.id, P.id)
       .then(() => { if (d["applied_" + oppId]) backend.deleteAsyncDuel(d.id); })
       .catch(() => {});
     const word = actual === 1 ? "Victory" : actual === 0 ? "Defeat" : "Draw";
-    toast(`Async duel vs ${o.name ?? "friend"} settled: ${word} ${mine.score}–${theirs.score} (${delta >= 0 ? "+" : ""}${delta})`);
+    if (!asyncShown.has(d.id))
+      toast(`Async duel vs ${o.name ?? "friend"} settled: ${word} ${mine.score}–${theirs.score} (${delta >= 0 ? "+" : ""}${delta})`);
+  }
+  // Keep the profile-side settlement memory from growing forever.
+  if (P?.asyncApplied) {
+    const live = new Set(asyncDuels.map(d => d.id));
+    Object.keys(P.asyncApplied).forEach(id => { if (!live.has(id)) delete P.asyncApplied[id]; });
   }
 }
 
@@ -1663,6 +1713,26 @@ function finishAsyncRun(duel) {
   lastRun = { cards: cards.slice(), my: my.slice() };
   persist();
   backend.submitAsyncResult(duel.id, P, { score: mine, correct, at: Date.now() }).catch(() => {});
+
+  const oppId = asyncOppId(duel);
+  const theirs = duel["result_" + oppId];
+  if (theirs) {
+    // I'm the second player — the duel is DECIDED right now. Show the real
+    // result screen (the rating itself settles via the listener a moment
+    // later, using these same snapshot numbers).
+    asyncShown.add(duel.id);
+    const o = duel.players?.[oppId] || {};
+    const actual = mine > theirs.score ? 1 : mine < theirs.score ? 0 : .5;
+    const delta = eloDelta(duel.players?.[P.id]?.rating ?? 1000, o.rating ?? 1000, actual);
+    lastMatch = { friendId: oppId };
+    lastResults = { headline: actual === 1 ? "Victory" : actual === 0 ? "Defeat" : "Draw",
+                    mine, theirs: theirs.score, delta,
+                    opp: { name: o.name ?? "Player", country: o.country || "" },
+                    now: P.rating + delta };
+    if (actual === 1) sfx.win(); else if (actual === 0) sfx.lose(); else sfx.draw();
+    showResults();
+    return;
+  }
   sfx.send();
   showAsyncSent(duel, mine);
 }
@@ -1681,9 +1751,19 @@ function showAsyncSent(duel, mine) {
   $("as-review").onclick = () => renderReview(() => showAsyncSent(duel, mine));
 }
 
-// Home cards: incoming challenges to play, and sent ones still waiting.
+// Home cards: incoming challenges to play, sent ones still waiting, and
+// results that settled while you were away (dismissible).
 function asyncCards() {
   const rows = [];
+  (P.asyncNews || []).forEach((n, i) => {
+    const win = n.mine > n.theirs, draw = n.mine === n.theirs;
+    rows.push(`<div class="invitecard" style="background:${win ? "rgba(33,176,107,.10)" : "var(--iris-soft)"}"><div class="row">
+      <span style="font-size:13.5px"><b>${win ? "Victory" : draw ? "Draw" : "Defeat"}</b>
+        — async duel vs ${flagOf(n.country)} ${esc(n.opp)} ended ${n.mine}–${n.theirs}
+        <b style="color:${n.delta >= 0 ? "var(--good)" : "var(--bad)"}">${n.delta >= 0 ? "+" : ""}${n.delta}</b></span>
+      <button class="chip" style="background:var(--card);color:var(--ink2)" data-news-x="${i}">Dismiss</button>
+    </div></div>`);
+  });
   for (const d of asyncDuels) {
     const oppId = asyncOppId(d);
     const o = d.players?.[oppId] || {};

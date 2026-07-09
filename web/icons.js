@@ -1,7 +1,9 @@
 // Clean line-icon set (inherits currentColor, sized by the container). Replaces
 // the unicode glyphs, which rendered tiny and inconsistently across devices.
 const P = {
-  play: '<path d="M18.5 3.5 21 6l-9 9-2.5-2.5zM3 6l2.5-2.5L15 13l-2.5 2.5zM6 6 3.5 3.5M18 18l2.5 2.5M14 17l3 3-2 2-3-3zM10 7 7 4 5 6l3 3"/>',
+  // The Play tab: a clean bolt (the old crossed-swords glyph rendered as a
+  // tangle at tab size).
+  play: '<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/>',
   friends: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>',
   profile: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
   sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M5 5l1.4 1.4M17.6 17.6 19 19M2 12h2M20 12h2M5 19l1.4-1.4M17.6 6.4 19 5"/>',
