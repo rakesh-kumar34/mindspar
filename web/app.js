@@ -30,30 +30,20 @@ const BOTS = [
     acc: { reasoning: .62, math: .62, verbal: .62, knowledge: .62, science: .62, patterns: .62, history: .62, geography: .62 }, min: 1.2, max: 3.5 },
 ];
 
-// ---- The Gauntlet: a twenty-rung ladder of named rivals, 850 → 1520 Elo.
-// Skill is derived from rating (uniform base + a signature strength and a
-// soft spot per rival), so every rung is honest about difficulty.
+// ---- Rivals: a ten-rung ladder of named opponents, 850 → 1480 Elo.
+// Skill derives from rating (uniform base + a signature strength and a soft
+// spot each), so every rung is honest about difficulty.
 const GAUNTLET = [
   ["Pip", "bot", 850, "Still learning the ropes"],
-  ["Dash", "fast", 900, "Answers before you finish reading"],
-  ["Ivy", "book", 940, "Bookish, and quietly quick"],
-  ["Echo", "sigma", 980, "Repeats your mistakes back at you"],
-  ["Rune", "grid", 1020, "Sees the pattern before you do"],
-  ["Atlas", "globe", 1050, "Knows a little about everything"],
-  ["Nova", "zap", 1080, "Burns bright on every buzzer"],
-  ["Lyra", "book", 1100, "Reads between every line"],
-  ["Zephyr", "fast", 1140, "Gone before the ink dries"],
-  ["Vega", "sigma", 1150, "Numbers move first"],
-  ["Delta", "chart", 1180, "Always one step improved"],
-  ["Cosmo", "compass", 1220, "Navigates every domain"],
-  ["Kepler", "atom", 1250, "Methodical, rarely wrong, never fast"],
-  ["Nyx", "eye", 1290, "Strikes from the dark"],
-  ["Vera", "check", 1330, "Simply doesn't miss"],
-  ["Orion", "landmark", 1370, "A constellation of facts"],
-  ["Astra", "sun", 1410, "Radiant under pressure"],
-  ["Sable", "flag", 1450, "The quiet closer"],
-  ["Onyx", "lock", 1480, "Impenetrable"],
-  ["Minerva", "trophy", 1520, "Wisdom itself"],
+  ["Ivy", "book", 920, "Bookish, and quietly quick"],
+  ["Echo", "sigma", 990, "Repeats your mistakes back at you"],
+  ["Rune", "grid", 1060, "Sees the pattern before you do"],
+  ["Nova", "zap", 1130, "Burns bright on every buzzer"],
+  ["Zephyr", "fast", 1200, "Gone before the ink dries"],
+  ["Delta", "chart", 1270, "Always one step improved"],
+  ["Vera", "check", 1340, "Simply doesn't miss"],
+  ["Sable", "flag", 1410, "The quiet closer"],
+  ["Minerva", "trophy", 1480, "Wisdom itself"],
 ].map(([name, icon, rating, tag], i) => {
   const keys = Object.keys(DOMAINS);
   const base = Math.min(.92, .38 + (rating - 850) / 1150);
@@ -64,7 +54,7 @@ const GAUNTLET = [
     if (j === (i + 4) % keys.length) a -= .07;
     acc[k] = Math.max(.2, Math.min(.95, a));
   });
-  const t = (rating - 850) / 670;
+  const t = (rating - 850) / 630;
   return { i, name, icon, rating, tag, acc,
            min: Math.max(1.4, 5.5 - 3.5 * t), max: Math.max(3.5, 11 - 6 * t) };
 });
@@ -185,6 +175,7 @@ const localBackend = {
   listenAsyncDuels() {}, async submitAsyncResult() {}, async markAsyncApplied() {},
   async deleteAsyncDuel() {},
   async reportQuestion() {},
+  async savePush() {},
   async changeEmail(P, newEmail) { P.email = newEmail.toLowerCase().trim(); },
   async deleteAccount() { localStorage.removeItem("mindspar-web"); },
   // Friends + chat require accounts, so they're online-only.
@@ -494,6 +485,11 @@ async function makeFirebaseBackend(config) {
       await updateDoc(doc(db, "matches", id), { ["applied_" + uid]: true });
     },
     async deleteAsyncDuel(id) { await deleteDoc(doc(db, "matches", id)).catch(() => {}); },
+
+    // --- web-push subscription, stored on the profile for the sender job ---
+    async savePush(uid, sub) {
+      await updateDoc(doc(db, "users", uid), { push: sub }).catch(() => {});
+    },
 
     // --- question quality reports (write-only; reviewed in the console) ---
     async reportQuestion(qid, P) {
@@ -833,6 +829,7 @@ async function startSession() {
   });
   startHeartbeat();
   processInviteLink();
+  subscribePush();          // refresh the push subscription if already granted
 }
 
 // A friend's invite link was opened: introduce them and offer the request.
@@ -1237,9 +1234,9 @@ function renderHome() {
         : `Everyone plays the same ${N} today — compare with friends`}</span></span></button>
     <button class="playrow" id="h-gauntlet">
       <span class="sig" style="background:rgba(176,68,88,.14);color:#c4566b">${ic("trophy")}</span>
-      <span><b>The Gauntlet</b><span>${gauntletRung() >= GAUNTLET.length
-        ? "Conquered — all 20 rungs cleared"
-        : `Rung ${gauntletRung() + 1} of ${GAUNTLET.length} · face ${GAUNTLET[gauntletRung()].name}`}</span></span></button>
+      <span><b>Rivals</b><span>${gauntletRung() >= GAUNTLET.length
+        ? "All ${GAUNTLET.length} defeated — champion"
+        : `${gauntletRung()} of ${GAUNTLET.length} beaten · next up: ${GAUNTLET[gauntletRung()].name}`}</span></span></button>
     <button class="playrow" id="h-quick">
       <span class="sig hot">${ic("bolt")}</span>
       <span><b>Quick Match</b><span>${backend.isLive
@@ -1309,10 +1306,10 @@ function renderGauntlet() {
   screen.innerHTML = `<div class="pad" style="gap:12px">
     <button class="ghost" id="gt-back" style="align-self:flex-start;padding:4px 0">‹ Play</button>
     <div>
-      <div class="serif" style="font-size:24px;font-weight:600">The Gauntlet</div>
+      <div class="serif" style="font-size:24px;font-weight:600">Rivals</div>
       <div style="font-size:12.5px;color:var(--ink2);margin-top:3px">${g >= GAUNTLET.length
-        ? "Conquered. Twenty minds fell to yours."
-        : `Twenty minds between you and the summit — ${GAUNTLET.length - g} to go`}</div>
+        ? "All ten rivals defeated. The ladder is yours."
+        : `Beat each rival to unlock the next — ${GAUNTLET.length - g} to go`}</div>
     </div>
     <div class="ladder"><i style="width:${Math.round(g / GAUNTLET.length * 100)}%"></i></div>
     ${rows}
@@ -1335,7 +1332,7 @@ function maybeIntro() {
     <div class="intro-row"><span class="intro-ic">${ic("bolt", "18px")}</span>
       <span><b>Duel in ${N} questions</b>8 domains, 18 seconds each — accuracy and speed both score.</span></div>
     <div class="intro-row"><span class="intro-ic">${ic("trophy", "18px")}</span>
-      <span><b>Climb the Gauntlet</b>Twenty rivals stand in a ladder. Beat one to unlock the next — and move your rating with every duel.</span></span></div>
+      <span><b>Beat your rivals</b>Ten opponents stand in a ladder. Beat one to unlock the next — and move your rating with every duel.</span></div>
     <div class="intro-row"><span class="intro-ic">${ic("bulb", "18px")}</span>
       <span><b>Unlock your Mindspar Score</b>${MIN_ANSWERS} answers calibrate an IQ-style score, normalized for your age group.</span></div>
     <button class="primary" id="in-go">Face ${GAUNTLET[0].name}, your first rival</button>
@@ -1628,10 +1625,10 @@ function end() {
   if (actual === 1) { P.won++; P.streak++; P.best = Math.max(P.best, P.streak); }
   else if (actual === 0) P.streak = 0;
   if (actual === 1 && lastMatch?.gauntlet !== undefined && lastMatch.gauntlet === gauntletRung()) {
-    P.gauntlet = lastMatch.gauntlet + 1;       // rung cleared — the ladder opens
-    achQueue.push({ label: "Gauntlet", icon: "trophy", color: "#b04458",
+    P.gauntlet = lastMatch.gauntlet + 1;       // rival beaten — the next unlocks
+    achQueue.push({ label: "Rival beaten", icon: "trophy", color: "#b04458",
                     name: P.gauntlet >= GAUNTLET.length
-                      ? "The Gauntlet — conquered!"
+                      ? "All rivals defeated!"
                       : `${GAUNTLET[lastMatch.gauntlet].name} defeated` });
     if (!achShowing) nextAchPop();
   }
@@ -2326,11 +2323,34 @@ function enableSecureChat(then) {
   $("ec-pass").focus();
 }
 
+// Web Push: with permission granted, this device subscribes and stores the
+// subscription on the profile; a scheduled sender (GitHub Actions) delivers
+// async-duel notifications even when the app is fully closed.
+const VAPID_PUBLIC = "BCqELAY25fsZLSfGiUsiWCXfJnuarhEcFObeb_gOVKZCeTvJzLqR752huAr21F-ioqxSDwaepIxq92tfuMRjveY";
+function b64ToBytes(b64) {
+  const pad = "=".repeat((4 - b64.length % 4) % 4);
+  const raw = atob((b64 + pad).replace(/-/g, "+").replace(/_/g, "/"));
+  return Uint8Array.from(raw, c => c.charCodeAt(0));
+}
+async function subscribePush() {
+  try {
+    if (!P || !backend.isLive || !("serviceWorker" in navigator)
+        || !("PushManager" in window) || Notification.permission !== "granted") return;
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.subscribe(
+      { userVisibleOnly: true, applicationServerKey: b64ToBytes(VAPID_PUBLIC) });
+    await backend.savePush(P.id, sub.toJSON());
+  } catch (e) { console.warn("push subscribe failed", e); }
+}
+
 let notifyAsked = false;
 function requestNotifyPermission() {
-  if (notifyAsked || !("Notification" in window)) return;
+  if (!("Notification" in window)) return;
+  if (Notification.permission === "granted") return subscribePush();
+  if (notifyAsked) return;
   notifyAsked = true;
-  if (Notification.permission === "default") Notification.requestPermission().catch(() => {});
+  if (Notification.permission === "default")
+    Notification.requestPermission().then(p => { if (p === "granted") subscribePush(); }).catch(() => {});
 }
 
 async function openChat(friend) {
