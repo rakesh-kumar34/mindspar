@@ -1949,8 +1949,8 @@ function renderFriends() {
     <div class="frow"><span class="fav">${avatarHTML({ name: r.fromName })}</span>
       <span class="fmeta"><b>${flagOf(r.fromCountry)} ${esc(r.fromName)}</b><span>wants to be friends · ${r.fromRating ?? 1000}</span></span>
       <span class="fbtns">
-        <button class="smallbtn" data-acc="${r.id}">Accept</button>
-        <button class="chip" style="background:var(--iris-soft);color:var(--ink2)" data-dec="${r.id}">Ignore</button>
+        <button class="icbtn good" data-acc="${r.id}" title="Accept" aria-label="Accept request">${ic("check", "17px")}</button>
+        <button class="icbtn mute" data-dec="${r.id}" title="Ignore" aria-label="Ignore request">${ic("x", "16px")}</button>
       </span></div>`).join("");
   const friendRows = friends.length ? friends.map(f => {
     const unread = unreadBy.get(f.id);
@@ -1961,8 +1961,8 @@ function renderFriends() {
           <span>${unread ? `<b style="color:var(--iris)">New message</b> · ` : ""}${tier(f.rating)} · ${f.rating}</span></span>
       </button>
       <span class="fbtns">
-        <button class="smallbtn" data-chal="${f.id}">Challenge</button>
-        <button class="smallbtn" data-chat="${f.id}">Message</button>
+        <button class="icbtn" data-chal="${f.id}" title="Challenge" aria-label="Challenge ${esc(f.name)}">${ic("bolt", "16px")}</button>
+        <button class="icbtn fill" data-chat="${f.id}" title="Message" aria-label="Message ${esc(f.name)}">${ic("msg", "16px")}</button>
       </span></div>`;
   }).join("")
     : `<div class="cardbox" style="padding:18px;font-size:13px;color:var(--ink2);text-align:center">
@@ -2163,12 +2163,13 @@ function renderChatShell(f) {
     <div class="chat-head">
       <button class="iconbtn" id="c-back" title="Back">‹</button>
       <span class="fav sm">${avatarHTML(f)}</span>
-      <span class="chat-who"><b>${flagOf(f.country)} ${esc(f.name)}</b><span>🔒 End-to-end encrypted</span></span>
+      <span class="chat-who"><b>${flagOf(f.country)} ${esc(f.name)}</b>
+        <span>${ic("lock", "11px")} End-to-end encrypted</span></span>
     </div>
     <div class="msgs" id="c-msgs"><div class="chat-note">Setting up secure channel…</div></div>
     <div class="chat-input">
-      <input id="c-text" placeholder="Message" autocomplete="off" maxlength="2000" enterkeyhint="send">
-      <button class="smallbtn" id="c-send">Send</button>
+      <input id="c-text" placeholder="Message…" autocomplete="off" maxlength="2000" enterkeyhint="send">
+      <button class="sendbtn" id="c-send" title="Send" aria-label="Send">${ic("send", "17px")}</button>
     </div>`;
   $("c-back").onclick = leaveChat;
   const input = $("c-text"), send = $("c-send");
