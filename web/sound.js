@@ -44,6 +44,11 @@ export const sfx = {
   lose() { tone(392, 0.18); tone(294, 0.24, { when: 0.16 }); },
   draw() { tone(523, 0.14); tone(523, 0.14, { when: 0.18 }); },
   send() { tone(740, 0.08, { glide: 990 }); },
+  unlock() {
+    tone(784, 0.1); tone(988, 0.1, { when: 0.09 });
+    tone(1319, 0.24, { when: 0.18, gain: 0.08 });
+    buzz([15, 25, 15]);
+  },
 };
 
 export const isMuted = () => muted;

@@ -145,6 +145,7 @@ const localBackend = {
   listenAsyncDuels() {}, async submitAsyncResult() {}, async markAsyncApplied() {},
   async deleteAsyncDuel() {},
   async reportQuestion() {},
+  async changeEmail(P, newEmail) { P.email = newEmail.toLowerCase().trim(); },
   async deleteAccount() { localStorage.removeItem("mindspar-web"); },
   // Friends + chat require accounts, so they're online-only.
   async publishIdentity() {},
@@ -171,7 +172,8 @@ async function makeFirebaseBackend(config) {
   const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js");
   const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
           signOut, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail,
-          EmailAuthProvider, reauthenticateWithCredential, deleteUser } =
+          EmailAuthProvider, reauthenticateWithCredential, deleteUser,
+          verifyBeforeUpdateEmail } =
     await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js");
   const { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, getDocs,
           collection, query, where, orderBy, limit, onSnapshot, arrayUnion,
@@ -208,6 +210,16 @@ async function makeFirebaseBackend(config) {
   // Never let a dob reach Firestore, whatever path a profile object took.
   const publicDoc = profile => { const { dob, ...pub } = profile; return pub; };
 
+  // After a verified email change, the auth account carries the new address
+  // before the profile doc does — bring the doc (used for friend/invite
+  // lookups) in line on the next sign-in.
+  async function syncEmail(profile, user) {
+    const live = (user.email || "").toLowerCase();
+    if (!profile || !live || profile.email === live) return profile;
+    await updateDoc(doc(db, "users", profile.id), { email: live }).catch(() => {});
+    return { ...profile, email: live };
+  }
+
   return {
     isLive: true,
     async restore() {
@@ -216,12 +228,13 @@ async function makeFirebaseBackend(config) {
       // Not verified yet → tell the app to show the verification gate rather
       // than a usable profile (the security rules would block it anyway).
       if (!user.emailVerified) return { pendingVerification: true, uid: user.uid, email: user.email };
-      // Force a token refresh so its email_verified claim matches the account
-      // (the two can diverge right after verifying, which the rules would
-      // otherwise reject).
-      await user.getIdToken(true);
+      // The rules need the token's email_verified claim. Only force a network
+      // refresh when the cached token is stale (i.e. right after verifying) —
+      // on a normal sign-in this saves a whole auth round trip.
+      const cached = await user.getIdTokenResult();
+      if (!cached.claims.email_verified) await user.getIdToken(true);
       const snap = await getDoc(doc(db, "users", user.uid));
-      return snap.exists() ? await scrubDob(snap.data()) : null;
+      return snap.exists() ? await syncEmail(await scrubDob(snap.data()), user) : null;
     },
     // Create the account and send the verification email, but DON'T create the
     // profile doc yet — that happens once the email is confirmed. Real, owned
@@ -273,7 +286,7 @@ async function makeFirebaseBackend(config) {
       await cred.user.getIdToken(true);
       const snap = await getDoc(doc(db, "users", cred.user.uid));
       if (!snap.exists()) throw new Error("Profile not found — please sign up again.");
-      return await scrubDob(snap.data());
+      return await syncEmail(await scrubDob(snap.data()), cred.user);
     },
     async signOut() { stopSession(); stopMatchSubs(); await signOut(auth); },
     async publishIdentity(uid, idn) {
@@ -429,6 +442,17 @@ async function makeFirebaseBackend(config) {
     async reportQuestion(qid, P) {
       await addDoc(collection(db, "reports"),
         { qid, by: P.id, createdAt: serverTimestamp() });
+    },
+
+    // --- email change: reauth, then send a confirmation link to the NEW
+    // address; the sign-in email switches only after it's clicked (the
+    // verified-email rules stay airtight throughout). The profile doc syncs
+    // on the next sign-in via syncEmail().
+    async changeEmail(P, newEmail, password) {
+      const user = auth.currentUser;
+      if (!user) throw new Error("Not signed in.");
+      await reauthenticateWithCredential(user, EmailAuthProvider.credential(P.email, password));
+      await verifyBeforeUpdateEmail(user, newEmail.toLowerCase().trim());
     },
 
     // --- account deletion: reauth with the password, then remove the profile
@@ -821,6 +845,7 @@ async function doSignOut() {
   await backend.signOut();
   P = null; invites = []; friends = []; friendReqs = []; friendsLoaded = false; myKeys = null;
   asyncDuels = []; asyncApplying.clear(); lastRun = null; lastResults = null;
+  achEarned = null; achQueue.length = 0;
   setPending(null);
   chatCache.clear();
   clearTimeout(idleTimer);
@@ -828,10 +853,61 @@ async function doSignOut() {
   render();
 }
 
-async function persist() { try { await backend.save(P); } catch (e) { console.error(e); } }
+async function persist() {
+  // Celebration must never block saving — e.g. a stale cached module right
+  // after a deploy shouldn't cost the player their progress.
+  try { checkAchievements(); } catch (e) { console.error(e); }
+  try { await backend.save(P); } catch (e) { console.error(e); }
+}
+
+// ---- achievement unlocks: celebrated the moment a badge flips to earned ----
+// The session's baseline is seeded on the first render after sign-in, so
+// long-held badges never re-announce; only NEW unlocks pop.
+let achEarned = null;
+const achQueue = [];
+let achShowing = false;
+
+function seedAch() {
+  if (!P || achEarned) return;
+  achEarned = new Set(ACH.filter(a => a.done(P)).map(a => a.name));
+}
+
+// Rank-ups ride the same banner queue as achievements.
+function rankPop(tierName) {
+  achQueue.push({ label: "Rank up", name: tierName, icon: "trophy", color: "#c48c1c" });
+  if (!achShowing) nextAchPop();
+}
+
+function checkAchievements() {
+  if (!P || !achEarned) return;
+  for (const a of ACH) {
+    if (achEarned.has(a.name) || !a.done(P)) continue;
+    achEarned.add(a.name);
+    achQueue.push(a);
+  }
+  if (!achShowing && achQueue.length) nextAchPop();
+}
+
+function nextAchPop() {
+  const a = achQueue.shift();
+  if (!a) { achShowing = false; return; }
+  achShowing = true;
+  sfx.unlock?.();
+  const el = document.createElement("div");
+  el.className = "achpop";
+  el.innerHTML = `<span class="ach-ic on" style="--ac:${a.color}">${ic(a.icon, "19px")}</span>
+    <span class="achpop-t"><i>${a.label || "Achievement unlocked"}</i><b>${a.name}</b></span>`;
+  document.querySelector(".app").appendChild(el);
+  el.onclick = () => { setTab("prof"); el.remove(); nextAchPop(); };
+  setTimeout(() => {
+    el.classList.add("out");
+    setTimeout(() => { el.remove(); nextAchPop(); }, 350);
+  }, 3400);
+}
 
 function render() {
   if (!P) { tabs.style.display = "none"; return renderAuth(); }
+  seedAch();
   tabs.style.display = "flex";
   updateFriendBadge();
   if (tab === "friends") renderFriends();
@@ -1349,7 +1425,9 @@ function end() {
   const actual = mine > theirs ? 1 : mine < theirs ? 0 : .5;
   const delta = eloDelta(P.rating, OPP.rating, actual);
 
+  const prevTier = tier(P.rating);
   P.rating += delta;
+  if (delta > 0 && tier(P.rating) !== prevTier) rankPop(tier(P.rating));
   P.played++;
   if (actual === 1) { P.won++; P.streak++; P.best = Math.max(P.best, P.streak); }
   else if (actual === 0) P.streak = 0;
@@ -1375,6 +1453,50 @@ function end() {
                   mine, theirs, delta, opp: OPP, now: P.rating };
   if (actual === 1) sfx.win(); else if (actual === 0) sfx.lose(); else sfx.draw();
   showResults();
+}
+
+// A short, battle-tested celebration: canvas confetti over the arena.
+function confetti() {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const cv = document.createElement("canvas");
+  cv.className = "confetti";
+  const box = arena.getBoundingClientRect();
+  cv.width = box.width; cv.height = box.height;
+  arena.appendChild(cv);
+  const x = cv.getContext("2d");
+  const colors = ["#7d80f0", "#a78bfa", "#2bbd78", "#ffd257", "#ff5f6b", "#6ee7ff"];
+  const bits = Array.from({ length: 120 }, () => ({
+    x: Math.random() * cv.width, y: -20 - Math.random() * cv.height * .4,
+    w: 5 + Math.random() * 5, h: 8 + Math.random() * 6,
+    vy: 2.2 + Math.random() * 3, vx: -1.2 + Math.random() * 2.4,
+    rot: Math.random() * Math.PI, vr: -.12 + Math.random() * .24,
+    c: colors[Math.floor(Math.random() * colors.length)],
+  }));
+  const t0 = performance.now();
+  (function tick(t) {
+    x.clearRect(0, 0, cv.width, cv.height);
+    for (const b of bits) {
+      b.x += b.vx; b.y += b.vy; b.rot += b.vr;
+      x.save(); x.translate(b.x, b.y); x.rotate(b.rot);
+      x.fillStyle = b.c; x.fillRect(-b.w / 2, -b.h / 2, b.w, b.h);
+      x.restore();
+    }
+    if (t - t0 < 2600) requestAnimationFrame(tick); else cv.remove();
+  })(t0);
+}
+
+// Numbers that tick up feel earned; static ones feel printed.
+function countUp(el, target, ms = 700) {
+  if (!el || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (el) el.textContent = target;
+    return;
+  }
+  const t0 = performance.now();
+  (function tick(t) {
+    const k = Math.min(1, (t - t0) / ms);
+    el.textContent = Math.round(target * (1 - Math.pow(1 - k, 3)));
+    if (k < 1) requestAnimationFrame(tick);
+  })(t0);
 }
 
 function showResults() {
@@ -1409,6 +1531,9 @@ function showResults() {
   $("d-done").onclick = () => { arena.classList.remove("on"); render(); };
   $("d-rematch").onclick = rematch;
   $("d-review").onclick = () => renderReview(showResults);
+  const [meV, oppV] = arena.querySelectorAll(".fs .v");
+  countUp(meV, mine); countUp(oppV, theirs);
+  if (headline === "Victory") confetti();
   $("d-share").onclick = () => shareCard({
     headline, line: `You ${mine} — ${theirs} ${opp.name}`,
     sub: `${delta >= 0 ? "+" : ""}${delta} rating · ${tier(P.rating)} ${P.rating}` });
@@ -1660,7 +1785,9 @@ function settleAsyncDuels() {
     const me0 = d.players?.[P.id]?.rating ?? 1000, opp0 = o.rating ?? 1000;
     const actual = mine.score > theirs.score ? 1 : mine.score < theirs.score ? 0 : .5;
     const delta = eloDelta(me0, opp0, actual);
+    const prevTier = tier(P.rating);
     P.rating += delta;
+    if (delta > 0 && tier(P.rating) !== prevTier) rankPop(tier(P.rating));
     P.played++;
     if (actual === 1) { P.won++; P.streak++; P.best = Math.max(P.best, P.streak); }
     else if (actual === 0) P.streak = 0;
@@ -2356,8 +2483,10 @@ function editProfileFlow() {
     </select>
     <div class="err" id="ep-err"></div>
     <button class="primary" id="ep-save">Save</button>
+    <button class="ghost" id="ep-email">Change email…</button>
     <button class="ghost" id="ep-close">Cancel</button></div>`;
   $("ep-close").onclick = () => overlay.classList.remove("on");
+  $("ep-email").onclick = changeEmailFlow;
   $("ep-save").onclick = async () => {
     const name = $("ep-name").value.trim();
     if (name.length < 2) return $("ep-err").textContent = "Enter a name (2+ characters).";
@@ -2369,6 +2498,47 @@ function editProfileFlow() {
     renderProfile();
   };
   $("ep-name").focus();
+}
+
+// Change the sign-in email. Online this is verify-first: a confirmation link
+// goes to the NEW address, and nothing switches until it's clicked — so the
+// verified-players-only guarantee never lapses.
+function changeEmailFlow() {
+  overlay.classList.add("on");
+  overlay.innerHTML = `<div class="panel" style="align-items:stretch;text-align:left">
+    <b style="text-align:center">Change email</b>
+    <span style="font-size:12px;color:var(--ink2);text-align:center">Currently ${esc(P.email || "")}</span>
+    <input id="ce-email" type="email" placeholder="New email address" autocomplete="email">
+    ${backend.isLive ? pwField("ce-pass", "Your password") : ""}
+    ${backend.isLive ? `<span style="font-size:11.5px;color:var(--ink2);line-height:1.5">We'll send a
+      confirmation link to the new address. Your sign-in email switches once you click it —
+      until then, keep signing in with the current one.</span>` : ""}
+    <div class="err" id="ce-err"></div>
+    <button class="primary" id="ce-go">${backend.isLive ? "Send confirmation link" : "Save email"}</button>
+    <button class="ghost" id="ce-close">Cancel</button></div>`;
+  $("ce-close").onclick = () => overlay.classList.remove("on");
+  if (backend.isLive) wirePwEye("ce-pass");
+  $("ce-go").onclick = async () => {
+    const err = $("ce-err");
+    const email = $("ce-email").value.trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return err.textContent = "Enter a valid email address.";
+    if (email === (P.email || "").toLowerCase()) return err.textContent = "That's already your email.";
+    const pw = backend.isLive ? $("ce-pass").value : null;
+    if (backend.isLive && !pw) return err.textContent = "Enter your password to confirm.";
+    $("ce-go").disabled = true;
+    err.textContent = "Working…";
+    try {
+      await backend.changeEmail(P, email, pw);
+      if (!backend.isLive) await persist();
+      overlay.classList.remove("on");
+      toast(backend.isLive ? `Confirmation link sent to ${email}.` : "Email updated.");
+      renderProfile();
+    } catch (e) {
+      $("ce-go").disabled = false;
+      err.textContent = (e.message || "Couldn't change the email.").replace("Firebase: ", "");
+    }
+  };
+  $("ce-email").focus();
 }
 
 // Permanent account deletion. Online it needs the password (Firebase requires a

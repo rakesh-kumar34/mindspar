@@ -283,7 +283,14 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
   border-radius:50%;animation:rot 1s linear infinite;display:inline-block;}
 @keyframes rot{to{transform:rotate(360deg)}}
 /* full-area loading state (boot, friends, etc.) */
-.loading{flex:1;display:flex;align-items:center;justify-content:center;min-height:55vh;}
+.loading{flex:1;display:flex;flex-direction:column;gap:14px;align-items:center;
+  justify-content:center;min-height:55vh;}
+.splash{font-family:"Fraunces",ui-serif,"New York",Georgia,serif;font-size:34px;
+  font-weight:600;letter-spacing:-0.01em;animation:breathe 1.6s ease-in-out infinite;}
+@keyframes breathe{0%,100%{opacity:.45}50%{opacity:1}}
+
+/* victory confetti canvas rides over the arena */
+.confetti{position:absolute;inset:0;pointer-events:none;z-index:5;}
 
 /* toast */
 .toast{position:absolute;left:50%;transform:translateX(-50%) translateY(8px);bottom:96px;z-index:40;
@@ -333,6 +340,22 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 .ach:not(.on) .ach-ic{opacity:.5;}
 .ach-nm{font-size:9.5px;font-weight:600;color:var(--ink2);text-align:center;line-height:1.25;}
 .ach.on .ach-nm{color:var(--ink);}
+
+/* achievement unlock banner — slides in over everything, even the arena */
+.achpop{position:absolute;top:max(14px,env(safe-area-inset-top));left:50%;
+  transform:translateX(-50%);z-index:45;display:flex;align-items:center;gap:11px;
+  background:var(--card);border:1px solid var(--hair);border-radius:999px;
+  padding:8px 18px 8px 9px;box-shadow:0 14px 40px rgba(0,0,0,.35);cursor:pointer;
+  animation:achin .45s cubic-bezier(.2,.9,.3,1.25);white-space:nowrap;}
+.achpop .ach-ic{width:38px;height:38px;}
+.achpop-t{display:flex;flex-direction:column;line-height:1.25;}
+.achpop-t i{font-style:normal;font-size:9.5px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink2);}
+.achpop-t b{font-size:14px;color:var(--ink);}
+.achpop.out{animation:achout .35s ease forwards;}
+@keyframes achin{from{opacity:0;transform:translateX(-50%) translateY(-24px)}
+  to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes achout{to{opacity:0;transform:translateX(-50%) translateY(-24px)}}
 
 /* rank ladder */
 .rank-top{display:flex;justify-content:space-between;align-items:center;}
