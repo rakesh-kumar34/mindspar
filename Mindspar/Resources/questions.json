@@ -10,7 +10,8 @@
    "Maya is one of the florists in Bloomsdale"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the florists in Bloomsdale is among the early risers, anyone outside the early risers cannot be one of the florists in Bloomsdale."
  },
  {
   "id": "r002",
@@ -23,7 +24,8 @@
    "Noor is one of the violinists in the orchestra"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the violinists in the orchestra is among the sight-readers, anyone outside the sight-readers cannot be one of the violinists in the orchestra."
  },
  {
   "id": "r003",
@@ -36,7 +38,8 @@
    "Priya is one of the guides on the mountain"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the guides on the mountain is among the certified climbers, anyone outside the certified climbers cannot be one of the guides on the mountain."
  },
  {
   "id": "r004",
@@ -49,7 +52,8 @@
    "Kavi is one of the chefs at the bistro"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the chefs at the bistro is among the trained bakers, anyone outside the trained bakers cannot be one of the chefs at the bistro."
  },
  {
   "id": "r005",
@@ -62,7 +66,8 @@
    "Ravi is not one of the pilots at the airfield"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the pilots at the airfield is among the licensed navigators, anyone outside the licensed navigators cannot be one of the pilots at the airfield."
  },
  {
   "id": "r006",
@@ -75,7 +80,8 @@
    "Asha is one of the librarians in Westport"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the librarians in Westport is among the avid readers, anyone outside the avid readers cannot be one of the librarians in Westport."
  },
  {
   "id": "r007",
@@ -88,7 +94,8 @@
    "Rohan dislikes being one of the strong swimmers"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the lifeguards at the bay is among the strong swimmers, anyone outside the strong swimmers cannot be one of the lifeguards at the bay."
  },
  {
   "id": "r008",
@@ -101,7 +108,8 @@
    "Nothing can be concluded"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the bakers on Mill Street is among the early risers, anyone outside the early risers cannot be one of the bakers on Mill Street."
  },
  {
   "id": "r009",
@@ -114,7 +122,8 @@
    "Nothing can be concluded"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the referees in the league is among the certified officials, anyone outside the certified officials cannot be one of the referees in the league."
  },
  {
   "id": "r010",
@@ -127,7 +136,8 @@
    "Nothing can be concluded"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the archivists at the museum is among the trained historians, anyone outside the trained historians cannot be one of the archivists at the museum."
  },
  {
   "id": "r011",
@@ -140,7 +150,8 @@
    "Nothing can be concluded"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the rangers in the reserve is among the licensed trackers, anyone outside the licensed trackers cannot be one of the rangers in the reserve."
  },
  {
   "id": "r012",
@@ -153,7 +164,8 @@
    "Ishan is one of the editors at the journal"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the editors at the journal is among the careful proofreaders, anyone outside the careful proofreaders cannot be one of the editors at the journal."
  },
  {
   "id": "r013",
@@ -166,7 +178,8 @@
    "Nothing can be concluded"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the divers on the crew is among the certified medics, anyone outside the certified medics cannot be one of the divers on the crew."
  },
  {
   "id": "r014",
@@ -179,7 +192,8 @@
    "Nothing can be concluded"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the tailors in the guild is among the master cutters, anyone outside the master cutters cannot be one of the tailors in the guild."
  },
  {
   "id": "r015",
@@ -192,7 +206,8 @@
    "Zara is one of the printers on Fleet Row"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the printers on Fleet Row is among the night workers, anyone outside the night workers cannot be one of the printers on Fleet Row."
  },
  {
   "id": "r016",
@@ -205,7 +220,8 @@
    "Dev is not one of the beekeepers in the valley"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the beekeepers in the valley is among the registered farmers, anyone outside the registered farmers cannot be one of the beekeepers in the valley."
  },
  {
   "id": "r017",
@@ -218,7 +234,8 @@
    "Maya dislikes being one of the licensed engineers"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the surveyors on the project is among the licensed engineers, anyone outside the licensed engineers cannot be one of the surveyors on the project."
  },
  {
   "id": "r018",
@@ -231,7 +248,8 @@
    "Noor is not one of the brewers at the cooperative"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the brewers at the cooperative is among the trained chemists, anyone outside the trained chemists cannot be one of the brewers at the cooperative."
  },
  {
   "id": "r019",
@@ -244,7 +262,8 @@
    "Priya is not one of the coopers at the yard"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the coopers at the yard is among the licensed joiners, anyone outside the licensed joiners cannot be one of the coopers at the yard."
  },
  {
   "id": "r020",
@@ -257,7 +276,8 @@
    "Kavi is not one of the scribes at the court"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the scribes at the court is among the trained linguists, anyone outside the trained linguists cannot be one of the scribes at the court."
  },
  {
   "id": "r021",
@@ -270,7 +290,8 @@
    "Ravi is not one of the wardens of the park"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the wardens of the park is among the certified naturalists, anyone outside the certified naturalists cannot be one of the wardens of the park."
  },
  {
   "id": "r022",
@@ -283,7 +304,8 @@
    "Asha is one of the masons on the site"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the masons on the site is among the bonded craftsmen, anyone outside the bonded craftsmen cannot be one of the masons on the site."
  },
  {
   "id": "r023",
@@ -296,7 +318,8 @@
    "Rohan is not one of the clerks of the exchange"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the clerks of the exchange is among the sworn auditors, anyone outside the sworn auditors cannot be one of the clerks of the exchange."
  },
  {
   "id": "r024",
@@ -309,7 +332,8 @@
    "Nothing can be concluded"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "If every one of the glaziers in the workshop is among the insured tradesmen, anyone outside the insured tradesmen cannot be one of the glaziers in the workshop."
  },
  {
   "id": "r025",
@@ -322,7 +346,8 @@
    "It rained lightly"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "When \"if A then B\" holds and B is false, A must be false too (modus tollens)."
  },
  {
   "id": "r026",
@@ -335,7 +360,8 @@
    "The ferry is cancelled anyway"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "When \"if A then B\" holds and B is false, A must be false too (modus tollens)."
  },
  {
   "id": "r027",
@@ -348,7 +374,8 @@
    "The doors lock anyway"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "When \"if A then B\" holds and B is false, A must be false too (modus tollens)."
  },
  {
   "id": "r028",
@@ -361,7 +388,8 @@
    "The light is on anyway"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "When \"if A then B\" holds and B is false, A must be false too (modus tollens)."
  },
  {
   "id": "r029",
@@ -374,7 +402,8 @@
    "She caught a later train home"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "When \"if A then B\" holds and B is false, A must be false too (modus tollens)."
  },
  {
   "id": "r030",
@@ -387,7 +416,8 @@
    "The tide was rising"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "When \"if A then B\" holds and B is false, A must be false too (modus tollens)."
  },
  {
   "id": "r031",
@@ -400,7 +430,8 @@
    "The kiln was not fired"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "When \"if A then B\" holds and B is false, A must be false too (modus tollens)."
  },
  {
   "id": "r032",
@@ -413,7 +444,8 @@
    "Nothing can be concluded"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "When \"if A then B\" holds and B is false, A must be false too (modus tollens)."
  },
  {
   "id": "r033",
@@ -426,7 +458,8 @@
    "The update ships on friday anyway"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "When \"if A then B\" holds and B is false, A must be false too (modus tollens)."
  },
  {
   "id": "r034",
@@ -439,7 +472,8 @@
    "The market opens in august anyway"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "When \"if A then B\" holds and B is false, A must be false too (modus tollens)."
  },
  {
   "id": "r035",
@@ -452,7 +486,8 @@
    "The lighthouse lamp is dimmed anyway"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "When \"if A then B\" holds and B is false, A must be false too (modus tollens)."
  },
  {
   "id": "r036",
@@ -465,7 +500,8 @@
    "The hall stays open late anyway"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "When \"if A then B\" holds and B is false, A must be false too (modus tollens)."
  },
  {
   "id": "r037",
@@ -478,7 +514,8 @@
    "The cellar lights work anyway"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "When \"if A then B\" holds and B is false, A must be false too (modus tollens)."
  },
  {
   "id": "r038",
@@ -491,7 +528,8 @@
    "The mail cart goes over the ridge anyway"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "When \"if A then B\" holds and B is false, A must be false too (modus tollens)."
  },
  {
   "id": "r039",
@@ -504,7 +542,8 @@
    "Definitely not it snows"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "\"If A then B\" says nothing when B happens — B can have other causes (affirming the consequent is a fallacy)."
  },
  {
   "id": "r040",
@@ -517,7 +556,8 @@
    "The rule is false"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "\"If A then B\" says nothing when B happens — B can have other causes (affirming the consequent is a fallacy)."
  },
  {
   "id": "r041",
@@ -530,7 +570,8 @@
    "Nothing — the rule doesn't work in reverse"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "\"If A then B\" says nothing when B happens — B can have other causes (affirming the consequent is a fallacy)."
  },
  {
   "id": "r042",
@@ -543,7 +584,8 @@
    "Definitely not the cafe is busy"
   ],
   "correctIndex": 0,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "\"If A then B\" says nothing when B happens — B can have other causes (affirming the consequent is a fallacy)."
  },
  {
   "id": "r043",
@@ -556,7 +598,8 @@
    "Nothing — the rule doesn't work in reverse"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "\"If A then B\" says nothing when B happens — B can have other causes (affirming the consequent is a fallacy)."
  },
  {
   "id": "r044",
@@ -569,7 +612,8 @@
    "The rule is false"
   ],
   "correctIndex": 0,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "\"If A then B\" says nothing when B happens — B can have other causes (affirming the consequent is a fallacy)."
  },
  {
   "id": "r045",
@@ -582,7 +626,8 @@
    "Nothing — the rule doesn't work in reverse"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "\"If A then B\" says nothing when B happens — B can have other causes (affirming the consequent is a fallacy)."
  },
  {
   "id": "r046",
@@ -595,7 +640,8 @@
    "All doctors are trained in navigation"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The doctors who are pilots are all trained in navigation — so at least some doctors are trained in navigation; nothing supports the stronger claims."
  },
  {
   "id": "r047",
@@ -608,7 +654,8 @@
    "Some painters are licensed to sail"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The painters who are sailors are all licensed to sail — so at least some painters are licensed to sail; nothing supports the stronger claims."
  },
  {
   "id": "r048",
@@ -621,7 +668,8 @@
    "No teachers are registered with the guild"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The teachers who are beekeepers are all registered with the guild — so at least some teachers are registered with the guild; nothing supports the stronger claims."
  },
  {
   "id": "r049",
@@ -634,7 +682,8 @@
    "No farmers are members of the craft union"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The farmers who are weavers are all members of the craft union — so at least some farmers are members of the craft union; nothing supports the stronger claims."
  },
  {
   "id": "r050",
@@ -647,7 +696,8 @@
    "All graduates of the academy are dancers"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The dancers who are drummers are all graduates of the academy — so at least some dancers are graduates of the academy; nothing supports the stronger claims."
  },
  {
   "id": "r051",
@@ -660,7 +710,8 @@
    "All skaters are members of the club"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The skaters who are coders are all members of the club — so at least some skaters are members of the club; nothing supports the stronger claims."
  },
  {
   "id": "r052",
@@ -673,7 +724,8 @@
    "All prize winners are poets"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The poets who are gardeners are all prize winners — so at least some poets are prize winners; nothing supports the stronger claims."
  },
  {
   "id": "r053",
@@ -686,7 +738,8 @@
    "Some clerks are trained in first aid"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The clerks who are climbers are all trained in first aid — so at least some clerks are trained in first aid; nothing supports the stronger claims."
  },
  {
   "id": "r054",
@@ -699,7 +752,8 @@
    "All certified instructors are singers"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The singers who are surfers are all certified instructors — so at least some singers are certified instructors; nothing supports the stronger claims."
  },
  {
   "id": "r055",
@@ -712,7 +766,8 @@
    "All jugglers are union members"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The jugglers who are welders are all union members — so at least some jugglers are union members; nothing supports the stronger claims."
  },
  {
   "id": "r056",
@@ -725,7 +780,8 @@
    "Nothing can be concluded"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "All P sit inside R, and Q sit entirely outside R — the two groups can't overlap."
  },
  {
   "id": "r057",
@@ -738,7 +794,8 @@
    "No swans are runners"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "All swans sit inside flyers, and runners sit entirely outside flyers — the two groups can't overlap."
  },
  {
   "id": "r058",
@@ -751,7 +808,8 @@
    "Nothing can be concluded"
   ],
   "correctIndex": 0,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "All cubes sit inside solids with corners, and discs sit entirely outside solids with corners — the two groups can't overlap."
  },
  {
   "id": "r059",
@@ -764,7 +822,8 @@
    "Some ferns are cacti"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "All ferns sit inside shade plants, and cacti sit entirely outside shade plants — the two groups can't overlap."
  },
  {
   "id": "r060",
@@ -777,7 +836,8 @@
    "No kayaks are sleds"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "All kayaks sit inside watercraft, and sleds sit entirely outside watercraft — the two groups can't overlap."
  },
  {
   "id": "r061",
@@ -790,7 +850,8 @@
    "Nothing can be concluded"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "All owls sit inside night hunters, and larks sit entirely outside night hunters — the two groups can't overlap."
  },
  {
   "id": "r062",
@@ -803,7 +864,8 @@
    "North"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Track quarter-turns from North: each 90° right moves one step clockwise (N→E→S→W); the turns end at South."
  },
  {
   "id": "r063",
@@ -816,7 +878,8 @@
    "West"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Track quarter-turns from East: each 90° right moves one step clockwise (N→E→S→W); the turns end at West."
  },
  {
   "id": "r064",
@@ -829,7 +892,8 @@
    "North"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Track quarter-turns from South: each 90° right moves one step clockwise (N→E→S→W); the turns end at East."
  },
  {
   "id": "r065",
@@ -842,7 +906,8 @@
    "West"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Track quarter-turns from West: each 90° right moves one step clockwise (N→E→S→W); the turns end at South."
  },
  {
   "id": "r066",
@@ -855,7 +920,8 @@
    "South"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Track quarter-turns from North: each 90° right moves one step clockwise (N→E→S→W); the turns end at North."
  },
  {
   "id": "r067",
@@ -868,7 +934,8 @@
    "North"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Track quarter-turns from East: each 90° right moves one step clockwise (N→E→S→W); the turns end at North."
  },
  {
   "id": "r068",
@@ -881,7 +948,8 @@
    "North"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Track quarter-turns from South: each 90° right moves one step clockwise (N→E→S→W); the turns end at North."
  },
  {
   "id": "r069",
@@ -894,7 +962,8 @@
    "West"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Track quarter-turns from West: each 90° right moves one step clockwise (N→E→S→W); the turns end at South."
  },
  {
   "id": "r070",
@@ -907,7 +976,8 @@
    "North"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Track quarter-turns from North: each 90° right moves one step clockwise (N→E→S→W); the turns end at West."
  },
  {
   "id": "r071",
@@ -920,7 +990,8 @@
    "East"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Track quarter-turns from East: each 90° right moves one step clockwise (N→E→S→W); the turns end at South."
  },
  {
   "id": "r072",
@@ -933,7 +1004,8 @@
    "West"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Track quarter-turns from South: each 90° right moves one step clockwise (N→E→S→W); the turns end at West."
  },
  {
   "id": "r073",
@@ -946,7 +1018,8 @@
    "North"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Track quarter-turns from West: each 90° right moves one step clockwise (N→E→S→W); the turns end at North."
  },
  {
   "id": "r074",
@@ -959,7 +1032,8 @@
    "Ravi"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Ravi > Kavi > Omar > Leo, so Kavi is second."
  },
  {
   "id": "r075",
@@ -972,7 +1046,8 @@
    "Rohan"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Rohan > Ishan > Asha > Priya, so Ishan is second."
  },
  {
   "id": "r076",
@@ -985,7 +1060,8 @@
    "Leo"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Leo > Nikhil > Ishan > Dev, so Nikhil is second."
  },
  {
   "id": "r077",
@@ -998,7 +1074,8 @@
    "Dev"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Dev > Nikhil > Anika > Rohan, so Nikhil is second."
  },
  {
   "id": "r078",
@@ -1011,7 +1088,8 @@
    "Priya"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Noor > Priya > Kavi > Anika, so Priya is second."
  },
  {
   "id": "r079",
@@ -1024,7 +1102,8 @@
    "Dev"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Dev > Ishan > Zara > Noor, so Ishan is second."
  },
  {
   "id": "r080",
@@ -1037,7 +1116,8 @@
    "Kavi"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Nikhil > Kavi > Tara > Noor, so Kavi is second."
  },
  {
   "id": "r081",
@@ -1050,7 +1130,8 @@
    "Noor"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Sara > Priya > Noor > Anika, so Priya is second."
  },
  {
   "id": "r082",
@@ -1063,7 +1144,8 @@
    "Ravi"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Asha > Nikhil > Ravi > Maya, so Nikhil is second."
  },
  {
   "id": "r083",
@@ -1076,7 +1158,8 @@
    "Dev"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Ishan > Dev > Anika > Maya, so Dev is second."
  },
  {
   "id": "r084",
@@ -1089,7 +1172,8 @@
    "Kavi"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Kavi > Leo > Anika > Noor, so Leo is second."
  },
  {
   "id": "r085",
@@ -1102,7 +1186,8 @@
    "Rohan"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Tara > Ravi > Nikhil > Rohan, so Ravi is second."
  },
  {
   "id": "r086",
@@ -1115,7 +1200,8 @@
    "Priya"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Noor > Omar > Priya > Dev, so Omar is second."
  },
  {
   "id": "r087",
@@ -1128,7 +1214,8 @@
    "Zara"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Rohan > Ishan > Zara > Tara, so Ishan is second."
  },
  {
   "id": "r088",
@@ -1141,7 +1228,8 @@
    "Rohan"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Dev > Leo > Nikhil > Rohan, so Leo is second."
  },
  {
   "id": "r089",
@@ -1154,7 +1242,8 @@
    "Ishan"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Ishan > Asha > Leo > Anika, so Asha is second."
  },
  {
   "id": "r090",
@@ -1167,7 +1256,8 @@
    "Priya"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Priya > Leo > Anika > Kavi, so Leo is second."
  },
  {
   "id": "r091",
@@ -1180,7 +1270,8 @@
    "Ravi"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Ravi > Ishan > Kavi > Priya, so Ishan is second."
  },
  {
   "id": "r092",
@@ -1193,7 +1284,8 @@
    "Noor"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Noor > Rohan > Ishan > Ravi, so Rohan is second."
  },
  {
   "id": "r093",
@@ -1206,7 +1298,8 @@
    "Ravi"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Ravi > Ishan > Tara > Dev, so Ishan is second."
  },
  {
   "id": "r094",
@@ -1219,7 +1312,8 @@
    "Leo"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Rohan > Kavi > Sara > Leo, so Kavi is second."
  },
  {
   "id": "r095",
@@ -1232,7 +1326,8 @@
    "Sara"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Anika > Sara > Priya > Maya, so Sara is second."
  },
  {
   "id": "r096",
@@ -1245,7 +1340,8 @@
    "Ishan"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Ishan > Anika > Nikhil > Dev, so Anika is second."
  },
  {
   "id": "r097",
@@ -1258,7 +1354,8 @@
    "Zara"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Asha > Ravi > Rohan > Zara, so Ravi is second."
  },
  {
   "id": "r098",
@@ -1271,7 +1368,8 @@
    "Rohan"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Rohan > Nikhil > Leo > Sara, so Nikhil is second."
  },
  {
   "id": "r099",
@@ -1284,7 +1382,8 @@
    "Nikhil"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Nikhil > Rohan > Sara > Maya, so Rohan is second."
  },
  {
   "id": "r100",
@@ -1297,7 +1396,8 @@
    "Anika"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Noor > Ishan > Nikhil > Anika, so Ishan is second."
  },
  {
   "id": "r101",
@@ -1310,7 +1410,8 @@
    "Rohan"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Leo > Asha > Ishan > Rohan, so Asha is second."
  },
  {
   "id": "r102",
@@ -1323,7 +1424,8 @@
    "Ravi"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Chaining the statements gives the order Ishan > Ravi > Omar > Maya, so Ravi is second."
  },
  {
   "id": "r103",
@@ -1336,7 +1438,8 @@
    "26"
   ],
   "correctIndex": 0,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "\"All but 9\" means 9 stay — the wording already states what remains."
  },
  {
   "id": "r104",
@@ -1349,7 +1452,8 @@
    "23"
   ],
   "correctIndex": 2,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "\"All but 8\" means 8 stay — the wording already states what remains."
  },
  {
   "id": "r105",
@@ -1362,7 +1466,8 @@
    "31"
   ],
   "correctIndex": 0,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "\"All but 12\" means 12 stay — the wording already states what remains."
  },
  {
   "id": "r106",
@@ -1375,7 +1480,8 @@
    "8"
   ],
   "correctIndex": 0,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "\"All but 6\" means 6 stay — the wording already states what remains."
  },
  {
   "id": "r107",
@@ -1388,7 +1494,8 @@
    "15"
   ],
   "correctIndex": 2,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "\"All but 11\" means 11 stay — the wording already states what remains."
  },
  {
   "id": "r108",
@@ -1401,7 +1508,8 @@
    "7"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "\"All but 7\" means 7 stay — the wording already states what remains."
  },
  {
   "id": "r109",
@@ -1414,7 +1522,8 @@
    "41"
   ],
   "correctIndex": 1,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "\"All but 13\" means 13 stay — the wording already states what remains."
  },
  {
   "id": "r110",
@@ -1427,7 +1536,8 @@
    "18"
   ],
   "correctIndex": 0,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "\"All but 15\" means 15 stay — the wording already states what remains."
  },
  {
   "id": "r111",
@@ -1440,7 +1550,8 @@
    "Thursday"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "10 = 1 full weeks + 3 days; 3 days after Monday is Thursday."
  },
  {
   "id": "r112",
@@ -1453,7 +1564,8 @@
    "Sunday"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "16 = 2 full weeks + 2 days; 2 days after Wednesday is Friday."
  },
  {
   "id": "r113",
@@ -1466,7 +1578,8 @@
    "Tuesday"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "9 = 1 full weeks + 2 days; 2 days after Friday is Sunday."
  },
  {
   "id": "r114",
@@ -1479,7 +1592,8 @@
    "Tuesday"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "23 = 3 full weeks + 2 days; 2 days after Tuesday is Thursday."
  },
  {
   "id": "r115",
@@ -1492,7 +1606,8 @@
    "Saturday"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "12 = 1 full weeks + 5 days; 5 days after Saturday is Thursday."
  },
  {
   "id": "r116",
@@ -1505,7 +1620,8 @@
    "Thursday"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "30 = 4 full weeks + 2 days; 2 days after Thursday is Saturday."
  },
  {
   "id": "r117",
@@ -1518,7 +1634,8 @@
    "Wednesday"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "15 = 2 full weeks + 1 days; 1 days after Sunday is Monday."
  },
  {
   "id": "r118",
@@ -1531,7 +1648,8 @@
    "Thursday"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "45 = 6 full weeks + 3 days; 3 days after Monday is Thursday."
  },
  {
   "id": "r119",
@@ -1544,7 +1662,8 @@
    "Saturday"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "100 = 14 full weeks + 2 days; 2 days after Wednesday is Friday."
  },
  {
   "id": "r120",
@@ -1557,7 +1676,8 @@
    "Friday"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "26 = 3 full weeks + 5 days; 5 days after Friday is Wednesday."
  },
  {
   "id": "r121",
@@ -1570,7 +1690,8 @@
    "Monday"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "61 = 8 full weeks + 5 days; 5 days after Tuesday is Sunday."
  },
  {
   "id": "r122",
@@ -1583,7 +1704,8 @@
    "Monday"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "39 = 5 full weeks + 4 days; 4 days after Saturday is Wednesday."
  },
  {
   "id": "r123",
@@ -1596,7 +1718,8 @@
    "A and 4"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Only a vowel with an odd back (A) or an odd number hiding a vowel (7) can break the rule — 4 obeys it whatever is behind."
  },
  {
   "id": "r124",
@@ -1609,7 +1732,8 @@
    "E and 3"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Only a vowel with an odd back (E) or an odd number hiding a vowel (3) can break the rule — 8 obeys it whatever is behind."
  },
  {
   "id": "r125",
@@ -1622,7 +1746,8 @@
    "I and 6"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Only a vowel with an odd back (I) or an odd number hiding a vowel (9) can break the rule — 6 obeys it whatever is behind."
  },
  {
   "id": "r126",
@@ -1635,7 +1760,8 @@
    "U and 5"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Only a vowel with an odd back (U) or an odd number hiding a vowel (5) can break the rule — 2 obeys it whatever is behind."
  },
  {
   "id": "r127",
@@ -1648,7 +1774,8 @@
    "O and 11"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Only a vowel with an odd back (O) or an odd number hiding a vowel (11) can break the rule — 10 obeys it whatever is behind."
  },
  {
   "id": "r128",
@@ -1661,7 +1788,8 @@
    "S and 12"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Only a vowel with an odd back (A) or an odd number hiding a vowel (15) can break the rule — 12 obeys it whatever is behind."
  },
  {
   "id": "r129",
@@ -1674,7 +1802,8 @@
    "Your aunt"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Step through the chain: the sister of your father is, by definition, your aunt."
  },
  {
   "id": "r130",
@@ -1687,7 +1816,8 @@
    "Your niece"
   ],
   "correctIndex": 0,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Step through the chain: the daughter of your uncle is, by definition, your cousin."
  },
  {
   "id": "r131",
@@ -1700,7 +1830,8 @@
    "Your cousin"
   ],
   "correctIndex": 1,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Step through the chain: the son of your sister is, by definition, your nephew."
  },
  {
   "id": "r132",
@@ -1713,7 +1844,8 @@
    "Your grandmother"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Step through the chain: the mother of your father is, by definition, your grandmother."
  },
  {
   "id": "r133",
@@ -1726,7 +1858,8 @@
    "Your stepson"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Step through the chain: the husband of your daughter is, by definition, your son-in-law."
  },
  {
   "id": "r134",
@@ -1739,7 +1872,8 @@
    "Your aunt"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Step through the chain: the wife of your brother is, by definition, your sister-in-law."
  },
  {
   "id": "r135",
@@ -1752,7 +1886,8 @@
    "Your uncle"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Step through the chain: the father of your mother's mother is, by definition, your great-grandfather."
  },
  {
   "id": "r136",
@@ -1765,7 +1900,8 @@
    "Your nephew"
   ],
   "correctIndex": 0,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Step through the chain: the son of your father's brother is, by definition, your cousin."
  },
  {
   "id": "r137",
@@ -1778,7 +1914,8 @@
    "Your brother-in-law"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Step through the chain: the brother of your spouse is, by definition, your brother-in-law."
  },
  {
   "id": "r138",
@@ -1791,7 +1928,8 @@
    "10"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each of 4 people shakes 3 hands; halve to avoid double-counting: 4×3÷2 = 6."
  },
  {
   "id": "r139",
@@ -1804,7 +1942,8 @@
    "6"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each of 5 people shakes 4 hands; halve to avoid double-counting: 5×4÷2 = 10."
  },
  {
   "id": "r140",
@@ -1817,7 +1956,8 @@
    "30"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each of 6 people shakes 5 hands; halve to avoid double-counting: 6×5÷2 = 15."
  },
  {
   "id": "r141",
@@ -1830,7 +1970,8 @@
    "42"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each of 7 people shakes 6 hands; halve to avoid double-counting: 7×6÷2 = 21."
  },
  {
   "id": "r142",
@@ -1843,7 +1984,8 @@
    "36"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each of 8 people shakes 7 hands; halve to avoid double-counting: 8×7÷2 = 28."
  },
  {
   "id": "r143",
@@ -1856,7 +1998,8 @@
    "72"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each of 9 people shakes 8 hands; halve to avoid double-counting: 9×8÷2 = 36."
  },
  {
   "id": "r144",
@@ -1869,7 +2012,8 @@
    "55"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each of 10 people shakes 9 hands; halve to avoid double-counting: 10×9÷2 = 45."
  },
  {
   "id": "r145",
@@ -1882,7 +2026,8 @@
    "66"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each of 12 people shakes 11 hands; halve to avoid double-counting: 12×11÷2 = 66."
  },
  {
   "id": "r146",
@@ -1895,7 +2040,8 @@
    "66"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each of 11 people shakes 10 hands; halve to avoid double-counting: 11×10÷2 = 55."
  },
  {
   "id": "r147",
@@ -1908,7 +2054,8 @@
    "91"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each of 13 people shakes 12 hands; halve to avoid double-counting: 13×12÷2 = 78."
  },
  {
   "id": "r148",
@@ -1921,7 +2068,8 @@
    "105"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each of 14 people shakes 13 hands; halve to avoid double-counting: 14×13÷2 = 91."
  },
  {
   "id": "r149",
@@ -1934,7 +2082,8 @@
    "105"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each of 15 people shakes 14 hands; halve to avoid double-counting: 15×14÷2 = 105."
  },
  {
   "id": "r150",
@@ -1947,7 +2096,8 @@
    "Omar"
   ],
   "correctIndex": 1,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "The chain Omar > Ishan > Ravi puts Ravi at the bottom."
  },
  {
   "id": "r151",
@@ -1960,7 +2110,8 @@
    "It cannot be determined"
   ],
   "correctIndex": 1,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "The chain Noor > Rohan > Ishan puts Ishan at the bottom."
  },
  {
   "id": "r152",
@@ -1973,7 +2124,8 @@
    "Noor"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "The chain Tara > Ravi > Noor puts Noor at the bottom."
  },
  {
   "id": "r153",
@@ -1986,7 +2138,8 @@
    "Tara"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "The chain Dev > Anika > Tara puts Tara at the bottom."
  },
  {
   "id": "r154",
@@ -1999,7 +2152,8 @@
    "Zara"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "The chain Ravi > Omar > Zara puts Zara at the bottom."
  },
  {
   "id": "r155",
@@ -2012,7 +2166,8 @@
    "Zara"
   ],
   "correctIndex": 2,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "The chain Zara > Omar > Tara puts Tara at the bottom."
  },
  {
   "id": "r156",
@@ -2025,7 +2180,8 @@
    "Tara"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "The chain Noor > Rohan > Tara puts Tara at the bottom."
  },
  {
   "id": "r157",
@@ -2038,7 +2194,8 @@
    "Ishan"
   ],
   "correctIndex": 0,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "The chain Ishan > Nikhil > Zara puts Zara at the bottom."
  },
  {
   "id": "r158",
@@ -2051,7 +2208,8 @@
    "Rohan"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "The chain Anika > Priya > Rohan puts Rohan at the bottom."
  },
  {
   "id": "r159",
@@ -2064,7 +2222,8 @@
    "Omar"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "The chain Nikhil > Anika > Omar puts Omar at the bottom."
  },
  {
   "id": "r160",
@@ -2077,7 +2236,8 @@
    "It cannot be determined"
   ],
   "correctIndex": 0,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "The chain Kavi > Tara > Zara puts Zara at the bottom."
  },
  {
   "id": "r161",
@@ -2090,7 +2250,8 @@
    "It cannot be determined"
   ],
   "correctIndex": 1,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "The chain Zara > Noor > Maya puts Maya at the bottom."
  },
  {
   "id": "r162",
@@ -2103,7 +2264,8 @@
    "Rohan"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "The chain Dev > Tara > Rohan puts Rohan at the bottom."
  },
  {
   "id": "r163",
@@ -2116,7 +2278,8 @@
    "Priya"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "The chain Rohan > Zara > Priya puts Priya at the bottom."
  },
  {
   "id": "r164",
@@ -2129,7 +2292,8 @@
    "Zara"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "The chain Maya > Omar > Zara puts Zara at the bottom."
  },
  {
   "id": "r165",
@@ -2142,7 +2306,8 @@
    "Sara"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "The chain Kavi > Priya > Sara puts Sara at the bottom."
  },
  {
   "id": "r166",
@@ -2155,7 +2320,8 @@
    "It cannot be determined"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Rohan always tells the truth, so the key is where Rohan says — the liar's claim just confirms it isn't in the blue box."
  },
  {
   "id": "r167",
@@ -2168,7 +2334,8 @@
    "In the left drawer"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Sara always tells the truth, so the coin is where Sara says — the liar's claim just confirms it isn't in the right drawer."
  },
  {
   "id": "r168",
@@ -2181,7 +2348,8 @@
    "In the green chest"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Leo always tells the truth, so the map is where Leo says — the liar's claim just confirms it isn't in the black chest."
  },
  {
   "id": "r169",
@@ -2194,7 +2362,8 @@
    "It cannot be determined"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Anika always tells the truth, so the ticket is where Anika says — the liar's claim just confirms it isn't in the bottom shelf."
  },
  {
   "id": "r170",
@@ -2207,7 +2376,8 @@
    "In the oak desk"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Omar always tells the truth, so the letter is where Omar says — the liar's claim just confirms it isn't in the pine desk."
  },
  {
   "id": "m001",
@@ -2220,7 +2390,8 @@
    "21"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "15% means 15/100, so 240 × 0.15 = 36."
  },
  {
   "id": "m002",
@@ -2233,7 +2404,8 @@
    "80"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "25% means 25/100, so 320 × 0.25 = 80."
  },
  {
   "id": "m003",
@@ -2246,7 +2418,8 @@
    "25"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "30% means 30/100, so 150 × 0.3 = 45."
  },
  {
   "id": "m004",
@@ -2259,7 +2432,8 @@
    "8"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "12% means 12/100, so 400 × 0.12 = 48."
  },
  {
   "id": "m005",
@@ -2272,7 +2446,8 @@
    "140"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "35% means 35/100, so 200 × 0.35 = 70."
  },
  {
   "id": "m006",
@@ -2285,7 +2460,8 @@
    "1"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "45% means 45/100, so 180 × 0.45 = 81."
  },
  {
   "id": "m007",
@@ -2298,7 +2474,8 @@
    "1"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "65% means 65/100, so 140 × 0.65 = 91."
  },
  {
   "id": "m008",
@@ -2311,7 +2488,8 @@
    "93"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "18% means 18/100, so 350 × 0.18 = 63."
  },
  {
   "id": "m009",
@@ -2324,7 +2502,8 @@
    "121"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "55% means 55/100, so 220 × 0.55 = 121."
  },
  {
   "id": "m010",
@@ -2337,7 +2516,8 @@
    "66"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "28% means 28/100, so 450 × 0.28 = 126."
  },
  {
   "id": "m011",
@@ -2350,7 +2530,8 @@
    "120"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "75% means 75/100, so 160 × 0.75 = 120."
  },
  {
   "id": "m012",
@@ -2363,7 +2544,8 @@
    "4"
   ],
   "correctIndex": 2,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "5% means 5/100, so 480 × 0.05 = 24."
  },
  {
   "id": "m013",
@@ -2376,7 +2558,8 @@
    "255"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "85% means 85/100, so 300 × 0.85 = 255."
  },
  {
   "id": "m014",
@@ -2389,7 +2572,8 @@
    "220"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "22% means 22/100, so 500 × 0.22 = 110."
  },
  {
   "id": "m015",
@@ -2402,7 +2586,8 @@
    "135"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "36% means 36/100, so 250 × 0.36 = 90."
  },
  {
   "id": "m016",
@@ -2415,7 +2600,8 @@
    "57"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "64% means 64/100, so 175 × 0.64 = 112."
  },
  {
   "id": "m017",
@@ -2428,7 +2614,8 @@
    "1,100"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "After 20% off, the sale price is 80% of the original: 800 ÷ 0.8 = 1,000."
  },
  {
   "id": "m018",
@@ -2441,7 +2628,8 @@
    "1,500"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "After 30% off, the sale price is 70% of the original: 1,050 ÷ 0.7 = 1,500."
  },
  {
   "id": "m019",
@@ -2454,7 +2642,8 @@
    "1,100"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "After 15% off, the sale price is 85% of the original: 1,020 ÷ 0.85 = 1,200."
  },
  {
   "id": "m020",
@@ -2467,7 +2656,8 @@
    "2,000"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "After 35% off, the sale price is 65% of the original: 1,300 ÷ 0.65 = 2,000."
  },
  {
   "id": "m021",
@@ -2480,7 +2670,8 @@
    "700"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "After 40% off, the sale price is 60% of the original: 360 ÷ 0.6 = 600."
  },
  {
   "id": "m022",
@@ -2493,7 +2684,8 @@
    "3,600"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "After 12% off, the sale price is 88% of the original: 2,200 ÷ 0.88 = 2,500."
  },
  {
   "id": "m023",
@@ -2506,7 +2698,8 @@
    "900"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "After 60% off, the sale price is 40% of the original: 360 ÷ 0.4 = 900."
  },
  {
   "id": "m024",
@@ -2519,7 +2712,8 @@
    "300"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "After 30% off, the sale price is 70% of the original: 280 ÷ 0.7 = 400."
  },
  {
   "id": "m025",
@@ -2532,7 +2726,8 @@
    "750"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "After 20% off, the sale price is 80% of the original: 600 ÷ 0.8 = 750."
  },
  {
   "id": "m026",
@@ -2545,7 +2740,8 @@
    "4,275"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "After 15% off, the sale price is 85% of the original: 2,550 ÷ 0.85 = 3,000."
  },
  {
   "id": "m027",
@@ -2558,7 +2754,8 @@
    "9"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Add 7 to both sides: 3x = 27, so x = 27 ÷ 3 = 9."
  },
  {
   "id": "m028",
@@ -2571,7 +2768,8 @@
    "10"
   ],
   "correctIndex": 0,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Add 5 to both sides: 4x = 32, so x = 32 ÷ 4 = 8."
  },
  {
   "id": "m029",
@@ -2584,7 +2782,8 @@
    "5"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Add 12 to both sides: 5x = 35, so x = 35 ÷ 5 = 7."
  },
  {
   "id": "m030",
@@ -2597,7 +2796,8 @@
    "4"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Add 9 to both sides: 7x = 42, so x = 42 ÷ 7 = 6."
  },
  {
   "id": "m031",
@@ -2610,7 +2810,8 @@
    "7"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Add 15 to both sides: 8x = 72, so x = 72 ÷ 8 = 9."
  },
  {
   "id": "m032",
@@ -2623,7 +2824,8 @@
    "10"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Add 11 to both sides: 9x = 72, so x = 72 ÷ 9 = 8."
  },
  {
   "id": "m033",
@@ -2636,7 +2838,8 @@
    "15"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Add 18 to both sides: 4x = 60, so x = 60 ÷ 4 = 15."
  },
  {
   "id": "m034",
@@ -2649,7 +2852,8 @@
    "9"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Add 16 to both sides: 11x = 77, so x = 77 ÷ 11 = 7."
  },
  {
   "id": "m035",
@@ -2662,7 +2866,8 @@
    "2"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Add 19 to both sides: 12x = 72, so x = 72 ÷ 12 = 6."
  },
  {
   "id": "m036",
@@ -2675,7 +2880,8 @@
    "15"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Add 8 to both sides: 5x = 65, so x = 65 ÷ 5 = 13."
  },
  {
   "id": "m037",
@@ -2688,7 +2894,8 @@
    "7"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Add 5 to both sides: 7x = 77, so x = 77 ÷ 7 = 11."
  },
  {
   "id": "m038",
@@ -2701,7 +2908,8 @@
    "12"
   ],
   "correctIndex": 2,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Add 11 to both sides: 3x = 48, so x = 48 ÷ 3 = 16."
  },
  {
   "id": "m039",
@@ -2714,7 +2922,8 @@
    "8"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Add 25 to both sides: 9x = 108, so x = 108 ÷ 9 = 12."
  },
  {
   "id": "m040",
@@ -2727,7 +2936,8 @@
    "72 km/h"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Speed = distance ÷ time: 180 ÷ 2.5 = 72 km/h."
  },
  {
   "id": "m041",
@@ -2740,7 +2950,8 @@
    "76 km/h"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Speed = distance ÷ time: 240 ÷ 3 = 80 km/h."
  },
  {
   "id": "m042",
@@ -2753,7 +2964,8 @@
    "64 km/h"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Speed = distance ÷ time: 150 ÷ 2.5 = 60 km/h."
  },
  {
   "id": "m043",
@@ -2766,7 +2978,8 @@
    "68 km/h"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Speed = distance ÷ time: 90 ÷ 1.5 = 60 km/h."
  },
  {
   "id": "m044",
@@ -2779,7 +2992,8 @@
    "60 km/h"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Speed = distance ÷ time: 210 ÷ 3.5 = 60 km/h."
  },
  {
   "id": "m045",
@@ -2792,7 +3006,8 @@
    "80 km/h"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Speed = distance ÷ time: 280 ÷ 3.5 = 80 km/h."
  },
  {
   "id": "m046",
@@ -2805,7 +3020,8 @@
    "94 km/h"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Speed = distance ÷ time: 135 ÷ 1.5 = 90 km/h."
  },
  {
   "id": "m047",
@@ -2818,7 +3034,8 @@
    "60 km/h"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Speed = distance ÷ time: 330 ÷ 5.5 = 60 km/h."
  },
  {
   "id": "m048",
@@ -2831,7 +3048,8 @@
    "15"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The job is 12 × 10 = 120 worker-days; 120 ÷ 8 workers = 15 days."
  },
  {
   "id": "m049",
@@ -2844,7 +3062,8 @@
    "12"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The job is 6 × 8 = 48 worker-days; 48 ÷ 4 workers = 12 days."
  },
  {
   "id": "m050",
@@ -2857,7 +3076,8 @@
    "14"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The job is 9 × 12 = 108 worker-days; 108 ÷ 6 workers = 18 days."
  },
  {
   "id": "m051",
@@ -2870,7 +3090,8 @@
    "10"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The job is 10 × 6 = 60 worker-days; 60 ÷ 5 workers = 12 days."
  },
  {
   "id": "m052",
@@ -2883,7 +3104,8 @@
    "14"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The job is 8 × 9 = 72 worker-days; 72 ÷ 6 workers = 12 days."
  },
  {
   "id": "m053",
@@ -2896,7 +3118,8 @@
    "8"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The job is 15 × 4 = 60 worker-days; 60 ÷ 10 workers = 6 days."
  },
  {
   "id": "m054",
@@ -2909,7 +3132,8 @@
    "8"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The job is 16 × 9 = 144 worker-days; 144 ÷ 12 workers = 12 days."
  },
  {
   "id": "m055",
@@ -2922,7 +3146,8 @@
    "13"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The job is 20 × 6 = 120 worker-days; 120 ÷ 8 workers = 15 days."
  },
  {
   "id": "m056",
@@ -2935,7 +3160,8 @@
    "15"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The job is 18 × 10 = 180 worker-days; 180 ÷ 12 workers = 15 days."
  },
  {
   "id": "m057",
@@ -2948,7 +3174,8 @@
    "33"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Checking upward from 31: the next number with no divisors besides 1 and itself is 37."
  },
  {
   "id": "m058",
@@ -2961,7 +3188,8 @@
    "49"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Checking upward from 43: the next number with no divisors besides 1 and itself is 47."
  },
  {
   "id": "m059",
@@ -2974,7 +3202,8 @@
    "61"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Checking upward from 53: the next number with no divisors besides 1 and itself is 59."
  },
  {
   "id": "m060",
@@ -2987,7 +3216,8 @@
    "91"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Checking upward from 83: the next number with no divisors besides 1 and itself is 89."
  },
  {
   "id": "m061",
@@ -3000,7 +3230,8 @@
    "49"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Checking upward from 47: the next number with no divisors besides 1 and itself is 53."
  },
  {
   "id": "m062",
@@ -3013,7 +3244,8 @@
    "91"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Checking upward from 89: the next number with no divisors besides 1 and itself is 97."
  },
  {
   "id": "m063",
@@ -3026,7 +3258,8 @@
    "103"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Checking upward from 97: the next number with no divisors besides 1 and itself is 101."
  },
  {
   "id": "m064",
@@ -3039,7 +3272,8 @@
    "8"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Multiplying powers of the same base adds the exponents: 5 + 3 = 8."
  },
  {
   "id": "m065",
@@ -3052,7 +3286,8 @@
    "11"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Multiplying powers of the same base adds the exponents: 4 + 6 = 10."
  },
  {
   "id": "m066",
@@ -3065,7 +3300,8 @@
    "13"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Multiplying powers of the same base adds the exponents: 3 + 9 = 12."
  },
  {
   "id": "m067",
@@ -3078,7 +3314,8 @@
    "11"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Multiplying powers of the same base adds the exponents: 6 + 5 = 11."
  },
  {
   "id": "m068",
@@ -3091,7 +3328,8 @@
    "32"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Multiplying powers of the same base adds the exponents: 8 + 4 = 12."
  },
  {
   "id": "m069",
@@ -3104,7 +3342,8 @@
    "6"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Multiplying powers of the same base adds the exponents: 9 + 3 = 12."
  },
  {
   "id": "m070",
@@ -3117,7 +3356,8 @@
    "2"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Multiplying powers of the same base adds the exponents: 7 + 5 = 12."
  },
  {
   "id": "m071",
@@ -3130,7 +3370,8 @@
    "8"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "A power of a power multiplies the exponents: 4 × 2 = 8."
  },
  {
   "id": "m072",
@@ -3143,7 +3384,8 @@
    "11"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "A power of a power multiplies the exponents: 3 × 4 = 12."
  },
  {
   "id": "m073",
@@ -3156,7 +3398,8 @@
    "25"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "A power of a power multiplies the exponents: 5 × 2 = 10."
  },
  {
   "id": "m074",
@@ -3169,7 +3412,8 @@
    "21"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Sum 12 + 18 + 24 = 54, divided by 3 values = 18."
  },
  {
   "id": "m075",
@@ -3182,7 +3426,8 @@
    "5"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Sum 7 + 11 + 15 = 33, divided by 3 values = 11."
  },
  {
   "id": "m076",
@@ -3195,7 +3440,8 @@
    "30"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Sum 20 + 30 + 40 = 90, divided by 3 values = 30."
  },
  {
   "id": "m077",
@@ -3208,7 +3454,8 @@
    "10"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Sum 9 + 14 + 25 = 48, divided by 3 values = 16."
  },
  {
   "id": "m078",
@@ -3221,7 +3468,8 @@
    "25"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Sum 5 + 25 + 45 = 75, divided by 3 values = 25."
  },
  {
   "id": "m079",
@@ -3234,7 +3482,8 @@
    "22"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Sum 13 + 21 + 32 + 46 = 112, divided by 4 values = 28."
  },
  {
   "id": "m080",
@@ -3247,7 +3496,8 @@
    "19"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Sum 10 + 20 + 30 + 40 = 100, divided by 4 values = 25."
  },
  {
   "id": "m081",
@@ -3260,7 +3510,8 @@
    "11"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Sum 8 + 16 + 27 = 51, divided by 3 values = 17."
  },
  {
   "id": "m082",
@@ -3273,7 +3524,8 @@
    "20"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Sum 11 + 23 + 35 = 69, divided by 3 values = 23."
  },
  {
   "id": "m083",
@@ -3286,7 +3538,8 @@
    "19"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Sum 6 + 18 + 33 + 43 = 100, divided by 4 values = 25."
  },
  {
   "id": "m084",
@@ -3299,7 +3552,8 @@
    "64"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "96 ÷ 4 = 24, then × 3 = 72."
  },
  {
   "id": "m085",
@@ -3312,7 +3566,8 @@
    "56"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "84 ÷ 3 = 28, then × 2 = 56."
  },
  {
   "id": "m086",
@@ -3325,7 +3580,8 @@
    "40"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "64 ÷ 8 = 8, then × 5 = 40."
  },
  {
   "id": "m087",
@@ -3338,7 +3594,8 @@
    "35"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "75 ÷ 5 = 15, then × 3 = 45."
  },
  {
   "id": "m088",
@@ -3351,7 +3608,8 @@
    "52"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "91 ÷ 7 = 13, then × 4 = 52."
  },
  {
   "id": "m089",
@@ -3364,7 +3622,8 @@
    "33"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "56 ÷ 8 = 7, then × 7 = 49."
  },
  {
   "id": "m090",
@@ -3377,7 +3636,8 @@
    "18"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "81 ÷ 9 = 9, then × 2 = 18."
  },
  {
   "id": "m091",
@@ -3390,7 +3650,8 @@
    "36"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "84 ÷ 7 = 12, then × 3 = 36."
  },
  {
   "id": "m092",
@@ -3403,7 +3664,8 @@
    "51"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "108 ÷ 9 = 12, then × 5 = 60."
  },
  {
   "id": "m093",
@@ -3416,7 +3678,8 @@
    "87"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "115 ÷ 5 = 23, then × 4 = 92."
  },
  {
   "id": "m094",
@@ -3429,7 +3692,8 @@
    "32"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "96 ÷ 12 = 8, then × 7 = 56."
  },
  {
   "id": "m095",
@@ -3442,7 +3706,8 @@
    "59"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "4:5 makes 9 parts; each part is 90 ÷ 9 = 10, and the larger share is 5 parts = 50."
  },
  {
   "id": "m096",
@@ -3455,7 +3720,8 @@
    "83"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "3:5 makes 8 parts; each part is 120 ÷ 8 = 15, and the larger share is 5 parts = 75."
  },
  {
   "id": "m097",
@@ -3468,7 +3734,8 @@
    "34"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "3:4 makes 7 parts; each part is 84 ÷ 7 = 12, and the larger share is 4 parts = 48."
  },
  {
   "id": "m098",
@@ -3481,7 +3748,8 @@
    "50"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "7:8 makes 15 parts; each part is 150 ÷ 15 = 10, and the larger share is 8 parts = 80."
  },
  {
   "id": "m099",
@@ -3494,7 +3762,8 @@
    "42"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "5:7 makes 12 parts; each part is 72 ÷ 12 = 6, and the larger share is 7 parts = 42."
  },
  {
   "id": "m100",
@@ -3507,7 +3776,8 @@
    "38"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "5:6 makes 11 parts; each part is 110 ÷ 11 = 10, and the larger share is 6 parts = 60."
  },
  {
   "id": "m101",
@@ -3520,7 +3790,8 @@
    "83"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "6:7 makes 13 parts; each part is 130 ÷ 13 = 10, and the larger share is 7 parts = 70."
  },
  {
   "id": "m102",
@@ -3533,7 +3804,8 @@
    "78"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "3:7 makes 10 parts; each part is 140 ÷ 10 = 14, and the larger share is 7 parts = 98."
  },
  {
   "id": "m103",
@@ -3546,7 +3818,8 @@
    "110"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Interest = principal × rate × time: 1,000 × 5% × 2 = 100."
  },
  {
   "id": "m104",
@@ -3559,7 +3832,8 @@
    "216"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Interest = principal × rate × time: 2,000 × 4% × 3 = 240."
  },
  {
   "id": "m105",
@@ -3572,7 +3846,8 @@
    "180"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Interest = principal × rate × time: 1,500 × 6% × 2 = 180."
  },
  {
   "id": "m106",
@@ -3585,7 +3860,8 @@
    "160"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Interest = principal × rate × time: 800 × 5% × 4 = 160."
  },
  {
   "id": "m107",
@@ -3598,7 +3874,8 @@
    "390"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Interest = principal × rate × time: 1,200 × 10% × 3 = 360."
  },
  {
   "id": "m108",
@@ -3611,7 +3888,8 @@
    "540"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Interest = principal × rate × time: 3,000 × 6% × 3 = 540."
  },
  {
   "id": "m109",
@@ -3624,7 +3902,8 @@
    "180"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Interest = principal × rate × time: 1,800 × 5% × 2 = 180."
  },
  {
   "id": "m110",
@@ -3637,7 +3916,8 @@
    "108"
   ],
   "correctIndex": 2,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Area = length × width: 12 × 8 = 96."
  },
  {
   "id": "m111",
@@ -3650,7 +3930,8 @@
    "105"
   ],
   "correctIndex": 2,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Area = length × width: 15 × 6 = 90."
  },
  {
   "id": "m112",
@@ -3663,7 +3944,8 @@
    "72"
   ],
   "correctIndex": 1,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Area = length × width: 9 × 7 = 63."
  },
  {
   "id": "m113",
@@ -3676,7 +3958,8 @@
    "90"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Area = length × width: 18 × 5 = 90."
  },
  {
   "id": "m114",
@@ -3689,7 +3972,8 @@
    "50"
   ],
   "correctIndex": 1,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Area = length × width: 13 × 12 = 156."
  },
  {
   "id": "m115",
@@ -3702,7 +3986,8 @@
    "128"
   ],
   "correctIndex": 2,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Area = length × width: 16 × 7 = 112."
  },
  {
   "id": "m116",
@@ -3715,7 +4000,8 @@
    "133"
   ],
   "correctIndex": 2,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Area = length × width: 19 × 6 = 114."
  },
  {
   "id": "m117",
@@ -3728,7 +4014,8 @@
    "50"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Perimeter = 2 × (length + width): 2 × (16 + 9) = 50."
  },
  {
   "id": "m118",
@@ -3741,7 +4028,8 @@
    "18"
   ],
   "correctIndex": 2,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Perimeter = 2 × (length + width): 2 × (11 + 7) = 36."
  },
  {
   "id": "m119",
@@ -3754,7 +4042,8 @@
    "50"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Perimeter = 2 × (length + width): 2 × (17 + 8) = 50."
  },
  {
   "id": "m120",
@@ -3767,7 +4056,8 @@
    "46"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Perimeter = 2 × (length + width): 2 × (14 + 9) = 46."
  },
  {
   "id": "m121",
@@ -3780,7 +4070,8 @@
    "68"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Perimeter = 2 × (length + width): 2 × (23 + 11) = 68."
  },
  {
   "id": "m122",
@@ -3793,7 +4084,8 @@
    "156"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "13 × 13 = 169."
  },
  {
   "id": "m123",
@@ -3806,7 +4098,8 @@
    "210"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "14 × 14 = 196."
  },
  {
   "id": "m124",
@@ -3819,7 +4112,8 @@
    "272"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "16 × 16 = 256."
  },
  {
   "id": "m125",
@@ -3832,7 +4126,8 @@
    "324"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "18 × 18 = 324."
  },
  {
   "id": "m126",
@@ -3845,7 +4140,8 @@
    "400"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "19 × 19 = 361."
  },
  {
   "id": "m127",
@@ -3858,7 +4154,8 @@
    "441"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "21 × 21 = 441."
  },
  {
   "id": "m128",
@@ -3871,7 +4168,8 @@
    "576"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "23 × 23 = 529."
  },
  {
   "id": "m129",
@@ -3884,7 +4182,8 @@
    "552"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "24 × 24 = 576."
  },
  {
   "id": "m130",
@@ -3897,7 +4196,8 @@
    "8"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "12 × 12 = 144, so √144 = 12."
  },
  {
   "id": "m131",
@@ -3910,7 +4210,8 @@
    "14"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "14 × 14 = 196, so √196 = 14."
  },
  {
   "id": "m132",
@@ -3923,7 +4224,8 @@
    "15"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "15 × 15 = 225, so √225 = 15."
  },
  {
   "id": "m133",
@@ -3936,7 +4238,8 @@
    "19"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "17 × 17 = 289, so √289 = 17."
  },
  {
   "id": "m134",
@@ -3949,7 +4252,8 @@
    "18"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "18 × 18 = 324, so √324 = 18."
  },
  {
   "id": "m135",
@@ -3962,7 +4266,8 @@
    "18"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "20 × 20 = 400, so √400 = 20."
  },
  {
   "id": "m136",
@@ -3975,7 +4280,8 @@
    "17"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "21 × 21 = 441, so √441 = 21."
  },
  {
   "id": "m137",
@@ -3988,7 +4294,8 @@
    "2"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "24 is the smallest number both 6 and 8 divide into (24 = 6 × 4 = 8 × 3)."
  },
  {
   "id": "m138",
@@ -4001,7 +4308,8 @@
    "24"
   ],
   "correctIndex": 0,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "20 is the smallest number both 4 and 10 divide into (20 = 4 × 5 = 10 × 2)."
  },
  {
   "id": "m139",
@@ -4014,7 +4322,8 @@
    "108"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "36 is the smallest number both 9 and 12 divide into (36 = 9 × 4 = 12 × 3)."
  },
  {
   "id": "m140",
@@ -4027,7 +4336,8 @@
    "96"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "24 is the smallest number both 8 and 12 divide into (24 = 8 × 3 = 12 × 2)."
  },
  {
   "id": "m141",
@@ -4040,7 +4350,8 @@
    "30"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "30 is the smallest number both 6 and 15 divide into (30 = 6 × 5 = 15 × 2)."
  },
  {
   "id": "m142",
@@ -4053,7 +4364,8 @@
    "216"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "36 is the smallest number both 12 and 18 divide into (36 = 12 × 3 = 18 × 2)."
  },
  {
   "id": "m143",
@@ -4066,7 +4378,8 @@
    "56"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "56 is the smallest number both 8 and 14 divide into (56 = 8 × 7 = 14 × 4)."
  },
  {
   "id": "m144",
@@ -4079,7 +4392,8 @@
    "6"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "12 is the largest number dividing both: 24 = 12 × 2 and 36 = 12 × 3."
  },
  {
   "id": "m145",
@@ -4092,7 +4406,8 @@
    "12"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "6 is the largest number dividing both: 18 = 6 × 3 and 30 = 6 × 5."
  },
  {
   "id": "m146",
@@ -4105,7 +4420,8 @@
    "11"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "14 is the largest number dividing both: 28 = 14 × 2 and 42 = 14 × 3."
  },
  {
   "id": "m147",
@@ -4118,7 +4434,8 @@
    "16"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "16 is the largest number dividing both: 32 = 16 × 2 and 48 = 16 × 3."
  },
  {
   "id": "m148",
@@ -4131,7 +4448,8 @@
    "12"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "18 is the largest number dividing both: 36 = 18 × 2 and 54 = 18 × 3."
  },
  {
   "id": "m149",
@@ -4144,7 +4462,8 @@
    "1/2"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Count favourable outcomes over equally likely outcomes: the fraction reduces to 1/2."
  },
  {
   "id": "m150",
@@ -4157,7 +4476,8 @@
    "1/2"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Count favourable outcomes over equally likely outcomes: the fraction reduces to 1/3."
  },
  {
   "id": "m151",
@@ -4170,7 +4490,8 @@
    "1/3"
   ],
   "correctIndex": 2,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Count favourable outcomes over equally likely outcomes: the fraction reduces to 1/6."
  },
  {
   "id": "m152",
@@ -4183,7 +4504,8 @@
    "1/4"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Count favourable outcomes over equally likely outcomes: the fraction reduces to 1/4."
  },
  {
   "id": "m153",
@@ -4196,7 +4518,8 @@
    "3/4"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Count favourable outcomes over equally likely outcomes: the fraction reduces to 3/4."
  },
  {
   "id": "m154",
@@ -4209,7 +4532,8 @@
    "1/4"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Count favourable outcomes over equally likely outcomes: the fraction reduces to 1/13."
  },
  {
   "id": "m155",
@@ -4222,7 +4546,8 @@
    "1/36"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Count favourable outcomes over equally likely outcomes: the fraction reduces to 1/36."
  },
  {
   "id": "m156",
@@ -4235,7 +4560,8 @@
    "55"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Pair the ends: 1+10, 2+9… giving 10×11÷2 = 55."
  },
  {
   "id": "m157",
@@ -4248,7 +4574,8 @@
    "230"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Pair the ends: 1+20, 2+19… giving 20×21÷2 = 210."
  },
  {
   "id": "m158",
@@ -4261,7 +4588,8 @@
    "105"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Pair the ends: 1+15, 2+14… giving 15×16÷2 = 120."
  },
  {
   "id": "m159",
@@ -4274,7 +4602,8 @@
    "54"
   ],
   "correctIndex": 0,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Pair the ends: 1+12, 2+11… giving 12×13÷2 = 78."
  },
  {
   "id": "m160",
@@ -4287,7 +4616,8 @@
    "495"
   ],
   "correctIndex": 0,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Pair the ends: 1+30, 2+29… giving 30×31÷2 = 465."
  },
  {
   "id": "m161",
@@ -4300,7 +4630,8 @@
    "25%"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Profit is 100 − 80 = 20; as a share of cost: 20 ÷ 80 = 25%."
  },
  {
   "id": "m162",
@@ -4313,7 +4644,8 @@
    "25%"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Profit is 150 − 120 = 30; as a share of cost: 30 ÷ 120 = 25%."
  },
  {
   "id": "m163",
@@ -4326,7 +4658,8 @@
    "25%"
   ],
   "correctIndex": 0,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Profit is 260 − 200 = 60; as a share of cost: 60 ÷ 200 = 30%."
  },
  {
   "id": "m164",
@@ -4339,7 +4672,8 @@
    "25%"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Profit is 180 − 150 = 30; as a share of cost: 30 ÷ 150 = 20%."
  },
  {
   "id": "m165",
@@ -4352,7 +4686,8 @@
    "20%"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Profit is 300 − 250 = 50; as a share of cost: 50 ÷ 250 = 20%."
  },
  {
   "id": "m166",
@@ -4365,7 +4700,8 @@
    "145°"
   ],
   "correctIndex": 0,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Triangle angles sum to 180°: 180 − 35 − 65 = 80°."
  },
  {
   "id": "m167",
@@ -4378,7 +4714,8 @@
    "132°"
   ],
   "correctIndex": 0,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Triangle angles sum to 180°: 180 − 48 − 72 = 60°."
  },
  {
   "id": "m168",
@@ -4391,7 +4728,8 @@
    "90°"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Triangle angles sum to 180°: 180 − 54 − 36 = 90°."
  },
  {
   "id": "m169",
@@ -4404,7 +4742,8 @@
    "30°"
   ],
   "correctIndex": 2,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Triangle angles sum to 180°: 180 − 25 − 115 = 40°."
  },
  {
   "id": "m170",
@@ -4417,7 +4756,8 @@
    "60°"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Triangle angles sum to 180°: 180 − 62 − 58 = 60°."
  },
  {
   "id": "v001",
@@ -11060,7 +11400,8 @@
    "19"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The gaps grow by one each step (+2, +3, +4, +5), so the next gap is +6 → 21."
  },
  {
   "id": "p002",
@@ -11073,7 +11414,8 @@
    "23"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The gaps grow by one each step (+2, +3, +4, +5), so the next gap is +6 → 22."
  },
  {
   "id": "p003",
@@ -11086,7 +11428,8 @@
    "24"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The gaps grow by one each step (+2, +3, +4, +5), so the next gap is +6 → 23."
  },
  {
   "id": "p004",
@@ -11099,7 +11442,8 @@
    "23"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The gaps grow by one each step (+2, +3, +4, +5), so the next gap is +6 → 25."
  },
  {
   "id": "p005",
@@ -11112,7 +11456,8 @@
    "24"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The gaps grow by one each step (+2, +3, +4, +5), so the next gap is +6 → 24."
  },
  {
   "id": "p006",
@@ -11125,7 +11470,8 @@
    "28"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The gaps grow by one each step (+2, +3, +4, +5), so the next gap is +6 → 27."
  },
  {
   "id": "p007",
@@ -11138,7 +11484,8 @@
    "45"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 2 each step; the next difference is +12, giving 42."
  },
  {
   "id": "p008",
@@ -11151,7 +11498,8 @@
    "18"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 1 each step; the next difference is +5, giving 18."
  },
  {
   "id": "p009",
@@ -11164,7 +11512,8 @@
    "45"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 3 each step; the next difference is +14, giving 41."
  },
  {
   "id": "p010",
@@ -11177,7 +11526,8 @@
    "43"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 2 each step; the next difference is +11, giving 40."
  },
  {
   "id": "p011",
@@ -11190,7 +11540,8 @@
    "55"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 3 each step; the next difference is +17, giving 59."
  },
  {
   "id": "p012",
@@ -11203,7 +11554,8 @@
    "77"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 4 each step; the next difference is +23, giving 77."
  },
  {
   "id": "p013",
@@ -11216,7 +11568,8 @@
    "43"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 2 each step; the next difference is +10, giving 40."
  },
  {
   "id": "p014",
@@ -11229,7 +11582,8 @@
    "76"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 5 each step; the next difference is +25, giving 76."
  },
  {
   "id": "p015",
@@ -11242,7 +11596,8 @@
    "51"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 4 each step; the next difference is +18, giving 56."
  },
  {
   "id": "p016",
@@ -11255,7 +11610,8 @@
    "66"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 2 each step; the next difference is +16, giving 63."
  },
  {
   "id": "p017",
@@ -11268,7 +11624,8 @@
    "38"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 3 each step; the next difference is +13, giving 42."
  },
  {
   "id": "p018",
@@ -11281,7 +11638,8 @@
    "102"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 5 each step; the next difference is +30, giving 102."
  },
  {
   "id": "p019",
@@ -11294,7 +11652,8 @@
    "57"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 3 each step; the next difference is +15, giving 57."
  },
  {
   "id": "p020",
@@ -11307,7 +11666,8 @@
    "92"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 6 each step; the next difference is +33, giving 106."
  },
  {
   "id": "p021",
@@ -11320,7 +11680,8 @@
    "73"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 4 each step; the next difference is +20, giving 68."
  },
  {
   "id": "p022",
@@ -11333,7 +11694,8 @@
    "57"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 3 each step; the next difference is +18, giving 65."
  },
  {
   "id": "p023",
@@ -11346,7 +11708,8 @@
    "69"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 5 each step; the next difference is +22, giving 69."
  },
  {
   "id": "p024",
@@ -11359,7 +11722,8 @@
    "73"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 2 each step; the next difference is +19, giving 79."
  },
  {
   "id": "p025",
@@ -11372,7 +11736,8 @@
    "72"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 4 each step; the next difference is +21, giving 72."
  },
  {
   "id": "p026",
@@ -11385,7 +11750,8 @@
    "99"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 6 each step; the next difference is +30, giving 92."
  },
  {
   "id": "p027",
@@ -11398,7 +11764,8 @@
    "48"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 2 each step; the next difference is +12, giving 51."
  },
  {
   "id": "p028",
@@ -11411,7 +11778,8 @@
    "63"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The differences increase by 3 each step; the next difference is +19, giving 71."
  },
  {
   "id": "p029",
@@ -11424,7 +11792,8 @@
    "165"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is ×3 the previous, so next is 54 × 3 = 162."
  },
  {
   "id": "p030",
@@ -11437,7 +11806,8 @@
    "80"
   ],
   "correctIndex": 0,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Each term is ×2 the previous, so next is 80 × 2 = 160."
  },
  {
   "id": "p031",
@@ -11450,7 +11820,8 @@
    "772"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is ×4 the previous, so next is 192 × 4 = 768."
  },
  {
   "id": "p032",
@@ -11463,7 +11834,8 @@
    "56"
   ],
   "correctIndex": 0,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Each term is ×2 the previous, so next is 56 × 2 = 112."
  },
  {
   "id": "p033",
@@ -11476,7 +11848,8 @@
    "486"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is ×3 the previous, so next is 162 × 3 = 486."
  },
  {
   "id": "p034",
@@ -11489,7 +11862,8 @@
    "384"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Each term is ×2 the previous, so next is 192 × 2 = 384."
  },
  {
   "id": "p035",
@@ -11502,7 +11876,8 @@
    "6250"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is ×5 the previous, so next is 250 × 5 = 1250."
  },
  {
   "id": "p036",
@@ -11515,7 +11890,8 @@
    "8"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is ÷4 the previous, so next is 16 ÷ 4 = 4."
  },
  {
   "id": "p037",
@@ -11528,7 +11904,8 @@
    "6"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is ÷3 the previous, so next is 6 ÷ 3 = 2."
  },
  {
   "id": "p038",
@@ -11541,7 +11918,8 @@
    "352"
   ],
   "correctIndex": 1,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Each term is ×2 the previous, so next is 88 × 2 = 176."
  },
  {
   "id": "p039",
@@ -11554,7 +11932,8 @@
    "108"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is ×3 the previous, so next is 108 × 3 = 324."
  },
  {
   "id": "p040",
@@ -11567,7 +11946,8 @@
    "3"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is ÷3 the previous, so next is 27 ÷ 3 = 9."
  },
  {
   "id": "p041",
@@ -11580,7 +11960,8 @@
    "13"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is the sum of the two before it: 5 + 8 = 13."
  },
  {
   "id": "p042",
@@ -11593,7 +11974,8 @@
    "42"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is the sum of the two before it: 13 + 21 = 34."
  },
  {
   "id": "p043",
@@ -11606,7 +11988,8 @@
    "46"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is the sum of the two before it: 14 + 23 = 37."
  },
  {
   "id": "p044",
@@ -11619,7 +12002,8 @@
    "47"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is the sum of the two before it: 18 + 29 = 47."
  },
  {
   "id": "p045",
@@ -11632,7 +12016,8 @@
    "48"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is the sum of the two before it: 19 + 31 = 50."
  },
  {
   "id": "p046",
@@ -11645,7 +12030,8 @@
    "73"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is the sum of the two before it: 28 + 45 = 73."
  },
  {
   "id": "p047",
@@ -11658,7 +12044,8 @@
    "94"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is the sum of the two before it: 29 + 47 = 76."
  },
  {
   "id": "p048",
@@ -11671,7 +12058,8 @@
    "66"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is the sum of the two before it: 20 + 33 = 53."
  },
  {
   "id": "p049",
@@ -11684,7 +12072,8 @@
    "87"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is the sum of the two before it: 33 + 53 = 86."
  },
  {
   "id": "p050",
@@ -11697,7 +12086,8 @@
    "102"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is the sum of the two before it: 31 + 51 = 82."
  },
  {
   "id": "p051",
@@ -11710,7 +12100,8 @@
    "71"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is the sum of the two before it: 27 + 44 = 71."
  },
  {
   "id": "p052",
@@ -11723,7 +12114,8 @@
    "120"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each term is the sum of the two before it: 37 + 60 = 97."
  },
  {
   "id": "p053",
@@ -11736,7 +12128,8 @@
    "33"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term is ×2 then −1: 17 × 2 − 1 = 33."
  },
  {
   "id": "p054",
@@ -11749,7 +12142,8 @@
    "57"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term is ×2 then +1: 31 × 2 + 1 = 63."
  },
  {
   "id": "p055",
@@ -11762,7 +12156,8 @@
    "38"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term is ×2 then −2: 18 × 2 − 2 = 34."
  },
  {
   "id": "p056",
@@ -11775,7 +12170,8 @@
    "41"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term is ×3 then −1: 14 × 3 − 1 = 41."
  },
  {
   "id": "p057",
@@ -11788,7 +12184,8 @@
    "202"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term is ×3 then +1: 67 × 3 + 1 = 202."
  },
  {
   "id": "p058",
@@ -11801,7 +12198,8 @@
    "99"
   ],
   "correctIndex": 0,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term is ×2 then +3: 53 × 2 + 3 = 109."
  },
  {
   "id": "p059",
@@ -11814,7 +12212,8 @@
    "72"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term is ×2 then −3: 35 × 2 − 3 = 67."
  },
  {
   "id": "p060",
@@ -11827,7 +12226,8 @@
    "86"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term is ×4 then −2: 22 × 4 − 2 = 86."
  },
  {
   "id": "p061",
@@ -11840,7 +12240,8 @@
    "243"
   ],
   "correctIndex": 0,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term is ×4 then −3: 65 × 4 − 3 = 257."
  },
  {
   "id": "p062",
@@ -11853,7 +12254,8 @@
    "313"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term is ×3 then +2: 107 × 3 + 2 = 323."
  },
  {
   "id": "p063",
@@ -11866,7 +12268,8 @@
    "37"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term is ×2 then −5: 21 × 2 − 5 = 37."
  },
  {
   "id": "p064",
@@ -11879,7 +12282,8 @@
    "16"
   ],
   "correctIndex": 0,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term is ×3 then −4: 2 × 3 − 4 = 2."
  },
  {
   "id": "p065",
@@ -11892,7 +12296,8 @@
    "7"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The sequence alternates +4 and +2; the next step is +2, giving 19."
  },
  {
   "id": "p066",
@@ -11905,7 +12310,8 @@
    "10"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The sequence alternates +5 and +3; the next step is +3, giving 26."
  },
  {
   "id": "p067",
@@ -11918,7 +12324,8 @@
    "28"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The sequence alternates +3 and +6; the next step is +6, giving 37."
  },
  {
   "id": "p068",
@@ -11931,7 +12338,8 @@
    "12"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The sequence alternates +7 and +1; the next step is +1, giving 28."
  },
  {
   "id": "p069",
@@ -11944,7 +12352,8 @@
    "36"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The sequence alternates +2 and +8; the next step is +8, giving 36."
  },
  {
   "id": "p070",
@@ -11957,7 +12366,8 @@
    "55"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The sequence alternates +9 and +4; the next step is +4, giving 42."
  },
  {
   "id": "p071",
@@ -11970,7 +12380,8 @@
    "37"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The sequence alternates +6 and +2; the next step is +2, giving 29."
  },
  {
   "id": "p072",
@@ -11983,7 +12394,8 @@
    "45"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The sequence alternates +8 and +3; the next step is +3, giving 34."
  },
  {
   "id": "p073",
@@ -11996,7 +12408,8 @@
    "20"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The sequence alternates +4 and +9; the next step is +9, giving 46."
  },
  {
   "id": "p074",
@@ -12009,7 +12422,8 @@
    "47"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The sequence alternates +10 and +5; the next step is +5, giving 47."
  },
  {
   "id": "p075",
@@ -12022,7 +12436,8 @@
    "19"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The sequence alternates +3 and +7; the next step is +7, giving 39."
  },
  {
   "id": "p076",
@@ -12035,7 +12450,8 @@
    "21"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The sequence alternates +6 and +11; the next step is +11, giving 55."
  },
  {
   "id": "p077",
@@ -12048,7 +12464,8 @@
    "22"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The sequence alternates +5 and +2; the next step is +2, giving 29."
  },
  {
   "id": "p078",
@@ -12061,7 +12478,8 @@
    "71"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The sequence alternates +11 and +6; the next step is +6, giving 54."
  },
  {
   "id": "p079",
@@ -12074,7 +12492,8 @@
    "21"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The sequence alternates +2 and +7; the next step is +7, giving 39."
  },
  {
   "id": "p080",
@@ -12087,7 +12506,8 @@
    "37"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Steps alternate ×2 then +3; the next step is +3, giving 37."
  },
  {
   "id": "p081",
@@ -12100,7 +12520,8 @@
    "60"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Steps alternate ×2 then +4; the next step is +4, giving 52."
  },
  {
   "id": "p082",
@@ -12113,7 +12534,8 @@
    "53"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Steps alternate ×3 then +2; the next step is +2, giving 53."
  },
  {
   "id": "p083",
@@ -12126,7 +12548,8 @@
    "44"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Steps alternate ×2 then +1; the next step is +1, giving 39."
  },
  {
   "id": "p084",
@@ -12139,7 +12562,8 @@
    "42"
   ],
   "correctIndex": 0,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Steps alternate ×2 then +2; the next step is +2, giving 54."
  },
  {
   "id": "p085",
@@ -12152,7 +12576,8 @@
    "61"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Steps alternate ×3 then +1; the next step is +1, giving 67."
  },
  {
   "id": "p086",
@@ -12165,7 +12590,8 @@
    "120"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Steps alternate ×3 then +3; the next step is +3, giving 120."
  },
  {
   "id": "p087",
@@ -12178,7 +12604,8 @@
    "65"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Steps alternate ×2 then +5; the next step is +5, giving 83."
  },
  {
   "id": "p088",
@@ -12191,7 +12618,8 @@
    "U"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The skips grow by one letter each time (+2, +3, +4…), landing on U."
  },
  {
   "id": "p089",
@@ -12204,7 +12632,8 @@
    "S"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The skips grow by one letter each time (+1, +2, +3…), landing on Q."
  },
  {
   "id": "p090",
@@ -12217,7 +12646,8 @@
    "X"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The skips grow by one letter each time (+2, +3, +4…), landing on W."
  },
  {
   "id": "p091",
@@ -12230,7 +12660,8 @@
    "C"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The skips grow by one letter each time (+3, +4, +5…), landing on C."
  },
  {
   "id": "p092",
@@ -12243,7 +12674,8 @@
    "W"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The skips grow by one letter each time (+1, +2, +3…), landing on U."
  },
  {
   "id": "p093",
@@ -12256,7 +12688,8 @@
    "C"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The skips grow by one letter each time (+2, +3, +4…), landing on B."
  },
  {
   "id": "p094",
@@ -12269,7 +12702,8 @@
    "K"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The skips grow by one letter each time (+3, +4, +5…), landing on I."
  },
  {
   "id": "p095",
@@ -12282,7 +12716,8 @@
    "Z"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The skips grow by one letter each time (+1, +2, +3…), landing on Z."
  },
  {
   "id": "p096",
@@ -12295,7 +12730,8 @@
    "H"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The skips grow by one letter each time (+2, +3, +4…), landing on G."
  },
  {
   "id": "p097",
@@ -12308,7 +12744,8 @@
    "E"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The skips grow by one letter each time (+3, +4, +5…), landing on D."
  },
  {
   "id": "p098",
@@ -12321,7 +12758,8 @@
    "T"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The skips grow by one letter each time (+1, +2, +3…), landing on V."
  },
  {
   "id": "p099",
@@ -12334,7 +12772,8 @@
    "G"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The skips grow by one letter each time (+2, +3, +4…), landing on F."
  },
  {
   "id": "p100",
@@ -12347,7 +12786,8 @@
    "P"
   ],
   "correctIndex": 3,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Every step skips 3 letters forward, so after M comes P."
  },
  {
   "id": "p101",
@@ -12360,7 +12800,8 @@
    "X"
   ],
   "correctIndex": 2,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Every step skips 4 letters forward, so after R comes V."
  },
  {
   "id": "p102",
@@ -12373,7 +12814,8 @@
    "Q"
   ],
   "correctIndex": 2,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Every step skips 3 letters forward, so after O comes R."
  },
  {
   "id": "p103",
@@ -12386,7 +12828,8 @@
    "M"
   ],
   "correctIndex": 0,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Every step skips 2 letters forward, so after L comes N."
  },
  {
   "id": "p104",
@@ -12399,7 +12842,8 @@
    "X"
   ],
   "correctIndex": 1,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Every step skips 4 letters forward, so after U comes Y."
  },
  {
   "id": "p105",
@@ -12412,7 +12856,8 @@
    "D"
   ],
   "correctIndex": 0,
-  "difficulty": 1
+  "difficulty": 1,
+  "explain": "Every step skips 5 letters forward, so after Z comes E."
  },
  {
   "id": "p106",
@@ -12425,7 +12870,8 @@
    "36"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The amounts subtracted grow by 4 each step; next is −20, giving 40."
  },
  {
   "id": "p107",
@@ -12438,7 +12884,8 @@
    "50"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The amounts subtracted grow by 3 each step; next is −14, giving 50."
  },
  {
   "id": "p108",
@@ -12451,7 +12898,8 @@
    "45"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The amounts subtracted grow by 5 each step; next is −25, giving 45."
  },
  {
   "id": "p109",
@@ -12464,7 +12912,8 @@
    "57"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The amounts subtracted grow by 2 each step; next is −9, giving 55."
  },
  {
   "id": "p110",
@@ -12477,7 +12926,8 @@
    "60"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The amounts subtracted grow by 10 each step; next is −50, giving 50."
  },
  {
   "id": "p111",
@@ -12490,7 +12940,8 @@
    "63"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The amounts subtracted grow by 6 each step; next is −27, giving 75."
  },
  {
   "id": "p112",
@@ -12503,7 +12954,8 @@
    "19"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The amounts subtracted grow by 3 each step; next is −13, giving 25."
  },
  {
   "id": "p113",
@@ -12516,7 +12968,8 @@
    "58"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The amounts subtracted grow by 2 each step; next is −14, giving 60."
  },
  {
   "id": "p114",
@@ -12529,7 +12982,8 @@
    "56"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The amounts subtracted grow by 4 each step; next is −24, giving 60."
  },
  {
   "id": "p115",
@@ -12542,7 +12996,8 @@
    "38"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The amounts subtracted grow by 1 each step; next is −9, giving 40."
  },
  {
   "id": "p116",
@@ -12555,7 +13010,8 @@
    "32"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The amounts subtracted grow by 4 each step; next is −19, giving 40."
  },
  {
   "id": "p117",
@@ -12568,7 +13024,8 @@
    "75"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "The amounts subtracted grow by 6 each step; next is −31, giving 75."
  },
  {
   "id": "p118",
@@ -12581,7 +13038,8 @@
    "38"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the square numbers: next is 6² = 36 → 36."
  },
  {
   "id": "p119",
@@ -12594,7 +13052,8 @@
    "37"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the square numbers plus 1: next is 6² = 36 → 37."
  },
  {
   "id": "p120",
@@ -12607,7 +13066,8 @@
    "40"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the square numbers plus 2: next is 6² = 36 → 38."
  },
  {
   "id": "p121",
@@ -12620,7 +13080,8 @@
    "41"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the square numbers minus 1: next is 6² = 36 → 35."
  },
  {
   "id": "p122",
@@ -12633,7 +13094,8 @@
    "41"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the square numbers plus 3: next is 6² = 36 → 39."
  },
  {
   "id": "p123",
@@ -12646,7 +13108,8 @@
    "47"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the square numbers plus 5: next is 6² = 36 → 41."
  },
  {
   "id": "p124",
@@ -12659,7 +13122,8 @@
    "40"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the square numbers plus 4: next is 6² = 36 → 40."
  },
  {
   "id": "p125",
@@ -12672,7 +13136,8 @@
    "32"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the square numbers minus 2: next is 6² = 36 → 34."
  },
  {
   "id": "p126",
@@ -12685,7 +13150,8 @@
    "115"
   ],
   "correctIndex": 0,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "These are the cube numbers: next is 5³ = 125 → 125."
  },
  {
   "id": "p127",
@@ -12698,7 +13164,8 @@
    "131"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "These are the cube numbers plus 1: next is 5³ = 125 → 126."
  },
  {
   "id": "p128",
@@ -12711,7 +13178,8 @@
    "129"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "These are the cube numbers minus 1: next is 5³ = 125 → 124."
  },
  {
   "id": "p129",
@@ -12724,7 +13192,8 @@
    "132"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "These are the cube numbers plus 2: next is 5³ = 125 → 127."
  },
  {
   "id": "p130",
@@ -12737,7 +13206,8 @@
    "118"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "These are the cube numbers plus 3: next is 5³ = 125 → 128."
  },
  {
   "id": "p131",
@@ -12750,7 +13220,8 @@
    "37"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each step adds 2 × its position: next is +2×6 = +12, giving 41."
  },
  {
   "id": "p132",
@@ -12763,7 +13234,8 @@
    "42"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each step adds 2 × its position: next is +2×6 = +12, giving 42."
  },
  {
   "id": "p133",
@@ -12776,7 +13248,8 @@
    "61"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each step adds 3 × its position: next is +3×6 = +18, giving 61."
  },
  {
   "id": "p134",
@@ -12789,7 +13262,8 @@
    "47"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each step adds 2 × its position: next is +2×6 = +12, giving 43."
  },
  {
   "id": "p135",
@@ -12802,7 +13276,8 @@
    "59"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each step adds 3 × its position: next is +3×6 = +18, giving 65."
  },
  {
   "id": "p136",
@@ -12815,7 +13290,8 @@
    "68"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each step adds 4 × its position: next is +4×6 = +24, giving 84."
  },
  {
   "id": "p137",
@@ -12828,7 +13304,8 @@
    "66"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each step adds 4 × its position: next is +4×6 = +24, giving 82."
  },
  {
   "id": "p138",
@@ -12841,7 +13318,8 @@
    "46"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each step adds 2 × its position: next is +2×6 = +12, giving 46."
  },
  {
   "id": "p139",
@@ -12854,7 +13332,8 @@
    "73"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each step adds 3 × its position: next is +3×6 = +18, giving 67."
  },
  {
   "id": "p140",
@@ -12867,7 +13346,8 @@
    "103"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each step adds 5 × its position: next is +5×6 = +30, giving 103."
  },
  {
   "id": "p141",
@@ -12880,7 +13360,8 @@
    "40"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each step adds 2 × its position: next is +2×6 = +12, giving 48."
  },
  {
   "id": "p142",
@@ -12893,7 +13374,8 @@
    "94"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each step adds 5 × its position: next is +5×6 = +30, giving 104."
  },
  {
   "id": "p143",
@@ -12906,7 +13388,8 @@
    "73"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "Each step adds 4 × its position: next is +4×6 = +24, giving 89."
  },
  {
   "id": "p144",
@@ -12919,7 +13402,8 @@
    "3"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Two sequences interleave; the odd positions go 2, 5, 8… so next is 11."
  },
  {
   "id": "p145",
@@ -12932,7 +13416,8 @@
    "18"
   ],
   "correctIndex": 0,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Two sequences interleave; the odd positions go 1, 5, 9… so next is 13."
  },
  {
   "id": "p146",
@@ -12945,7 +13430,8 @@
    "8"
   ],
   "correctIndex": 0,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Two sequences interleave; the odd positions go 5, 10, 15… so next is 20."
  },
  {
   "id": "p147",
@@ -12958,7 +13444,8 @@
    "40"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Two sequences interleave; the odd positions go 10, 20, 30… so next is 40."
  },
  {
   "id": "p148",
@@ -12971,7 +13458,8 @@
    "29"
   ],
   "correctIndex": 0,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Two sequences interleave; the odd positions go 4, 10, 16… so next is 22."
  },
  {
   "id": "p149",
@@ -12984,7 +13472,8 @@
    "24"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Two sequences interleave; the odd positions go 3, 10, 17… so next is 24."
  },
  {
   "id": "p150",
@@ -12997,7 +13486,8 @@
    "23"
   ],
   "correctIndex": 1,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Two sequences interleave; the odd positions go 6, 10, 14… so next is 18."
  },
  {
   "id": "p151",
@@ -13010,7 +13500,8 @@
    "32"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Two sequences interleave; the odd positions go 8, 16, 24… so next is 32."
  },
  {
   "id": "p152",
@@ -13023,7 +13514,8 @@
    "66"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the powers of 2: next is 64 → 64."
  },
  {
   "id": "p153",
@@ -13036,7 +13528,8 @@
    "67"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the powers of 2 plus 1: next is 64 → 65."
  },
  {
   "id": "p154",
@@ -13049,7 +13542,8 @@
    "65"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the powers of 2 minus 1: next is 64 → 63."
  },
  {
   "id": "p155",
@@ -13062,7 +13556,8 @@
    "75"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the powers of 2 plus 3: next is 64 → 67."
  },
  {
   "id": "p156",
@@ -13075,7 +13570,8 @@
    "69"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the powers of 2 plus 5: next is 64 → 69."
  },
  {
   "id": "p157",
@@ -13088,7 +13584,8 @@
    "68"
   ],
   "correctIndex": 0,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the powers of 2 plus 2: next is 64 → 66."
  },
  {
   "id": "p158",
@@ -13101,7 +13598,8 @@
    "46"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the powers of 2 minus 2: next is 64 → 62."
  },
  {
   "id": "p159",
@@ -13114,7 +13612,8 @@
    "52"
   ],
   "correctIndex": 1,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the powers of 2 plus 4: next is 64 → 68."
  },
  {
   "id": "p160",
@@ -13127,7 +13626,8 @@
    "70"
   ],
   "correctIndex": 3,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the powers of 2 plus 6: next is 64 → 70."
  },
  {
   "id": "p161",
@@ -13140,7 +13640,8 @@
    "63"
   ],
   "correctIndex": 2,
-  "difficulty": 2
+  "difficulty": 2,
+  "explain": "These are the powers of 2 minus 3: next is 64 → 61."
  },
  {
   "id": "p162",
@@ -13153,7 +13654,8 @@
    "8"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term doubles the last then subtracts its position: 2×7 − 6 = 8."
  },
  {
   "id": "p163",
@@ -13166,7 +13668,8 @@
    "45"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term doubles the last then subtracts its position: 2×23 − 6 = 40."
  },
  {
   "id": "p164",
@@ -13179,7 +13682,8 @@
    "62"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term doubles the last then subtracts its position: 2×39 − 6 = 72."
  },
  {
   "id": "p165",
@@ -13192,7 +13696,8 @@
    "99"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term doubles the last then subtracts its position: 2×55 − 6 = 104."
  },
  {
   "id": "p166",
@@ -13205,7 +13710,8 @@
    "136"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term doubles the last then subtracts its position: 2×71 − 6 = 136."
  },
  {
   "id": "p167",
@@ -13218,7 +13724,8 @@
    "173"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term doubles the last then subtracts its position: 2×87 − 6 = 168."
  },
  {
   "id": "p168",
@@ -13231,7 +13738,8 @@
    "190"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term doubles the last then subtracts its position: 2×103 − 6 = 200."
  },
  {
   "id": "p169",
@@ -13244,7 +13752,8 @@
    "227"
   ],
   "correctIndex": 2,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term doubles the last then subtracts its position: 2×119 − 6 = 232."
  },
  {
   "id": "p170",
@@ -13257,7 +13766,8 @@
    "264"
   ],
   "correctIndex": 3,
-  "difficulty": 3
+  "difficulty": 3,
+  "explain": "Each term doubles the last then subtracts its position: 2×135 − 6 = 264."
  },
  {
   "id": "h001",

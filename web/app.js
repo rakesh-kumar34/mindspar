@@ -30,6 +30,46 @@ const BOTS = [
     acc: { reasoning: .62, math: .62, verbal: .62, knowledge: .62, science: .62, patterns: .62, history: .62, geography: .62 }, min: 1.2, max: 3.5 },
 ];
 
+// ---- The Gauntlet: a twenty-rung ladder of named rivals, 850 → 1520 Elo.
+// Skill is derived from rating (uniform base + a signature strength and a
+// soft spot per rival), so every rung is honest about difficulty.
+const GAUNTLET = [
+  ["Pip", "bot", 850, "Still learning the ropes"],
+  ["Dash", "fast", 900, "Answers before you finish reading"],
+  ["Ivy", "book", 940, "Bookish, and quietly quick"],
+  ["Echo", "sigma", 980, "Repeats your mistakes back at you"],
+  ["Rune", "grid", 1020, "Sees the pattern before you do"],
+  ["Atlas", "globe", 1050, "Knows a little about everything"],
+  ["Nova", "zap", 1080, "Burns bright on every buzzer"],
+  ["Lyra", "book", 1100, "Reads between every line"],
+  ["Zephyr", "fast", 1140, "Gone before the ink dries"],
+  ["Vega", "sigma", 1150, "Numbers move first"],
+  ["Delta", "chart", 1180, "Always one step improved"],
+  ["Cosmo", "compass", 1220, "Navigates every domain"],
+  ["Kepler", "atom", 1250, "Methodical, rarely wrong, never fast"],
+  ["Nyx", "eye", 1290, "Strikes from the dark"],
+  ["Vera", "check", 1330, "Simply doesn't miss"],
+  ["Orion", "landmark", 1370, "A constellation of facts"],
+  ["Astra", "sun", 1410, "Radiant under pressure"],
+  ["Sable", "flag", 1450, "The quiet closer"],
+  ["Onyx", "lock", 1480, "Impenetrable"],
+  ["Minerva", "trophy", 1520, "Wisdom itself"],
+].map(([name, icon, rating, tag], i) => {
+  const keys = Object.keys(DOMAINS);
+  const base = Math.min(.92, .38 + (rating - 850) / 1150);
+  const acc = {};
+  keys.forEach((k, j) => {
+    let a = base;
+    if (j === i % keys.length) a += .10;
+    if (j === (i + 4) % keys.length) a -= .07;
+    acc[k] = Math.max(.2, Math.min(.95, a));
+  });
+  const t = (rating - 850) / 670;
+  return { i, name, icon, rating, tag, acc,
+           min: Math.max(1.4, 5.5 - 3.5 * t), max: Math.max(3.5, 11 - 6 * t) };
+});
+const gauntletRung = () => Math.min(P?.gauntlet || 0, GAUNTLET.length);
+
 const tier = r => r < 900 ? "Novice" : r < 1050 ? "Adept" : r < 1200 ? "Scholar" : r < 1350 ? "Sage" : "Luminary";
 const ladder = r => r < 950 ? 1.5 : r < 1150 ? 2 : r < 1300 ? 2.4 : 2.8;
 const eloDelta = (mine, theirs, actual) => Math.round(32 * (actual - 1 / (1 + 10 ** ((theirs - mine) / 400))));
@@ -188,6 +228,22 @@ async function makeFirebaseBackend(config) {
   // ends. Keeping them separate means finishing a match no longer kills the
   // invite/friend feeds.
   let sessionSubs = [], matchSubs = [], pendingInvite = null;
+
+  // Gameplay writes must survive a flaky connection: failed ops queue up and
+  // retry on a timer and whenever the browser comes back online.
+  const writeQueue = [];
+  let writeTimer = null;
+  function flushWrites() {
+    clearTimeout(writeTimer);
+    writeTimer = null;
+    const ops = writeQueue.splice(0);
+    for (const op of ops) op().catch(() => queueWrite(op));
+  }
+  function queueWrite(op) {
+    writeQueue.push(op);
+    if (!writeTimer) writeTimer = setTimeout(flushWrites, 4000);
+  }
+  window.addEventListener("online", flushWrites);
   const stopSession = () => { sessionSubs.forEach(u => u()); sessionSubs = []; };
   const stopMatchSubs = () => { matchSubs.forEach(u => u()); matchSubs = []; };
   const chatId = (a, b) => [a, b].sort().join("__");
@@ -431,7 +487,8 @@ async function makeFirebaseBackend(config) {
       sessionSubs.push(stop);
     },
     async submitAsyncResult(id, P, result) {
-      await updateDoc(doc(db, "matches", id), { ["result_" + P.id]: result });
+      const op = () => updateDoc(doc(db, "matches", id), { ["result_" + P.id]: result });
+      try { await op(); } catch { queueWrite(op); }
     },
     async markAsyncApplied(id, uid) {
       await updateDoc(doc(db, "matches", id), { ["applied_" + uid]: true });
@@ -471,8 +528,9 @@ async function makeFirebaseBackend(config) {
 
     // --- live answer sync ---
     submitAnswer(matchId, P, answer) {
-      updateDoc(doc(db, "matches", matchId), { ["answers_" + P.id]: arrayUnion(answer) })
-        .catch(() => {});
+      const op = () => updateDoc(doc(db, "matches", matchId),
+        { ["answers_" + P.id]: arrayUnion(answer) });
+      op().catch(() => queueWrite(op));
     },
     listenOpponent(matchId, oppId, onAnswer) {
       let delivered = 0;
@@ -620,6 +678,16 @@ let backend = localBackend, P = null, tab = "play", invites = [], subject = null
 let toastTimer;
 let myKeys = null, friends = [], friendReqs = [], friendsLoaded = false;  // friends + E2E chat
 let asyncDuels = []; const asyncApplying = new Set();     // play-by-mail duels
+let asyncSeenIds = null;                                  // notification baseline
+
+// In-app toast always; a real OS notification when the tab is backgrounded.
+function notifyAsync(message) {
+  toast(message);
+  if (document.visibilityState === "hidden" && "Notification" in window
+      && Notification.permission === "granted") {
+    try { new Notification("Mindspar", { body: message, tag: "async" }); } catch { /* ok */ }
+  }
+}
 let chatFriend = null, chatUnsub = null, chatMetaUnsub = null, chatChannel = null, chatCache = new Map();
 let chatMeta = {};                                       // read receipts for the open chat
 const latestStops = new Map(), unreadBy = new Map(), lastSeenMsg = new Map();
@@ -669,6 +737,14 @@ function armIdleTimer() {
   window.addEventListener(ev, () => { if (P && document.visibilityState !== "hidden") armIdleTimer(); },
     { passive: true }));
 
+// Refreshing or closing mid-duel silently forfeits — make the browser ask.
+window.addEventListener("beforeunload", e => {
+  if (arena.classList.contains("on") && cards && my && my.length < cards.length) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
+
 function toast(message) {
   const el = $("toast");
   el.textContent = message;
@@ -687,6 +763,7 @@ let animateNext = false;                     // one-shot slide-in on tab switche
 function setTab(t) {
   tab = t;
   viewingFriend = null;
+  showGauntlet = false;
   $("t-play").classList.toggle("on", t === "play");
   $("t-stats").classList.toggle("on", t === "stats");
   $("t-friends").classList.toggle("on", t === "friends");
@@ -696,6 +773,13 @@ function setTab(t) {
 }
 
 async function boot() {
+  // Invite links: mindspar/?add=<uid> — stash it so it survives the whole
+  // signup flow, then greet once a session exists.
+  const linkAdd = new URLSearchParams(location.search).get("add");
+  if (linkAdd) {
+    localStorage.setItem("mindspar-pending-add", linkAdd);
+    history.replaceState(null, "", location.pathname);
+  }
   if (firebaseConfig) {
     try { backend = await makeFirebaseBackend(firebaseConfig); }
     catch (e) { console.error(e); toast("Firebase failed to load — running offline."); }
@@ -727,6 +811,15 @@ async function startSession() {
   backend.listenInvites(P, list => { invites = list; if (tab === "play" && !arena.classList.contains("on")) render(); });
   backend.listenAsyncDuels(P, list => {
     asyncDuels = list.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+    // Announce brand-new incoming challenges (first snapshot is the baseline).
+    const first = !asyncSeenIds;
+    if (first) asyncSeenIds = new Set(list.map(d => d.id));
+    else for (const d of list) {
+      if (asyncSeenIds.has(d.id)) continue;
+      asyncSeenIds.add(d.id);
+      if (d.toId === P.id && !d["result_" + P.id])
+        notifyAsync(`${d.players?.[d.fromId]?.name ?? "A friend"} sent you an async duel`);
+    }
     settleAsyncDuels();
     if (tab === "play" && !arena.classList.contains("on")) render();
   });
@@ -739,6 +832,44 @@ async function startSession() {
     else if (tab === "prof") renderProfile();
   });
   startHeartbeat();
+  processInviteLink();
+}
+
+// A friend's invite link was opened: introduce them and offer the request.
+async function processInviteLink() {
+  const uid = localStorage.getItem("mindspar-pending-add");
+  if (!uid || !backend.isLive) return;
+  localStorage.removeItem("mindspar-pending-add");
+  if (uid === P.id) return;
+  if (friends.some(f => f.id === uid)) return toast("You're already friends!");
+  let prof = null;
+  try { prof = await backend.getProfile(uid); } catch { /* gone */ }
+  if (!prof) return;
+  overlay.classList.add("on");
+  overlay.innerHTML = `<div class="panel">
+    <span class="favBig">${avatarHTML(prof)}</span>
+    <b>${flagOf(prof.country)} ${esc(prof.name)} invited you</b>
+    <span style="font-size:12.5px;color:var(--ink2);line-height:1.5">${tier(prof.rating ?? 1000)} ·
+      ${prof.rating ?? 1000} rating. Add them as a friend to duel and chat.</span>
+    <button class="primary" id="il-add">Add friend</button>
+    <button class="ghost" id="il-close">Not now</button></div>`;
+  $("il-close").onclick = () => overlay.classList.remove("on");
+  $("il-add").onclick = async () => {
+    try {
+      await backend.sendFriendRequest(prof.email, P);
+      overlay.classList.remove("on");
+      toast(`Friend request sent to ${prof.name}.`);
+    } catch (e) { overlay.classList.remove("on"); toast(e.message); }
+  };
+}
+
+// Your own invite link, shared the native way (clipboard as fallback).
+async function shareInviteLink() {
+  const url = `${location.origin}${location.pathname}?add=${P.id}`;
+  const data = { title: "Mindspar", text: "Duel me on Mindspar — head-to-head thinking duels.", url };
+  if (navigator.share) { try { await navigator.share(data); return; } catch { /* cancelled */ } }
+  try { await navigator.clipboard.writeText(url); toast("Invite link copied — send it to a friend."); }
+  catch { toast(url); }
 }
 
 let heartbeatTimer;
@@ -844,7 +975,7 @@ async function doSignOut() {
   unreadBy.clear(); lastSeenMsg.clear();
   await backend.signOut();
   P = null; invites = []; friends = []; friendReqs = []; friendsLoaded = false; myKeys = null;
-  asyncDuels = []; asyncApplying.clear(); lastRun = null; lastResults = null;
+  asyncDuels = []; asyncApplying.clear(); asyncSeenIds = null; lastRun = null; lastResults = null;
   achEarned = null; achQueue.length = 0;
   setPending(null);
   chatCache.clear();
@@ -913,6 +1044,7 @@ function render() {
   if (tab === "friends") renderFriends();
   else if (tab === "stats") renderStats();
   else if (tab === "prof") renderProfile();
+  else if (showGauntlet) renderGauntlet();
   else renderHome();
   if (animateNext) {                          // only on explicit tab switches,
     animateNext = false;                      // never on live-listener repaints
@@ -970,6 +1102,8 @@ function renderAuth() {
     ${backend.isLive
       ? (signup ? `<div class="fine">We'll email you a link to confirm your address — you'll verify it before playing.</div>` : "")
       : `<div class="fine">Running offline — your profile stays in this browser. Bot duels and the daily challenge work fully.</div>`}
+    ${localStorage.getItem("mindspar-pending-add")
+      ? `<div class="fine" style="color:var(--iris)">You've been invited by a friend — sign up to connect.</div>` : ""}
     <div class="fine">Mindspar is for adults 18 and over · <a href="privacy.html" style="color:inherit">Privacy</a></div>
     ${installBanner()}
   </div>`;
@@ -1099,8 +1233,13 @@ function renderHome() {
     <button class="playrow" id="h-daily">
       <span class="sig" style="background:linear-gradient(135deg,#f6b73c,#ea5f2d);color:#fff">${ic("sun")}</span>
       <span><b>Daily Challenge${dailyStreakNow() > 1 ? ` <i style="font-style:normal;font-weight:600;font-size:11.5px;color:#e8843c">🔥 ${dailyStreakNow()}</i>` : ""}</b><span>${P.dailyDone === todayKey()
-        ? `Done — you scored ${P.dailyScore}. Tap for the leaderboard`
+        ? `Scored ${P.dailyScore} · next challenge in ${nextDailyIn()}`
         : `Everyone plays the same ${N} today — compare with friends`}</span></span></button>
+    <button class="playrow" id="h-gauntlet">
+      <span class="sig" style="background:rgba(176,68,88,.14);color:#c4566b">${ic("trophy")}</span>
+      <span><b>The Gauntlet</b><span>${gauntletRung() >= GAUNTLET.length
+        ? "Conquered — all 20 rungs cleared"
+        : `Rung ${gauntletRung() + 1} of ${GAUNTLET.length} · face ${GAUNTLET[gauntletRung()].name}`}</span></span></button>
     <button class="playrow" id="h-quick">
       <span class="sig hot">${ic("bolt")}</span>
       <span><b>Quick Match</b><span>${backend.isLive
@@ -1131,6 +1270,7 @@ function renderHome() {
   wireInstallBanner();
   maybeIntro();
   $("h-daily").onclick = startDaily;
+  $("h-gauntlet").onclick = () => { showGauntlet = true; render(); };
   $("h-quick").onclick = quickMatch;
   $("h-invite").onclick = inviteFlow;
   screen.querySelectorAll("[data-dom]").forEach(el =>
@@ -1140,11 +1280,46 @@ function renderHome() {
   screen.querySelectorAll("[data-inv]").forEach(el =>
     el.onclick = () => acceptInvite(el.dataset.inv));
   screen.querySelectorAll("[data-async-play]").forEach(el =>
-    el.onclick = () => { const d = asyncDuels.find(x => x.id === el.dataset.asyncPlay); if (d) startAsyncRun(d); });
+    el.onclick = () => { requestNotifyPermission();
+      const d = asyncDuels.find(x => x.id === el.dataset.asyncPlay); if (d) startAsyncRun(d); });
   screen.querySelectorAll("[data-async-cancel]").forEach(el =>
     el.onclick = async () => { await backend.deleteAsyncDuel(el.dataset.asyncCancel); toast("Challenge withdrawn."); });
   screen.querySelectorAll("[data-news-x]").forEach(el =>
     el.onclick = () => { (P.asyncNews || []).splice(+el.dataset.newsX, 1); persist(); renderHome(); });
+}
+
+// ---- The Gauntlet screen: the ladder, your progress, the next rival ----
+let showGauntlet = false;
+
+function renderGauntlet() {
+  const g = gauntletRung();
+  const rows = GAUNTLET.map((r, i) => {
+    if (i < g) return `<button class="gt-row done" data-g="${i}">
+      <span class="gt-ic" style="background:rgba(43,189,120,.14);color:var(--good)">${ic("check", "16px")}</span>
+      <span class="gt-meta"><b>${r.name}</b><span>${r.rating} · defeated</span></span>
+      <span class="gt-cta">Replay</span></button>`;
+    if (i === g) return `<button class="gt-row now" data-g="${i}">
+      <span class="gt-ic hot">${ic(r.icon, "18px")}</span>
+      <span class="gt-meta"><b>${r.name}</b><span>${r.rating} · ${esc(r.tag)}</span></span>
+      <span class="gt-cta go">Duel</span></button>`;
+    return `<div class="gt-row lock">
+      <span class="gt-ic">${ic("lock", "15px")}</span>
+      <span class="gt-meta"><b>${r.name}</b><span>${r.rating}</span></span></div>`;
+  }).join("");
+  screen.innerHTML = `<div class="pad" style="gap:12px">
+    <button class="ghost" id="gt-back" style="align-self:flex-start;padding:4px 0">‹ Play</button>
+    <div>
+      <div class="serif" style="font-size:24px;font-weight:600">The Gauntlet</div>
+      <div style="font-size:12.5px;color:var(--ink2);margin-top:3px">${g >= GAUNTLET.length
+        ? "Conquered. Twenty minds fell to yours."
+        : `Twenty minds between you and the summit — ${GAUNTLET.length - g} to go`}</div>
+    </div>
+    <div class="ladder"><i style="width:${Math.round(g / GAUNTLET.length * 100)}%"></i></div>
+    ${rows}
+  </div>`;
+  $("gt-back").onclick = () => { showGauntlet = false; render(); };
+  screen.querySelectorAll("[data-g]").forEach(el =>
+    el.onclick = () => startGauntletDuel(+el.dataset.g));
 }
 
 // One-time welcome: what a duel is, what the rating means, what unlocks.
@@ -1152,17 +1327,21 @@ function renderHome() {
 function maybeIntro() {
   if (!P || localStorage.getItem("mindspar-intro")) return;
   localStorage.setItem("mindspar-intro", "1");
+  if (P.played > 0) return;                    // veterans need no hand-holding
+  // Brand-new players go straight toward their first fight, not a brochure.
   overlay.classList.add("on");
   overlay.innerHTML = `<div class="panel" style="width:330px;align-items:stretch;text-align:left">
     <div class="serif" style="font-size:24px;font-weight:600;text-align:center">Welcome to Mindspar</div>
     <div class="intro-row"><span class="intro-ic">${ic("bolt", "18px")}</span>
       <span><b>Duel in ${N} questions</b>8 domains, 18 seconds each — accuracy and speed both score.</span></div>
-    <div class="intro-row"><span class="intro-ic">${ic("play", "18px")}</span>
-      <span><b>Your rating is your level</b>Every duel — bot or human — moves your Elo rating through the tiers, Novice to Luminary.</span></div>
+    <div class="intro-row"><span class="intro-ic">${ic("trophy", "18px")}</span>
+      <span><b>Climb the Gauntlet</b>Twenty rivals stand in a ladder. Beat one to unlock the next — and move your rating with every duel.</span></span></div>
     <div class="intro-row"><span class="intro-ic">${ic("bulb", "18px")}</span>
       <span><b>Unlock your Mindspar Score</b>${MIN_ANSWERS} answers calibrate an IQ-style score, normalized for your age group.</span></div>
-    <button class="primary" id="in-go">Let's duel</button></div>`;
-  $("in-go").onclick = () => overlay.classList.remove("on");
+    <button class="primary" id="in-go">Face ${GAUNTLET[0].name}, your first rival</button>
+    <button class="ghost" id="in-later">Look around first</button></div>`;
+  $("in-go").onclick = () => { overlay.classList.remove("on"); startGauntletDuel(0); };
+  $("in-later").onclick = () => overlay.classList.remove("on");
 }
 
 // ---------------- matchmaking ----------------
@@ -1262,6 +1441,19 @@ function startDaily() {
   beginDuel(() => {});
 }
 
+// Simulated feed: the rival races the same deck on its own clock.
+function botFeed(profile) {
+  return () => {
+    let cumulative = 2.4;
+    cards.forEach(q => {
+      const ok = Math.random() < (profile.acc[q[1]] ?? .6);
+      const secs = Math.min(profile.min + Math.random() * (profile.max - profile.min), LIMIT - .2);
+      cumulative += secs + 1.1;
+      botTimers.push(setTimeout(() => receiveOpponent({ ok, pts: scoreFor(ok, secs * 1000) }), cumulative * 1000));
+    });
+  };
+}
+
 function startBotDuel(botId) {
   solo = false;
   const bot = BOTS.find(b => b.id === botId);
@@ -1269,15 +1461,19 @@ function startBotDuel(botId) {
   lastMatch = { bot: botId };
   liveMatch = null;
   cards = buildDeck({ domain: subject, targetDifficulty: ladder(P.rating), seen: freshSeen(P) });
-  beginDuel(() => { // simulated feed: the bot races the deck on its own clock
-    let cumulative = 2.4;
-    cards.forEach(q => {
-      const ok = Math.random() < (bot.acc[q[1]] ?? .6);
-      const secs = Math.min(bot.min + Math.random() * (bot.max - bot.min), LIMIT - .2);
-      cumulative += secs + 1.1;
-      botTimers.push(setTimeout(() => receiveOpponent({ ok, pts: scoreFor(ok, secs * 1000) }), cumulative * 1000));
-    });
-  });
+  beginDuel(botFeed(bot));
+}
+
+function startGauntletDuel(i) {
+  if (i > gauntletRung()) return;              // locked rungs stay locked
+  const rival = GAUNTLET[i];
+  solo = false;
+  OPP = { name: rival.name, rating: rival.rating, isBot: true, icon: rival.icon };
+  lastMatch = { gauntlet: i };
+  liveMatch = null;
+  cards = buildDeck({ targetDifficulty: ladder(Math.round((P.rating + rival.rating) / 2)),
+                      seen: freshSeen(P) });
+  beginDuel(botFeed(rival));
 }
 
 function startHumanDuel(human) {
@@ -1298,7 +1494,7 @@ function startHumanDuel(human) {
 function faceOffHTML() {
   if (solo) return `<div class="vs">${esc(soloTitle)}</div>`;
   const oppAv = OPP.isBot
-    ? `<span class="favBig ic">${ic(BOT_ICON[OPP.botId] || "bot", "30px")}</span>`
+    ? `<span class="favBig ic">${ic(OPP.icon || BOT_ICON[OPP.botId] || "bot", "30px")}</span>`
     : `<span class="favBig">${characterAvatar(OPP.id || OPP.name)}</span>`;
   return `<div class="face">
     <div class="fp"><span class="favBig">${avatarHTML(P)}</span><b>You</b><span>${P.rating}</span></div>
@@ -1431,6 +1627,14 @@ function end() {
   P.played++;
   if (actual === 1) { P.won++; P.streak++; P.best = Math.max(P.best, P.streak); }
   else if (actual === 0) P.streak = 0;
+  if (actual === 1 && lastMatch?.gauntlet !== undefined && lastMatch.gauntlet === gauntletRung()) {
+    P.gauntlet = lastMatch.gauntlet + 1;       // rung cleared — the ladder opens
+    achQueue.push({ label: "Gauntlet", icon: "trophy", color: "#b04458",
+                    name: P.gauntlet >= GAUNTLET.length
+                      ? "The Gauntlet — conquered!"
+                      : `${GAUNTLET[lastMatch.gauntlet].name} defeated` });
+    if (!achShowing) nextAchPop();
+  }
   cards.forEach((q, i) => {
     P.dA[q[1]] = (P.dA[q[1]] || 0) + 1;
     if (my[i]?.ok) { P.dC[q[1]] = (P.dC[q[1]] || 0) + 1; P.sfSum += speedF(my[i].ms); P.sfN++; }
@@ -1557,7 +1761,8 @@ function renderReview(back) {
       <div class="rv-top"><span class="dchip" style="color:${color};background:${color}2e">${label}</span>
         <span class="rv-meta">${meta}</span>
         <button class="rv-flag" data-flag="${q[0]}" title="Report this question">${ic("flag", "15px")}</button></div>
-      <div class="rv-q">${esc(q[3])}</div>${q[6] ? `<div class="fig rv-fig">${q[6]}</div>` : ""}${opts}</div>`;
+      <div class="rv-q">${esc(q[3])}</div>${q[6] ? `<div class="fig rv-fig">${q[6]}</div>` : ""}${opts}${
+        q[7] ? `<div class="rv-why">${ic("bulb", "14px")}<span>${esc(q[7])}</span></div>` : ""}</div>`;
   }).join("");
   arena.innerHTML = `
     <div class="rv-head"><button class="arena-link" id="rv-back">‹ Back</button>
@@ -1617,6 +1822,7 @@ async function shareCard({ headline, line, sub }) {
 function rematch() {
   arena.classList.remove("on");
   if (lastMatch?.bot) return startBotDuel(lastMatch.bot);
+  if (lastMatch?.gauntlet !== undefined) return startGauntletDuel(lastMatch.gauntlet);
   if (lastMatch?.friendId) {
     const f = friends.find(x => x.id === lastMatch.friendId);
     if (f) return challengeFriend(f);
@@ -1648,6 +1854,14 @@ function endDaily() {
   persist();
   if (backend.isLive) backend.submitDaily(todayKey(), P, mine, correct).catch(() => {});
   showDailyResults();
+}
+
+// Time until the next (UTC) daily challenge, as "7h 32m".
+function nextDailyIn() {
+  const now = new Date();
+  const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+  const mins = Math.max(1, Math.round((next - now) / 60000));
+  return mins >= 60 ? `${Math.floor(mins / 60)}h ${mins % 60}m` : `${mins}m`;
 }
 
 // Current streak counts only if the chain is unbroken (played today, or the
@@ -1689,6 +1903,10 @@ async function showDailyResults() {
       <button class="arena-link" id="dl-share">Share score</button>
     </div>
   </div>`;
+  const cd = document.createElement("div");
+  cd.style.cssText = "font-size:12px;color:rgba(255,255,255,.5)";
+  cd.textContent = `Next challenge in ${nextDailyIn()}`;
+  arena.querySelector(".center")?.insertBefore(cd, $("dl-done"));
   $("dl-done").onclick = () => { arena.classList.remove("on"); render(); };
   const rv = $("dl-review");
   if (rv) rv.onclick = () => renderReview(showDailyResults);
@@ -1735,6 +1953,7 @@ async function challengeFriend(opp) {
       const target = ladder(Math.round((P.rating + (opp.rating ?? 1000)) / 2));
       const deckIds = buildDeck({ targetDifficulty: target, seen: freshSeen(P) }).map(q => q[0]);
       const id = await backend.createAsyncDuel(P, opp, deckIds, target);
+      requestNotifyPermission();
       overlay.classList.remove("on");
       startAsyncRun({ id, pids: [P.id, opp.id], fromId: P.id, deckIds,
         players: { [P.id]: { name: P.name }, [opp.id]: { name: opp.name, country: opp.country || "" } } });
@@ -1811,7 +2030,7 @@ function settleAsyncDuels() {
       .catch(() => {});
     const word = actual === 1 ? "Victory" : actual === 0 ? "Defeat" : "Draw";
     if (!asyncShown.has(d.id))
-      toast(`Async duel vs ${o.name ?? "friend"} settled: ${word} ${mine.score}–${theirs.score} (${delta >= 0 ? "+" : ""}${delta})`);
+      notifyAsync(`Async duel vs ${o.name ?? "friend"} settled: ${word} ${mine.score}–${theirs.score} (${delta >= 0 ? "+" : ""}${delta})`);
   }
   // Keep the profile-side settlement memory from growing forever.
   if (P?.asyncApplied) {
@@ -1979,6 +2198,7 @@ function renderFriends() {
         <button class="smallbtn" id="fr-add" style="padding:0 18px">Add</button>
       </div>
       <div class="err" id="fr-err"></div>
+      <button class="ghost" id="fr-share" style="padding:2px;align-self:center">Or share your invite link →</button>
     </div>
     ${friendReqs.length ? `<div class="eyebrow">REQUESTS</div>${reqRows}` : ""}
     <div class="eyebrow">YOUR FRIENDS</div>
@@ -1988,6 +2208,7 @@ function renderFriends() {
   </div>`;
 
   $("fr-add").onclick = addFriend;
+  $("fr-share").onclick = shareInviteLink;
   $("fr-email").addEventListener("keydown", e => { if (e.key === "Enter") addFriend(); });
   screen.querySelectorAll("[data-acc]").forEach(el =>
     el.onclick = async () => { try { await backend.acceptFriendRequest(friendReqs.find(r => r.id === el.dataset.acc), P); toast("Friend added."); } catch (e) { toast(e.message); } });
@@ -2653,6 +2874,12 @@ function wireInstallBanner() {
 
 // Fill the bottom-tab icons (SVG, not glyphs).
 document.querySelectorAll(".tico").forEach(el => { el.innerHTML = ic(el.dataset.ic, "23px"); });
+
+// Keep the daily countdown fresh while the home screen sits open.
+setInterval(() => {
+  if (P && tab === "play" && !showGauntlet && !arena.classList.contains("on")
+      && !chatEl.classList.contains("on") && P.dailyDone === todayKey()) render();
+}, 60000);
 
 initPWA();
 boot();

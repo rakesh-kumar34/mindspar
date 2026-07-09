@@ -31,8 +31,12 @@ QS = []            # {domain, prompt, options[4], correctIndex, difficulty}
 _seen = set()      # (prompt, frozenset(options)) — prompts may repeat if options differ
 
 
-def add(domain, prompt, correct, distractors, difficulty):
-    """Register a question. Skips duplicates; validates shape."""
+def add(domain, prompt, correct, distractors, difficulty, explain=None):
+    """Register a question. Skips duplicates; validates shape.
+
+    `explain` (optional) is a one-line "why" shown on the answer-review
+    screen. Computed questions generate it for free; curated ones may omit it.
+    """
     correct = str(correct)
     options = [correct] + [str(d) for d in distractors]
     options = list(dict.fromkeys(options))          # dedupe, keep order
@@ -48,6 +52,7 @@ def add(domain, prompt, correct, distractors, difficulty):
         "options": options,
         "correctIndex": options.index(correct),
         "difficulty": difficulty,
+        "explain": explain,
     })
     return True
 
@@ -78,7 +83,8 @@ def gen_math():
                  (22, 500), (36, 250), (64, 175)]:
         add("math", f"What is {p}% of {n}?", p * n // 100,
             int_distractors(p * n // 100, max(2, p * n // 1000 * 5 or 4)),
-            1 if p in (25, 50, 75, 10, 5) else 2)
+            1 if p in (25, 50, 75, 10, 5) else 2,
+            explain=f"{p}% means {p}/100, so {n} × {p / 100:g} = {p * n // 100}.")
 
     # Reverse percentage (discount)
     for orig, d in [(1000, 20), (1500, 30), (800, 25), (1200, 15), (2000, 35),
@@ -86,7 +92,8 @@ def gen_math():
                     (750, 20), (3000, 15)]:
         sale = orig * (100 - d) // 100
         add("math", f"A jacket costs {sale:,} after a {d}% discount. What was the original price?",
-            f"{orig:,}", [f"{orig + 100:,}", f"{orig - 100:,}", f"{sale + orig - sale // 2:,}"], 2)
+            f"{orig:,}", [f"{orig + 100:,}", f"{orig - 100:,}", f"{sale + orig - sale // 2:,}"], 2,
+            explain=f"After {d}% off, the sale price is {100 - d}% of the original: {sale:,} ÷ {(100 - d) / 100:g} = {orig:,}.")
 
     # Linear equations, integer solutions
     for a, x, b in [(3, 9, 7), (4, 8, 5), (5, 7, 12), (7, 6, 9), (6, 12, 13),
@@ -94,7 +101,8 @@ def gen_math():
                     (5, 13, 8), (6, 9, 17), (7, 11, 5), (3, 16, 11), (9, 12, 25)]:
         c = a * x - b
         add("math", f"If {a}x − {b} = {c}, what is x?", x, int_distractors(x, 2),
-            1 if a <= 4 else 2)
+            1 if a <= 4 else 2,
+            explain=f"Add {b} to both sides: {a}x = {c + b}, so x = {c + b} ÷ {a} = {x}.")
 
     # Speed = distance / time (integer answers)
     for d, t in [(180, 2.5), (240, 3), (150, 2.5), (320, 4), (90, 1.5),
@@ -103,7 +111,8 @@ def gen_math():
         if d / t != v:
             continue
         add("math", f"A train covers {d} km in {t} hours. What is its average speed?",
-            f"{v} km/h", [f"{v + 4} km/h", f"{v - 4} km/h", f"{v + 8} km/h"], 2)
+            f"{v} km/h", [f"{v + 4} km/h", f"{v - 4} km/h", f"{v + 8} km/h"], 2,
+            explain=f"Speed = distance ÷ time: {d} ÷ {t:g} = {v} km/h.")
 
     # Work rates: w1 workers, d1 days -> w2 workers
     for w1, d1, w2 in [(12, 10, 8), (6, 8, 4), (9, 12, 6), (10, 6, 5),
@@ -111,7 +120,8 @@ def gen_math():
                        (20, 6, 8), (18, 10, 12)]:
         days = w1 * d1 // w2
         add("math", f"{w1} workers finish a job in {d1} days. At the same rate, how many days would {w2} workers need?",
-            days, int_distractors(days, 2), 2)
+            days, int_distractors(days, 2), 2,
+            explain=f"The job is {w1} × {d1} = {w1 * d1} worker-days; {w1 * d1} ÷ {w2} workers = {days} days.")
 
     # Next prime
     primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59,
@@ -119,15 +129,18 @@ def gen_math():
     for n in [31, 43, 53, 61, 71, 83, 47, 89, 97, 101]:
         nxt = next(p for p in primes if p > n)
         wrong = [n + 2 if n + 2 != nxt else n + 6, nxt + 2, nxt + 4]
-        add("math", f"What is the next prime number after {n}?", nxt, wrong, 2)
+        add("math", f"What is the next prime number after {n}?", nxt, wrong, 2,
+            explain=f"Checking upward from {n}: the next number with no divisors besides 1 and itself is {nxt}.")
 
     # Exponent rules
     for a, b in [(5, 3), (4, 6), (7, 2), (3, 9), (6, 5), (8, 4), (9, 3), (7, 5)]:
         add("math", f"(2^{a} × 2^{b}) equals 2 raised to which power?", a + b,
-            [a * b, a + b + 1, abs(a - b)], 2)
+            [a * b, a + b + 1, abs(a - b)], 2,
+            explain=f"Multiplying powers of the same base adds the exponents: {a} + {b} = {a + b}.")
     for a, b in [(2, 3), (3, 2), (4, 2), (2, 5), (3, 4), (5, 2)]:
         add("math", f"(3^{a})^{b} equals 3 raised to which power?", a * b,
-            [a + b, a ** b if a ** b != a * b else a * b + 2, a * b - 1], 2)
+            [a + b, a ** b if a ** b != a * b else a * b + 2, a * b - 1], 2,
+            explain=f"A power of a power multiplies the exponents: {a} × {b} = {a * b}.")
 
     # Averages
     for nums in [(12, 18, 24), (7, 11, 15), (20, 30, 40), (9, 14, 25),
@@ -137,14 +150,16 @@ def gen_math():
         if sum(nums) % len(nums):
             continue
         add("math", f"What is the average of {', '.join(map(str, nums))}?",
-            avg, int_distractors(avg, 3), 2)
+            avg, int_distractors(avg, 3), 2,
+            explain=f"Sum {' + '.join(map(str, nums))} = {sum(nums)}, divided by {len(nums)} values = {avg}.")
 
     # Fractions of numbers
     for num, den, n in [(3, 4, 96), (2, 3, 84), (5, 8, 64), (3, 5, 75),
                         (4, 7, 91), (5, 6, 72), (7, 8, 56), (2, 9, 81),
                         (3, 7, 84), (5, 9, 108), (4, 5, 115), (7, 12, 96)]:
         ans = n * num // den
-        add("math", f"What is {num}/{den} of {n}?", ans, int_distractors(ans, den), 2)
+        add("math", f"What is {num}/{den} of {n}?", ans, int_distractors(ans, den), 2,
+            explain=f"{n} ÷ {den} = {n // den}, then × {num} = {ans}.")
 
     # Ratios
     for n, a, b in [(60, 2, 3), (90, 4, 5), (120, 3, 5), (84, 3, 4),
@@ -152,40 +167,48 @@ def gen_math():
                     (130, 6, 7), (140, 3, 7)]:
         larger = n * b // (a + b)
         add("math", f"{n} sweets are split in the ratio {a}:{b}. How many are in the larger share?",
-            larger, int_distractors(larger, a + b), 2)
+            larger, int_distractors(larger, a + b), 2,
+            explain=f"{a}:{b} makes {a + b} parts; each part is {n} ÷ {a + b} = {n // (a + b)}, and the larger share is {b} parts = {larger}.")
 
     # Simple interest
     for p, r, t in [(1000, 5, 2), (2000, 4, 3), (1500, 6, 2), (800, 5, 4),
                     (2500, 8, 2), (1200, 10, 3), (3000, 6, 3), (1800, 5, 2)]:
         interest = p * r * t // 100
         add("math", f"Simple interest on {p:,} at {r}% per year for {t} years is:",
-            interest, int_distractors(interest, r * t), 2)
+            interest, int_distractors(interest, r * t), 2,
+            explain=f"Interest = principal × rate × time: {p:,} × {r}% × {t} = {interest:,}.")
 
     # Rectangle area / perimeter
     for l, w in [(12, 8), (15, 6), (9, 7), (14, 11), (18, 5), (13, 12), (16, 7), (19, 6)]:
         add("math", f"A rectangle is {l} by {w}. What is its area?", l * w,
-            [2 * (l + w), l * w + l, l * w - w], 1)
+            [2 * (l + w), l * w + l, l * w - w], 1,
+            explain=f"Area = length × width: {l} × {w} = {l * w}.")
     for l, w in [(16, 9), (11, 7), (21, 13), (17, 8), (14, 9), (23, 11)]:
         add("math", f"A rectangle is {l} by {w}. What is its perimeter?", 2 * (l + w),
-            [l * w, 2 * (l + w) + 2, l + w], 1)
+            [l * w, 2 * (l + w) + 2, l + w], 1,
+            explain=f"Perimeter = 2 × (length + width): 2 × ({l} + {w}) = {2 * (l + w)}.")
 
     # Squares & roots
     for n in [13, 14, 16, 17, 18, 19, 21, 23, 24, 26]:
-        add("math", f"What is {n}²?", n * n, [n * n + n, n * n - n, (n + 1) * (n + 1)], 2)
+        add("math", f"What is {n}²?", n * n, [n * n + n, n * n - n, (n + 1) * (n + 1)], 2,
+            explain=f"{n} × {n} = {n * n}.")
     for n in [144, 196, 225, 289, 324, 400, 361, 441]:
         r = int(round(n ** 0.5))
-        add("math", f"What is the square root of {n}?", r, int_distractors(r, 2), 2)
+        add("math", f"What is the square root of {n}?", r, int_distractors(r, 2), 2,
+            explain=f"{r} × {r} = {n}, so √{n} = {r}.")
 
     # LCM / GCD (small, verified by computation)
     import math as _m
     for a, b in [(6, 8), (4, 10), (9, 12), (8, 12), (6, 15), (10, 14), (12, 18), (8, 14)]:
         lcm = a * b // _m.gcd(a, b)
         add("math", f"What is the least common multiple of {a} and {b}?", lcm,
-            [a * b if a * b != lcm else lcm + a, lcm + a, _m.gcd(a, b)], 3)
+            [a * b if a * b != lcm else lcm + a, lcm + a, _m.gcd(a, b)], 3,
+            explain=f"{lcm} is the smallest number both {a} and {b} divide into ({lcm} = {a} × {lcm // a} = {b} × {lcm // b}).")
     for a, b in [(24, 36), (18, 30), (28, 42), (32, 48), (45, 60), (36, 54)]:
         g = _m.gcd(a, b)
         add("math", f"What is the greatest common divisor of {a} and {b}?", g,
-            int_distractors(g, 3), 3)
+            int_distractors(g, 3), 3,
+            explain=f"{g} is the largest number dividing both: {a} = {g} × {a // g} and {b} = {g} × {b // g}.")
 
     # Probability (single die / two coins / cards) — exact fractions
     dice = [("rolling an even number on one fair die", "1/2", ["1/3", "1/6", "2/3"], 1),
@@ -197,25 +220,29 @@ def gen_math():
             ("drawing an ace from a standard 52-card deck", "1/13", ["1/4", "1/52", "1/26"], 2),
             ("rolling a total of 12 with two fair dice", "1/36", ["1/12", "1/6", "1/18"], 3)]
     for event, ans, wrong, diff in dice:
-        add("math", f"What is the probability of {event}?", ans, wrong, diff)
+        add("math", f"What is the probability of {event}?", ans, wrong, diff,
+            explain=f"Count favourable outcomes over equally likely outcomes: the fraction reduces to {ans}.")
 
     # Sum of 1..n  (n(n+1)/2)
     for n in [10, 20, 15, 12, 25, 30]:
         s = n * (n + 1) // 2
         add("math", f"What is the sum of all whole numbers from 1 to {n}?", s,
-            int_distractors(s, n), 3)
+            int_distractors(s, n), 3,
+            explain=f"Pair the ends: 1+{n}, 2+{n - 1}… giving {n}×{n + 1}÷2 = {s}.")
 
     # Profit / loss
     for cost, sell in [(80, 100), (120, 150), (200, 260), (150, 180), (250, 300), (60, 81)]:
         pct = (sell - cost) * 100 // cost
         add("math", f"Bought at {cost}, sold at {sell}. What is the profit as a percentage of cost?",
-            f"{pct}%", [f"{pct + 5}%", [f"{pct - 5}%", f"{pct + 10}%"][0], f"{pct + 10}%"], 3)
+            f"{pct}%", [f"{pct + 5}%", [f"{pct - 5}%", f"{pct + 10}%"][0], f"{pct + 10}%"], 3,
+            explain=f"Profit is {sell} − {cost} = {sell - cost}; as a share of cost: {sell - cost} ÷ {cost} = {pct}%.")
 
     # Angle facts (computed)
     for a, b in [(35, 65), (48, 72), (54, 36), (25, 115), (62, 58), (44, 76)]:
         c = 180 - a - b
         add("math", f"Two angles of a triangle are {a}° and {b}°. What is the third angle?",
-            f"{c}°", [f"{c + 10}°", f"{c - 10}°", f"{180 - a}°"], 1)
+            f"{c}°", [f"{c + 10}°", f"{c - 10}°", f"{180 - a}°"], 1,
+            explain=f"Triangle angles sum to 180°: 180 − {a} − {b} = {c}°.")
 
 
 # ------------------------------------------------------------- PATTERNS ----
@@ -228,7 +255,8 @@ def gen_patterns():
     for off in [0, 1, 2, 4, 3, 6]:
         terms = [i * (i + 1) // 2 + off for i in range(1, 6)]
         nxt = 21 + off
-        add("patterns", seq_prompt(terms), nxt, [nxt + 1, nxt - 2, nxt + 7], 2)
+        add("patterns", seq_prompt(terms), nxt, [nxt + 1, nxt - 2, nxt + 7], 2,
+            explain=f"The gaps grow by one each step (+2, +3, +4, +5), so the next gap is +6 → {nxt}.")
 
     # Second differences
     for start, d0, inc in [(2, 4, 2), (3, 1, 1), (1, 2, 3), (5, 3, 2),
@@ -243,7 +271,8 @@ def gen_patterns():
             terms.append(t)
             d += inc
         nxt = t + d
-        add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, inc + 1), 2)
+        add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, inc + 1), 2,
+            explain=f"The differences increase by {inc} each step; the next difference is +{d}, giving {nxt}.")
 
     # Geometric (increasing when start small, decreasing when start large)
     for start, r, n in [(81, 3, 4), (64, 2, 5), (2, 3, 4), (5, 2, 5),
@@ -255,7 +284,10 @@ def gen_patterns():
         nxt = terms[-1] * r if start < 60 else terms[-1] // r
         add("patterns", seq_prompt(terms), nxt,
             [nxt * r if nxt * r != nxt else nxt + 1, max(1, nxt // r), nxt + r],
-            1 if r == 2 else 2)
+            1 if r == 2 else 2,
+            explain=(f"Each term is ×{r} the previous, so next is {terms[-1]} × {r} = {nxt}."
+                     if start < 60 else
+                     f"Each term is ÷{r} the previous, so next is {terms[-1]} ÷ {r} = {nxt}."))
 
     # Fibonacci-like
     for a, b in [(1, 1), (2, 3), (1, 4), (3, 4), (2, 5), (5, 6),
@@ -265,7 +297,8 @@ def gen_patterns():
             terms.append(terms[-1] + terms[-2])
         nxt = terms[-1] + terms[-2]
         add("patterns", seq_prompt(terms), nxt,
-            [nxt + 1, nxt - 2, terms[-1] * 2], 2)
+            [nxt + 1, nxt - 2, terms[-1] * 2], 2,
+            explain=f"Each term is the sum of the two before it: {terms[-2]} + {terms[-1]} = {nxt}.")
 
     # x -> k*x + c recurrences
     for start, k, c, n in [(2, 2, -1, 5), (1, 2, 1, 5), (3, 2, -2, 5),
@@ -276,7 +309,8 @@ def gen_patterns():
         for _ in range(n - 1):
             terms.append(terms[-1] * k + c)
         nxt = terms[-1] * k + c
-        add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, max(3, abs(c) + k)), 3)
+        add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, max(3, abs(c) + k)), 3,
+            explain=f"Each term is ×{k} then {'+' if c >= 0 else '−'}{abs(c)}: {terms[-1]} × {k} {'+' if c >= 0 else '−'} {abs(c)} = {nxt}.")
 
     # Alternating add
     for start, a, b in [(1, 4, 2), (2, 5, 3), (10, 3, 6), (4, 7, 1),
@@ -288,7 +322,8 @@ def gen_patterns():
             t += a if i % 2 == 0 else b
             terms.append(t)
         nxt = t + (a if 5 % 2 == 0 else b)
-        add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, a + b), 2)
+        add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, a + b), 2,
+            explain=f"The sequence alternates +{a} and +{b}; the next step is +{b}, giving {nxt}.")
 
     # Alternating ×k then +c
     for start, k, c in [(2, 2, 3), (3, 2, 4), (1, 3, 2), (4, 2, 1),
@@ -298,7 +333,8 @@ def gen_patterns():
             t = t * k if i % 2 == 0 else t + c
             terms.append(t)
         nxt = t * k if 5 % 2 == 0 else t + c
-        add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, k + c + 2), 3)
+        add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, k + c + 2), 3,
+            explain=f"Steps alternate ×{k} then +{c}; the next step is +{c}, giving {nxt}.")
 
     # Letter sequences, growing skips (forward)
     def letters_forward(start, skips):
@@ -314,7 +350,8 @@ def gen_patterns():
         nxt_i = (ord(seq[-1]) - 65 + base + 4) % 26
         nxt = chr(65 + nxt_i)
         wrong = [chr(65 + (nxt_i + d) % 26) for d in (1, 2, 24)]
-        add("patterns", ", ".join(seq) + ", … which letter comes next?", nxt, wrong, 2)
+        add("patterns", ", ".join(seq) + ", … which letter comes next?", nxt, wrong, 2,
+            explain=f"The skips grow by one letter each time (+{base}, +{base + 1}, +{base + 2}…), landing on {nxt}.")
 
     # Constant-skip letters (easier)
     for start, skip in [("A", 3), ("B", 4), ("C", 3), ("D", 2), ("E", 4), ("F", 5)]:
@@ -323,7 +360,8 @@ def gen_patterns():
         nxt_i = (idx[-1] + skip) % 26
         nxt = chr(65 + nxt_i)
         wrong = [chr(65 + (nxt_i + d) % 26) for d in (1, 25, 2)]
-        add("patterns", ", ".join(seq) + ", … which letter comes next?", nxt, wrong, 1)
+        add("patterns", ", ".join(seq) + ", … which letter comes next?", nxt, wrong, 1,
+            explain=f"Every step skips {skip} letters forward, so after {seq[-1]} comes {nxt}.")
 
     # Decreasing with growing negative diffs
     for start, d0, inc in [(100, 4, 4), (90, 2, 3), (120, 5, 5), (80, 1, 2),
@@ -337,17 +375,20 @@ def gen_patterns():
         nxt = t - d
         if nxt <= 0:
             continue
-        add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, inc), 2)
+        add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, inc), 2,
+            explain=f"The amounts subtracted grow by {inc} each step; next is −{d}, giving {nxt}.")
 
     # Squares / cubes with offsets
     for off in [0, 1, 2, -1, 3, 5, 4, -2]:
         terms = [i * i + off for i in range(1, 6)]
         nxt = 36 + off
-        add("patterns", seq_prompt(terms), nxt, [nxt + 2, nxt - 2, nxt + 6], 2)
+        add("patterns", seq_prompt(terms), nxt, [nxt + 2, nxt - 2, nxt + 6], 2,
+            explain=f"These are the square numbers{f' plus {off}' if off > 0 else f' minus {abs(off)}' if off < 0 else ''}: next is 6² = 36 → {nxt}.")
     for off in [0, 1, -1, 2, 3]:
         terms = [i ** 3 + off for i in range(1, 5)]
         nxt = 125 + off
-        add("patterns", seq_prompt(terms), nxt, [nxt + 5, nxt - 10, 216 + off], 3)
+        add("patterns", seq_prompt(terms), nxt, [nxt + 5, nxt - 10, 216 + off], 3,
+            explain=f"These are the cube numbers{f' plus {off}' if off > 0 else f' minus {abs(off)}' if off < 0 else ''}: next is 5³ = 125 → {nxt}.")
 
     # Position products: t(n) = t(n-1) + k*n
     for start, k in [(1, 2), (2, 2), (1, 3), (3, 2), (5, 3), (4, 4), (2, 4),
@@ -356,7 +397,8 @@ def gen_patterns():
         for i in range(2, 6):
             terms.append(terms[-1] + k * i)
         nxt = terms[-1] + k * 6
-        add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, k * 2), 2)
+        add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, k * 2), 2,
+            explain=f"Each step adds {k} × its position: next is +{k}×6 = +{k * 6}, giving {nxt}.")
 
     # Interleaved sequences (two independent arithmetic threads)
     for a0, da, b0, db in [(2, 3, 10, -1), (1, 4, 20, 5), (5, 5, 3, 3),
@@ -369,13 +411,15 @@ def gen_patterns():
         nxt = a0 + da * 3       # 7th term belongs to thread A
         if any(t <= 0 for t in terms):
             continue
-        add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, abs(da) + 1), 3)
+        add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, abs(da) + 1), 3,
+            explain=f"Two sequences interleave; the odd positions go {a0}, {a0 + da}, {a0 + 2 * da}… so next is {nxt}.")
 
     # Powers of 2 with offsets
     for off in [0, 1, -1, 3, 5, 2, -2, 4, 6, -3]:
         terms = [2 ** i + off for i in range(1, 6)]
         nxt = 64 + off
-        add("patterns", seq_prompt(terms), nxt, [nxt - 16, nxt + 8, nxt + 2], 2)
+        add("patterns", seq_prompt(terms), nxt, [nxt - 16, nxt + 8, nxt + 2], 2,
+            explain=f"These are the powers of 2{f' plus {off}' if off > 0 else f' minus {abs(off)}' if off < 0 else ''}: next is 64 → {nxt}.")
 
     # Doubling minus position: t(n) = 2*t(n-1) - n
     for start in [3, 4, 5, 6, 7, 8, 9, 10, 11]:
@@ -384,7 +428,8 @@ def gen_patterns():
             t = 2 * t - i
             terms.append(t)
         nxt = 2 * t - 6
-        add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, 5), 3)
+        add("patterns", seq_prompt(terms), nxt, int_distractors(nxt, 5), 3,
+            explain=f"Each term doubles the last then subtracts its position: 2×{t} − 6 = {nxt}.")
 
 
 # ------------------------------------------------------------ REASONING ----
@@ -420,7 +465,8 @@ def gen_reasoning():
             f"All {a} are {b}. {name} is not one of the {b}. What must be true?",
             f"{name} is not one of the {a}",
             [f"{name} is one of the {a}", f"{name} dislikes being one of the {b}",
-             "Nothing can be concluded"], 2)
+             "Nothing can be concluded"], 2,
+            explain=f"If every one of the {a} is among the {b}, anyone outside the {b} cannot be one of the {a}.")
 
     # Modus tollens
     conds = [("it rains", "the match is postponed", "The match was not postponed", "It did not rain", "It rained lightly"),
@@ -439,7 +485,8 @@ def gen_reasoning():
              ("the pass is clear", "the mail cart goes over the ridge", "The mail cart did not go over the ridge", "The pass was not clear", "The mail was heavy")]
     for p, q, notq, ans, decoy in conds:
         add("reasoning", f"If {p}, {q}. {notq}. What follows?", ans,
-            [decoy, f"{q.capitalize()} anyway", "Nothing can be concluded"], 2)
+            [decoy, f"{q.capitalize()} anyway", "Nothing can be concluded"], 2,
+            explain=f"When \"if A then B\" holds and B is false, A must be false too (modus tollens).")
 
     # Affirming the consequent — the correct answer is "nothing follows"
     aff = [("it snows", "the school closes", "The school closed"),
@@ -454,7 +501,8 @@ def gen_reasoning():
         add("reasoning",
             f"If {p}, {q}. {qhap}. What can you conclude about whether {p.split(' ', 1)[0]} {p.split(' ', 1)[1]}?",
             "Nothing — the rule doesn't work in reverse",
-            [f"Definitely {p}", f"Definitely not {p}", "The rule is false"], 3)
+            [f"Definitely {p}", f"Definitely not {p}", "The rule is false"], 3,
+            explain="\"If A then B\" says nothing when B happens — B can have other causes (affirming the consequent is a fallacy).")
 
     # Some A are B; all B are C => some A are C
     triples = [("doctors", "pilots", "trained in navigation"),
@@ -470,7 +518,8 @@ def gen_reasoning():
     for a, b, c in triples:
         add("reasoning", f"Some {a} are {b}. All {b} are {c}. Which must be true?",
             f"Some {a} are {c}",
-            [f"All {a} are {c}", f"No {a} are {c}", f"All {c} are {a}"], 2)
+            [f"All {a} are {c}", f"No {a} are {c}", f"All {c} are {a}"], 2,
+            explain=f"The {a} who are {b} are all {c} — so at least some {a} are {c}; nothing supports the stronger claims.")
 
     # No Q are R; all P are R => no P are Q
     for p, q, r in [("P", "Q", "R"), ("swans", "runners", "flyers"),
@@ -480,7 +529,8 @@ def gen_reasoning():
                     ("owls", "larks", "night hunters")]:
         add("reasoning", f"If no {q} are {r}, and all {p} are {r}, then:",
             f"No {p} are {q}",
-            [f"Some {p} are {q}", f"All {q} are {p}", "Nothing can be concluded"], 3)
+            [f"Some {p} are {q}", f"All {q} are {p}", "Nothing can be concluded"], 3,
+            explain=f"All {p} sit inside {r}, and {q} sit entirely outside {r} — the two groups can't overlap.")
 
     # Directions
     dirs = ["North", "East", "South", "West"]
@@ -501,7 +551,8 @@ def gen_reasoning():
         wrong = [d for d in dirs if d != dirs[heading]][:3]
         add("reasoning",
             f"{name} faces {dirs[start].lower()}. They turn {', then '.join(turns)}. Which way do they face now?",
-            dirs[heading], wrong, 2)
+            dirs[heading], wrong, 2,
+            explain=f"Track quarter-turns from {dirs[start]}: each 90° right moves one step clockwise (N→E→S→W); the turns end at {dirs[heading]}.")
 
     # Ordering puzzles: derive from a random true order
     for i in range(30):
@@ -515,14 +566,16 @@ def gen_reasoning():
         wrong = [p for p in order if p != answer][:3]
         add("reasoning",
             f"{stmts[0]}. {stmts[1]}. {stmts[2]}. Who is second tallest?",
-            answer, wrong, 2)
+            answer, wrong, 2,
+            explain=f"Chaining the statements gives the order {order[0]} > {order[1]} > {order[2]} > {order[3]}, so {answer} is second.")
 
     # "All but n"
     for total, keep, thing in [(17, 9, "goats"), (23, 8, "lamps"), (31, 12, "hens"),
                                (14, 6, "kites"), (26, 11, "boats"), (19, 7, "ducks"),
                                (28, 13, "mugs"), (33, 15, "crates")]:
         add("reasoning", f"A keeper has {total} {thing}. All but {keep} wander off. How many {thing} remain?",
-            keep, [total - keep, total, total + keep], 1)
+            keep, [total - keep, total, total + keep], 1,
+            explain=f"\"All but {keep}\" means {keep} stay — the wording already states what remains.")
 
     # Row positions: left k-th, right m-th -> k+m-1 people
     for k, m in [(7, 5), (4, 9), (6, 6), (3, 11), (8, 7), (5, 8), (9, 4),
@@ -531,7 +584,8 @@ def gen_reasoning():
         name = rng.choice(NAMES)
         add("reasoning",
             f"In a single row, {name} is {k}th from the left and {m}th from the right. How many people are in the row?",
-            n, [n + 1, n - 1, k + m], 2)
+            n, [n + 1, n - 1, k + m], 2,
+            explain=f"{k} + {m} counts {name} twice, so the row has {k} + {m} − 1 = {n} people.")
 
     # Weekday arithmetic
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -541,7 +595,8 @@ def gen_reasoning():
         wrong = [days[(start + delta + d) % 7] for d in (1, 2, 5)]
         add("reasoning",
             f"If today is {days[start]}, what day of the week will it be in {delta} days?",
-            ans, wrong, 2)
+            ans, wrong, 2,
+            explain=f"{delta} = {delta // 7} full weeks + {delta % 7} days; {delta % 7} days after {days[start]} is {ans}.")
 
     # Card-flip rule check (Wason variants)
     for vowel, cons, even, odd in [("A", "K", 4, 7), ("E", "T", 8, 3),
@@ -550,7 +605,8 @@ def gen_reasoning():
         add("reasoning",
             f"Rule: every card with a vowel has an even number on its back. Cards show {vowel}, {cons}, {even}, {odd}. Which cards must you flip to test the rule?",
             f"{vowel} and {odd}",
-            [f"{vowel} and {even}", f"{cons} and {even}", "All four"], 3)
+            [f"{vowel} and {even}", f"{cons} and {even}", "All four"], 3,
+            explain=f"Only a vowel with an odd back ({vowel}) or an odd number hiding a vowel ({odd}) can break the rule — {even} obeys it whatever is behind.")
 
     # Family relations (single unambiguous step chains)
     fam = [("the brother of your mother", "Your uncle", ["Your cousin", "Your nephew", "Your grandfather"], 1),
@@ -564,14 +620,16 @@ def gen_reasoning():
            ("the son of your father's brother", "Your cousin", ["Your nephew", "Your half-brother", "Your uncle"], 1),
            ("the brother of your spouse", "Your brother-in-law", ["Your stepbrother", "Your cousin", "Your son-in-law"], 2)]
     for rel, ans, wrong, diff in fam:
-        add("reasoning", f"What relation to you is {rel}?", ans, wrong, diff)
+        add("reasoning", f"What relation to you is {rel}?", ans, wrong, diff,
+            explain=f"Step through the chain: {rel} is, by definition, {ans.lower()}.")
 
     # Handshake counting: n people, everyone shakes hands once
     for n in [4, 5, 6, 7, 8, 9, 10, 12, 11, 13, 14, 15]:
         total = n * (n - 1) // 2
         add("reasoning",
             f"{n} people meet and each pair shakes hands exactly once. How many handshakes happen?",
-            total, [n * (n - 1), total + n, total - n + 1 if total - n + 1 not in (total, n * (n - 1)) else total + 1], 2)
+            total, [n * (n - 1), total + n, total - n + 1 if total - n + 1 not in (total, n * (n - 1)) else total + 1], 2,
+            explain=f"Each of {n} people shakes {n - 1} hands; halve to avoid double-counting: {n}×{n - 1}÷2 = {total}.")
 
     # Chained comparisons — who is the youngest?
     for i in range(16):
@@ -579,7 +637,8 @@ def gen_reasoning():
         # trio[0] oldest, trio[2] youngest
         add("reasoning",
             f"{trio[0]} is older than {trio[1]}. {trio[1]} is older than {trio[2]}. Who is the youngest?",
-            trio[2], [trio[0], trio[1], "It cannot be determined"], 1)
+            trio[2], [trio[0], trio[1], "It cannot be determined"], 1,
+            explain=f"The chain {trio[0]} > {trio[1]} > {trio[2]} puts {trio[2]} at the bottom.")
 
     # Simple truth-teller/liar
     for i, (thing, place_a, place_b) in enumerate([
@@ -591,7 +650,8 @@ def gen_reasoning():
         add("reasoning",
             f"{honest} always tells the truth; {liar} always lies. {honest} says the {thing} is in the {place_a}. {liar} says the {thing} is in the {place_b}. Where is the {thing}?",
             f"In the {place_a}",
-            [f"In the {place_b}", "In neither place", "It cannot be determined"], 2)
+            [f"In the {place_b}", "In neither place", "It cannot be determined"], 2,
+            explain=f"{honest} always tells the truth, so the {thing} is where {honest} says — the liar's claim just confirms it isn't in the {place_b}.")
 
 
 # --------------------------------------------------------------- VERBAL ----
@@ -1701,13 +1761,13 @@ def _strip(cells):
                      f'fill="currentColor" stroke="none" opacity=".8">?</text>')
     return _svg("".join(parts), w=400, h=100)
 
-def add_visual(prompt, figure, correct_svg, wrong_svgs, difficulty):
+def add_visual(prompt, figure, correct_svg, wrong_svgs, difficulty, explain=None):
     options = [correct_svg] + wrong_svgs
     rng.shuffle(options)
     VISUAL.append({
         "id": f"z{len(VISUAL) + 1:03d}", "domain": "patterns", "prompt": prompt,
         "options": options, "correctIndex": options.index(correct_svg),
-        "difficulty": difficulty, "figure": figure,
+        "difficulty": difficulty, "figure": figure, "explain": explain,
     })
 
 def _dotgrid(n, ox=0):
@@ -1732,7 +1792,8 @@ def gen_visual():
                 fig,
                 _svg(_shape_at(name, correct, 50, 50, 0.9)),
                 [_svg(_shape_at(name, w, 50, 50, 0.9)) for w in (correct + 90, correct + 180, correct - 90)],
-                2 if step == 90 else 3)
+                2 if step == 90 else 3,
+                explain=f"The shape rotates {step}° clockwise each step, so the fourth turn lands at {correct % 360}°.")
 
     # 2) Counting: dots grow by a fixed amount each cell.
     for n0, k in [(1, 1), (2, 1), (1, 2), (3, 1), (2, 2), (4, 1), (3, 2), (1, 3),
@@ -1742,7 +1803,8 @@ def gen_visual():
         nxt = n0 + 3 * k
         wrongs = sorted({nxt + 1, max(1, nxt - 1), nxt + k + 1} - {nxt})
         add_visual("The dots increase by the same amount each step. Which comes next?",
-                   fig, _dots(nxt), [_dots(w) for w in list(wrongs)[:3]], 1 if k == 1 else 2)
+                   fig, _dots(nxt), [_dots(w) for w in list(wrongs)[:3]], 1 if k == 1 else 2,
+                   explain=f"Each cell adds {k} dot{'s' if k > 1 else ''}: {counts[0]}, {counts[1]}, {counts[2]} → {nxt}.")
 
     # 3) Mirror images: chiral shapes, so the mirror never equals a rotation.
     for name in ["ell", "eff", "pee", "flag"]:
@@ -1755,7 +1817,8 @@ def gen_visual():
                 "Which option is the mirror image (flipped left–right) of this figure?",
                 fig, _svg(mirror),
                 [_svg(_shape_at(name, a0 + r, 50, 50, 0.9)) for r in (180, 90, 0)],
-                3)
+                3,
+                explain="A mirror flips left and right; the rotated options keep the original handedness, which no rotation can mirror.")
 
     # 4) Size progression: the same figure grows (or shrinks) by a fixed step.
     for name in SHAPES:
@@ -1772,7 +1835,8 @@ def gen_visual():
                 fig,
                 _svg(_shape_at(name, angle, 50, 50, nxt)),
                 [_svg(_shape_at(name, angle, 50, 50, w)) for w in wrong_scales],
-                1 if growing else 2)
+                1 if growing else 2,
+                explain=f"The size changes by the same step each time — the next figure must be {'larger than' if growing else 'smaller than'} all three shown.")
 
     # 5) Fill alternation while rotating: solid, outline, solid → outline.
     for name in ["arrow", "ell", "tee", "eff", "pee", "flag"]:
@@ -1793,7 +1857,8 @@ def gen_visual():
                 "The figure alternates solid and outline while turning. Which comes next?",
                 fig, opt(False, a3),
                 [opt(True, a3), opt(False, a3 + 90), opt(True, a3 - step)],
-                2 if step == 90 else 3)
+                2 if step == 90 else 3,
+                explain=f"Two rules run together: the fill alternates solid/outline (next is outline) and the shape turns {step}° each step.")
 
 
 def validate_visual():
@@ -1855,25 +1920,30 @@ def main():
     validate_visual()
 
     root = Path(__file__).resolve().parent.parent
-    ordered = [{"id": q["id"], "domain": q["domain"], "prompt": q["prompt"],
+    ordered = [{k: v for k, v in {
+                "id": q["id"], "domain": q["domain"], "prompt": q["prompt"],
                 "options": q["options"], "correctIndex": q["correctIndex"],
-                "difficulty": q["difficulty"]} for q in QS]
+                "difficulty": q["difficulty"], "explain": q.get("explain"),
+               }.items() if v is not None} for q in QS]
     (root / "Mindspar/Resources/questions.json").write_text(
         json.dumps(ordered, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
     rows = ",\n".join(
         json.dumps([q["id"], q["domain"], q["difficulty"], q["prompt"],
-                    q["options"], q["correctIndex"]], ensure_ascii=False)
+                    q["options"], q["correctIndex"], None, q.get("explain")],
+                   ensure_ascii=False)
         for q in QS)
     vrows = ",\n".join(
         json.dumps([q["id"], q["domain"], q["difficulty"], q["prompt"],
-                    q["options"], q["correctIndex"], q["figure"]], ensure_ascii=False)
+                    q["options"], q["correctIndex"], q["figure"], q.get("explain")],
+                   ensure_ascii=False)
         for q in VISUAL)
     (root / "web/questions.js").write_text(
         "// GENERATED by tools/generate_questions.py — do not edit by hand.\n"
         "// Format: [id, domain, difficulty(1–3), prompt, options[4], correctIndex,\n"
-        "//          figure?] — a 7th element is an SVG figure (visual questions,\n"
-        "//          web only; option strings may also be SVG).\n"
+        "//          figure|null, explain|null] — figure is an SVG (visual questions,\n"
+        "//          web only; option strings may also be SVG); explain is the\n"
+        "//          one-line 'why' shown on the answer-review screen.\n"
         f"export const QUESTIONS = [\n{rows},\n{vrows}\n];\n", encoding="utf-8")
 
     by_domain = {}

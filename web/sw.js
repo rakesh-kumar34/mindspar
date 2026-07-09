@@ -42,6 +42,16 @@ self.addEventListener("fetch", (e) => {
   );
 });
 
+// Server-sent push (wired client-side; needs a free sender worker to go
+// fully closed-app — see the repo notes).
+self.addEventListener("push", (e) => {
+  let data = {};
+  try { data = e.data.json(); } catch { data = { body: e.data && e.data.text() }; }
+  e.waitUntil(self.registration.showNotification(data.title || "Mindspar", {
+    body: data.body || "", icon: "icon-192.png", badge: "icon-192.png", tag: data.tag || "mindspar",
+  }));
+});
+
 // Focus (or open) the app when a notification is tapped.
 self.addEventListener("notificationclick", (e) => {
   e.notification.close();
