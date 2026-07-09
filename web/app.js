@@ -656,6 +656,7 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 $("t-play").onclick = () => setTab("play");
+$("t-stats").onclick = () => setTab("stats");
 $("t-friends").onclick = () => setTab("friends");
 $("t-prof").onclick = () => setTab("prof");
 let animateNext = false;                     // one-shot slide-in on tab switches
@@ -663,6 +664,7 @@ function setTab(t) {
   tab = t;
   viewingFriend = null;
   $("t-play").classList.toggle("on", t === "play");
+  $("t-stats").classList.toggle("on", t === "stats");
   $("t-friends").classList.toggle("on", t === "friends");
   $("t-prof").classList.toggle("on", t === "prof");
   animateNext = true;
@@ -833,6 +835,7 @@ function render() {
   tabs.style.display = "flex";
   updateFriendBadge();
   if (tab === "friends") renderFriends();
+  else if (tab === "stats") renderStats();
   else if (tab === "prof") renderProfile();
   else renderHome();
   if (animateNext) {                          // only on explicit tab switches,
@@ -2127,7 +2130,9 @@ function sparklineCard() {
     </svg></div>`;
 }
 
-function renderProfile() {
+// ---- Stats: everything about how you're doing lives here (iOS-style
+// large-title screen), so the Profile tab can stay clean and personal. ----
+function renderStats() {
   const answered = Object.values(P.dA).reduce((a, b) => a + b, 0);
   const correct = Object.values(P.dC).reduce((a, b) => a + b, 0);
   const acc = answered ? Math.round(correct / answered * 100) : null;
@@ -2148,7 +2153,7 @@ function renderProfile() {
   const best = accByDom.slice().sort((a, b) => b[1] - a[1])[0];
   const focus = accByDom.slice().sort((a, b) => a[1] - b[1])[0];
 
-  const bars = Object.entries(DOMAINS).map(([k, [t, c, g]]) => {
+  const bars = Object.entries(DOMAINS).map(([k, [t, c]]) => {
     const n = P.dA[k] || 0;
     const pct = n ? Math.round((P.dC[k] || 0) / n * 100) : null;
     return `<div class="srow"><span style="color:${c};width:18px">${ic(DOMAIN_ICON[k], "18px")}</span>
@@ -2158,21 +2163,10 @@ function renderProfile() {
       <span class="pn">${n || ""}</span></div>`;
   }).join("");
 
+  const streak = dailyStreakNow();
+
   screen.innerHTML = `<div class="pad" style="gap:14px">
-    <div style="text-align:center;padding-top:6px">
-      <div class="avatar" id="p-avatar" style="cursor:pointer" title="Change your picture">${avatarHTML(P)}</div>
-      <input type="file" id="p-file" accept="image/*" style="display:none">
-      <div style="display:flex;gap:10px;justify-content:center;margin-top:3px">
-        <button class="ghost" id="p-char">Pick character</button>
-        <button class="ghost" id="p-photo">${P.photo ? "Change photo" : "Upload photo"}</button>
-      </div>
-      <div class="serif" style="font-size:25px;font-weight:600">${P.country ? flagOf(P.country) + " " : ""}${esc(P.name)}</div>
-      <div style="font-size:12px;color:var(--ink2);margin-top:3px">${esc(P.email || "")}${
-        P.country ? " · " + countryName(P.country) : ""}</div>
-      <div style="margin-top:8px"><span class="tierpill">${tName.toUpperCase()}
-        <i>${P.rating} · ${ageBand(P)}</i></span></div>
-      ${P.createdAt ? `<div style="font-size:11px;color:var(--ink2);margin-top:7px">Member since ${fmtDate(P.createdAt)}</div>` : ""}
-    </div>
+    <div class="serif" style="font-size:24px;font-weight:600">Stats</div>
 
     <div class="cardbox" style="padding:24px;text-align:center">
       <div class="eyebrow">MINDSPAR SCORE</div>
@@ -2207,6 +2201,7 @@ function renderProfile() {
       <div><div class="v">${answered}</div><div class="l">Answered</div></div>
       <div><div class="v">${acc === null ? "—" : acc + "%"}</div><div class="l">Accuracy</div></div>
       <div><div class="v">${avgSpeed === null ? "—" : Math.round(avgSpeed * 100) + "%"}</div><div class="l">Speed</div></div>
+      <div><div class="v">${streak > 0 ? "🔥 " + streak : "—"}</div><div class="l">Daily streak</div></div>
     </div>
 
     ${accByDom.length ? `<div class="cardbox" style="padding:16px;display:flex;gap:10px">
@@ -2232,19 +2227,89 @@ function renderProfile() {
       }).join("")}
     </div>` : ""}
 
-    ${backend.isLive ? `<div class="cardbox" style="padding:16px;display:flex;flex-direction:column;gap:12px">
-      <div class="rank-top"><span class="eyebrow">FRIENDS</span>
-        <button class="ghost" id="p-friends-all" style="padding:0;font-weight:600;color:var(--iris)">Manage</button></div>
-      ${friends.length ? friends.map(f => `
-        <div class="frow" style="box-shadow:none;padding:0;border:none;background:none">
-          <span class="fav sm">${avatarHTML(f)}${unreadBy.get(f.id) ? `<i class="undot"></i>` : ""}</span>
-          <span class="fmeta"><b>${flagOf(f.country)} ${esc(f.name)}</b><span>${unreadBy.get(f.id) ? `<b style="color:var(--iris)">New message</b> · ` : ""}${tier(f.rating)} · ${f.rating}</span></span>
-          <span class="fbtns">
-            <button class="smallbtn" data-pchal="${f.id}">Challenge</button>
-            <button class="smallbtn" data-pchat="${f.id}">Message</button>
-          </span></div>`).join("")
-        : `<div style="font-size:12.5px;color:var(--ink2)">No friends yet — add someone from the Friends tab.</div>`}
-    </div>` : ""}
+    <div class="fine">The Mindspar Score reflects your relative performance in this game, normalized by
+      age group. It is an entertainment estimate — not a clinical or psychometric IQ assessment.</div>
+  </div>`;
+}
+
+// ---- achievements: computed from stats already on the profile, no backend ----
+const ACH = [
+  { name: "First Duel", icon: "play", color: "#5457e8", desc: "Play your first duel.",
+    done: p => p.played >= 1, prog: p => [Math.min(p.played, 1), 1] },
+  { name: "First Victory", icon: "trophy", color: "#c48c1c", desc: "Win a duel.",
+    done: p => p.won >= 1, prog: p => [Math.min(p.won, 1), 1] },
+  { name: "Ten Up", icon: "hash", color: "#0f85d4", desc: "Play 10 duels.",
+    done: p => p.played >= 10, prog: p => [Math.min(p.played, 10), 10] },
+  { name: "Half Century", icon: "grid", color: "#8c5cd4", desc: "Play 50 duels.",
+    done: p => p.played >= 50, prog: p => [Math.min(p.played, 50), 50] },
+  { name: "Calibrated", icon: "bulb", color: "#219e78", desc: `Answer ${MIN_ANSWERS} questions and unlock your Mindspar Score.`,
+    done: p => sparScore(p) !== null,
+    prog: p => [Math.min(Object.values(p.dA).reduce((a, b) => a + b, 0), MIN_ANSWERS), MIN_ANSWERS] },
+  { name: "Scholar", icon: "grad", color: "#b04458", desc: "Reach the Scholar tier (rating 1050).",
+    done: p => p.rating >= 1050, prog: p => [Math.min(p.rating, 1050), 1050] },
+  { name: "Sage", icon: "landmark", color: "#0e8f8a", desc: "Reach the Sage tier (rating 1200).",
+    done: p => p.rating >= 1200, prog: p => [Math.min(p.rating, 1200), 1200] },
+  { name: "Hot Streak", icon: "fast", color: "#cc5624", desc: "Win 5 duels in a row.",
+    done: p => (p.best || 0) >= 5, prog: p => [Math.min(p.best || 0, 5), 5] },
+  { name: "Daily Devotee", icon: "sun", color: "#e8843c", desc: "Keep a 7-day daily-challenge streak.",
+    done: p => (p.dailyBestStreak || 0) >= 7, prog: p => [Math.min(p.dailyBestStreak || 0, 7), 7] },
+  { name: "Sharpshooter", icon: "eye", color: "#5457e8", desc: "80% accuracy across 100+ answers.",
+    done: p => { const a = Object.values(p.dA).reduce((x, y) => x + y, 0);
+      return a >= 100 && Object.values(p.dC).reduce((x, y) => x + y, 0) / a >= .8; },
+    prog: p => [Math.min(Object.values(p.dA).reduce((x, y) => x + y, 0), 100), 100] },
+  { name: "Lightning", icon: "zap", color: "#c48c1c", desc: "Average answer speed of 70%+ over 50 correct answers.",
+    done: p => p.sfN >= 50 && p.sfSum / p.sfN >= .7, prog: p => [Math.min(p.sfN || 0, 50), 50] },
+  { name: "Polymath", icon: "globe", color: "#8c5cd4", desc: "Answer correctly in all 8 domains.",
+    done: p => Object.keys(DOMAINS).every(k => (p.dC[k] || 0) >= 1),
+    prog: p => [Object.keys(DOMAINS).filter(k => (p.dC[k] || 0) >= 1).length, 8] },
+];
+
+function showAch(i) {
+  const a = ACH[i];
+  const done = a.done(P);
+  const [cur, goal] = a.prog(P);
+  overlay.classList.add("on");
+  overlay.innerHTML = `<div class="panel">
+    <span class="ach-ic big ${done ? "on" : ""}" style="--ac:${a.color}">${ic(a.icon, "26px")}</span>
+    <b>${a.name}</b>
+    <span style="font-size:12.5px;color:var(--ink2);line-height:1.5">${a.desc}</span>
+    ${done ? `<span style="font-size:13px;font-weight:700;color:var(--good)">Earned ✓</span>`
+           : `<div class="cal" style="width:80%"><i style="width:${Math.round(cur / goal * 100)}%"></i></div>
+              <span style="font-size:12px;color:var(--ink2)">${cur} / ${goal}</span>`}
+    <button class="ghost" id="ach-close">Close</button></div>`;
+  $("ach-close").onclick = () => overlay.classList.remove("on");
+}
+
+// ---- Profile: identity only — who you are, how you look, your trophies,
+// and your settings. Numbers live on the Stats tab. ----
+function renderProfile() {
+  const earned = ACH.filter(a => a.done(P)).length;
+  screen.innerHTML = `<div class="pad" style="gap:14px">
+    <div class="serif" style="font-size:24px;font-weight:600">Profile</div>
+    <div style="text-align:center;padding-top:2px">
+      <div class="avatar" id="p-avatar" style="cursor:pointer" title="Change your picture">${avatarHTML(P)}</div>
+      <input type="file" id="p-file" accept="image/*" style="display:none">
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:3px">
+        <button class="ghost" id="p-char">Pick character</button>
+        <button class="ghost" id="p-photo">${P.photo ? "Change photo" : "Upload photo"}</button>
+      </div>
+      <div class="serif" style="font-size:25px;font-weight:600">${P.country ? flagOf(P.country) + " " : ""}${esc(P.name)}
+        <button class="ghost" id="p-edit" style="padding:2px;vertical-align:middle" title="Edit profile">${ic("pencil", "15px")}</button></div>
+      <div style="font-size:12px;color:var(--ink2);margin-top:3px">${esc(P.email || "")}${
+        P.country ? " · " + countryName(P.country) : ""}</div>
+      <div style="margin-top:8px"><span class="tierpill">${tier(P.rating).toUpperCase()}
+        <i>${P.rating} · ${ageBand(P)}</i></span></div>
+      ${P.createdAt ? `<div style="font-size:11px;color:var(--ink2);margin-top:7px">Member since ${fmtDate(P.createdAt)}</div>` : ""}
+    </div>
+
+    <div class="cardbox" style="padding:16px;display:flex;flex-direction:column;gap:14px">
+      <div class="rank-top"><span class="eyebrow">ACHIEVEMENTS</span>
+        <span style="font-size:12px;color:var(--ink2)">${earned} of ${ACH.length}</span></div>
+      <div class="ach-grid">${ACH.map((a, i) => `
+        <button class="ach ${a.done(P) ? "on" : ""}" data-ach="${i}" style="--ac:${a.color}">
+          <span class="ach-ic">${ic(a.icon, "19px")}</span><span class="ach-nm">${a.name}</span>
+        </button>`).join("")}</div>
+    </div>
 
     <div class="cardbox" style="padding:16px;display:flex;flex-direction:column;gap:14px">
       <div style="display:flex;align-items:center;justify-content:space-between">
@@ -2259,9 +2324,7 @@ function renderProfile() {
       </div>
     </div>
 
-    <div class="fine">The Mindspar Score reflects your relative performance in this game, normalized by
-      age group. It is an entertainment estimate — not a clinical or psychometric IQ assessment
-      · <a href="privacy.html" style="color:inherit">Privacy</a></div>
+    <div class="fine">Mindspar is for adults 18 and over · <a href="privacy.html" style="color:inherit">Privacy</a></div>
     <button class="signout" id="p-out">Sign out</button>
     <button class="ghost" id="p-del" style="color:var(--bad);opacity:.75">Delete account…</button>
   </div>`;
@@ -2271,18 +2334,41 @@ function renderProfile() {
   $("p-char").onclick = characterPicker;
   $("p-photo").onclick = () => fileInput.click();
   fileInput.onchange = () => resizePhoto(fileInput.files[0]);
+  $("p-edit").onclick = editProfileFlow;
+  screen.querySelectorAll("[data-ach]").forEach(el => el.onclick = () => showAch(+el.dataset.ach));
   screen.querySelectorAll("[data-th]").forEach(el =>
     el.onclick = () => { applyTheme(el.dataset.th); renderProfile(); });
   screen.querySelectorAll("[data-snd]").forEach(el =>
     el.onclick = () => { setMuted(el.dataset.snd === "off"); if (el.dataset.snd === "on") sfx.correct(); renderProfile(); });
-  const allBtn = $("p-friends-all");
-  if (allBtn) allBtn.onclick = () => setTab("friends");
-  screen.querySelectorAll("[data-pchal]").forEach(el =>
-    el.onclick = () => challengeFriend(friends.find(x => x.id === el.dataset.pchal)));
-  screen.querySelectorAll("[data-pchat]").forEach(el =>
-    el.onclick = () => openChat(friends.find(x => x.id === el.dataset.pchat)));
   $("p-out").onclick = doSignOut;
   $("p-del").onclick = deleteAccountFlow;
+}
+
+// Edit display name and country. Email is the sign-in identity and stays put.
+function editProfileFlow() {
+  overlay.classList.add("on");
+  overlay.innerHTML = `<div class="panel" style="align-items:stretch;text-align:left">
+    <b style="text-align:center">Edit profile</b>
+    <input id="ep-name" placeholder="Your name" maxlength="30" value="${esc(P.name)}" autocomplete="name">
+    <select id="ep-country" class="select">
+      <option value="" disabled ${P.country ? "" : "selected"}>Your country</option>
+      ${COUNTRIES.map(([c, n]) => `<option value="${c}" ${P.country === c ? "selected" : ""}>${flagOf(c)}  ${esc(n)}</option>`).join("")}
+    </select>
+    <div class="err" id="ep-err"></div>
+    <button class="primary" id="ep-save">Save</button>
+    <button class="ghost" id="ep-close">Cancel</button></div>`;
+  $("ep-close").onclick = () => overlay.classList.remove("on");
+  $("ep-save").onclick = async () => {
+    const name = $("ep-name").value.trim();
+    if (name.length < 2) return $("ep-err").textContent = "Enter a name (2+ characters).";
+    P.name = name;
+    P.country = $("ep-country").value || P.country || "";
+    await persist();
+    overlay.classList.remove("on");
+    toast("Profile updated.");
+    renderProfile();
+  };
+  $("ep-name").focus();
 }
 
 // Permanent account deletion. Online it needs the password (Firebase requires a

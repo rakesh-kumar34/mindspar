@@ -319,6 +319,21 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 .cal{width:70%;height:6px;background:var(--hair);border-radius:4px;overflow:hidden;margin:6px auto;}
 .cal i{display:block;height:100%;background:linear-gradient(90deg,var(--iris),var(--violet));}
 
+/* achievements */
+.ach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 6px;}
+.ach{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:none;
+  cursor:pointer;font-family:inherit;padding:2px;transition:transform .12s ease;}
+.ach:active{transform:scale(.93)}
+.ach-ic{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;
+  background:color-mix(in srgb,var(--ac) 14%,transparent);color:var(--ac);
+  transition:background .2s ease;}
+.ach.on .ach-ic,.ach-ic.big.on{background:var(--ac);color:#fff;
+  box-shadow:0 6px 16px color-mix(in srgb,var(--ac) 40%,transparent);}
+.ach-ic.big{width:58px;height:58px;}
+.ach:not(.on) .ach-ic{opacity:.5;}
+.ach-nm{font-size:9.5px;font-weight:600;color:var(--ink2);text-align:center;line-height:1.25;}
+.ach.on .ach-nm{color:var(--ink);}
+
 /* rank ladder */
 .rank-top{display:flex;justify-content:space-between;align-items:center;}
 .ladder{height:8px;border-radius:5px;background:var(--hair);overflow:hidden;}
