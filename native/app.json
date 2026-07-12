@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "Synapse",
+    "slug": "synapse",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "com.rakesh.synapse",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.rakesh.synapse"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar"
+    ],
+    "scheme": "synapse"
+  }
+}
