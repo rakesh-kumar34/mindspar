@@ -1,15 +1,15 @@
 // Synapse web client. Runs offline (local profile + bots) with no setup;
 // real accounts, email invites, and live rating-matched duels switch on when
 // firebase-config.js is filled in — same graceful degradation as the iOS app.
-import { QUESTIONS } from "./questions.js?v=36";
-import { firebaseConfig } from "./firebase-config.js?v=36";
-import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js?v=36";
-import { COUNTRIES, flagOf, countryName } from "./countries.js?v=36";
-import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js?v=36";
-import { characterAvatar, PICKER_SEEDS } from "./avatars.js?v=36";
-import { sfx, isMuted, setMuted } from "./sound.js?v=36";
-import { mountAnim } from "./anim.js?v=36";
-const ASSET_V = "36";   // kept in lockstep by tools/release.sh
+import { QUESTIONS } from "./questions.js?v=37";
+import { firebaseConfig } from "./firebase-config.js?v=37";
+import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js?v=37";
+import { COUNTRIES, flagOf, countryName } from "./countries.js?v=37";
+import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js?v=37";
+import { characterAvatar, PICKER_SEEDS } from "./avatars.js?v=37";
+import { sfx, isMuted, setMuted } from "./sound.js?v=37";
+import { mountAnim } from "./anim.js?v=37";
+const ASSET_V = "37";   // kept in lockstep by tools/release.sh
 
 // ---------------- game math (mirrors the Swift services) ----------------
 const LIMIT = 18, N = 10, MIN_ANSWERS = 16;
@@ -1177,11 +1177,23 @@ function forgotPassword(prefill) {
   $("fp-email").addEventListener("keydown", e => { if (e.key === "Enter") go(); });
 }
 
+// Put an async CTA into a working state; returns a restore function.
+function busyBtn(btn, label) {
+  const prev = { html: btn.innerHTML, disabled: btn.disabled };
+  btn.disabled = true;
+  btn.classList.add("busy");
+  btn.innerHTML = `<span class="btnspin"></span>${label}`;
+  return () => { btn.disabled = prev.disabled; btn.classList.remove("busy"); btn.innerHTML = prev.html; };
+}
+
 async function submitAuth() {
   const err = $("a-err");
   const email = $("a-email").value.trim(), password = $("a-pass").value;
+  let restore = null;
   try {
     if (authMode === "signin") {
+      if (!email || !password) return err.textContent = "Enter your email and password.";
+      restore = busyBtn($("a-go"), "Signing in…");
       P = await backend.signIn(email, password);
       if (backend.isLive) await setupIdentity(password, true);
     } else {
@@ -1193,6 +1205,7 @@ async function submitAuth() {
       if (!dob) return err.textContent = "Enter your date of birth.";
       if (yearsOld(dob) < 18) return err.textContent = "Synapse is for adults 18 and over.";
       if (!$("a-adult").checked) return err.textContent = "Please confirm you are 18 or older.";
+      restore = busyBtn($("a-go"), "Creating account…");
       const result = await backend.signUp({ name, email, password, dob, country });
       if (result && result.pendingVerification) {   // online: must confirm email first
         // Build the E2E identity now (we have the password); stash the wrapped
@@ -1208,7 +1221,10 @@ async function submitAuth() {
     if (backend.isLive) await startSession();
     armIdleTimer();
     render();
-  } catch (e) { err.textContent = e.message.replace("Firebase: ", ""); }
+  } catch (e) {
+    if (restore) restore();
+    err.textContent = e.message.replace("Firebase: ", "");
+  }
 }
 
 // ---- email verification gate ----
@@ -1230,15 +1246,16 @@ function renderVerify() {
   $("v-cont").onclick = async () => {
     const err = $("v-err");
     err.textContent = "";
+    const restore = busyBtn($("v-cont"), "Checking…");
     try {
       const ok = await backend.refreshVerified();
-      if (!ok) return err.textContent = "Not verified yet — click the link in your email, then try again.";
+      if (!ok) { restore(); return err.textContent = "Not verified yet — click the link in your email, then try again."; }
       P = await backend.completeSignup(pending);
       setPending(null);
       if (backend.isLive) { await setupIdentity(null); await startSession(); }
       armIdleTimer();
       render();
-    } catch (e) { err.textContent = e.message.replace("Firebase: ", ""); }
+    } catch (e) { restore(); err.textContent = e.message.replace("Firebase: ", ""); }
   };
   $("v-resend").onclick = async () => {
     try { await backend.resendVerification(); toast("Verification email sent."); }

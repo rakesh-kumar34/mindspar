@@ -78,6 +78,10 @@ input:focus{outline:none;border-color:var(--iris);box-shadow:0 0 0 3px var(--iri
   box-shadow:0 8px 20px rgba(36,28,15,.22);transition:transform .12s ease,box-shadow .12s ease;}
 .primary:active{transform:scale(.975);box-shadow:0 4px 12px rgba(36,28,15,.18);}
 .primary:disabled{opacity:.4;cursor:default;box-shadow:none;}
+.primary.busy{opacity:.85;cursor:progress;}
+.btnspin{display:inline-block;width:15px;height:15px;border:2.5px solid currentColor;
+  border-top-color:transparent;border-radius:50%;animation:rot .8s linear infinite;
+  vertical-align:-3px;margin-right:9px;}
 .ghost{background:none;border:none;color:var(--ink2);font-size:13.5px;cursor:pointer;padding:8px;}
 .ghost:active{opacity:.5;}
 /* Sign out: quiet but unmistakable — a full-width bordered row, not a faint link. */
