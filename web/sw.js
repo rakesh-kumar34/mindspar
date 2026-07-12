@@ -7,7 +7,7 @@
 //    are STALE-WHILE-REVALIDATE: served instantly from cache, refreshed in
 //    the background. This is what makes sign-in fast on repeat visits.
 //  - Cross-origin (Firebase SDK/API) is untouched.
-const CACHE = "mindspar-v1";
+const CACHE = "synapse-v2";   // bumped to purge mixed-version caches
 
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (e) => e.waitUntil(
@@ -19,27 +19,33 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
   if (e.request.method !== "GET" || url.origin !== location.origin) return;
 
-  const shell = url.pathname.endsWith("/") || url.pathname.endsWith(".html")
-    || url.searchParams.has("v");
-  if (shell) {
-    e.respondWith(
-      fetch(e.request).then(r => {
-        const copy = r.clone();
-        caches.open(CACHE).then(c => c.put(e.request, copy));
-        return r;
-      }).catch(() => caches.match(e.request))
-    );
+  // Versioned assets (?v=N on styles and every module) are immutable BY URL:
+  // a deploy changes the URL, so cache-first is both instant and always
+  // consistent — no more mixed old/new builds after a release.
+  if (url.searchParams.has("v")) {
+    e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(r => {
+      if (r.ok) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
+      return r;
+    })));
     return;
   }
-  e.respondWith(
-    caches.match(e.request).then(hit => {
-      const net = fetch(e.request).then(r => {
-        if (r.ok) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
-        return r;
-      }).catch(() => hit);
-      return hit || net;
-    })
-  );
+  // The shell (index.html) is network-first so new releases land immediately.
+  if (url.pathname.endsWith("/") || url.pathname.endsWith(".html")) {
+    e.respondWith(fetch(e.request).then(r => {
+      const copy = r.clone();
+      caches.open(CACHE).then(c => c.put(e.request, copy));
+      return r;
+    }).catch(() => caches.match(e.request)));
+    return;
+  }
+  // Everything else (fonts, icons) — stale-while-revalidate.
+  e.respondWith(caches.match(e.request).then(hit => {
+    const net = fetch(e.request).then(r => {
+      if (r.ok) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
+      return r;
+    }).catch(() => hit);
+    return hit || net;
+  }));
 });
 
 // Server-sent push (wired client-side; needs a free sender worker to go

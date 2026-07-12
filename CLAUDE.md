@@ -66,11 +66,24 @@ rename before any App Store submission.
   bug this app can have. Keep domains balanced and difficulties spread as the
   bank grows.
 
-## Design language
+## Design language (Synapse, since 2026-07-11)
 
-Porcelain light surfaces + deep ink text + single iris accent (`Theme`). The duel
-arena is deliberately the only dark screen. Serif (design: .serif) for the wordmark
-and result headlines; rounded monospaced digits for scores and timers.
+App is branded **Synapse** ("The thinking person's arena") — storage keys, repo
+and URLs still say mindspar; never rename those without a migration. Warm paper
+surfaces (#F3EDE0 light / #171310 warm-ink dark), ink text #241C0F, terracotta
+accent #D95B43, teal good, gold tier accents. Display face: Instrument Serif
+(400 only — .serif forces weight 400; don't fight it), Fraunces fallback, both
+self-hosted. The duel arena is deliberately the only near-black screen. Desktop
+≥1000px is a sidebar layout; 700–999px a framed device; phones full-bleed.
+Keep OUR tab icons and the twelve SVG animal avatars — explicitly preferred
+over the design mockup's assets.
+
+## Release versioning (do not skip)
+
+Every first-party asset ships as `?v=N` (index.html links + all module imports
+in app.js); the service worker serves `?v` URLs cache-first as immutable.
+Bump with `tools/release.sh <N+1>` before every deploy — skipping this mixes
+old/new builds for returning visitors (the v31 incident).
 
 ## Firestore layout
 

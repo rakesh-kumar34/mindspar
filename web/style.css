@@ -573,7 +573,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
    the left, one content column, no phone frame. Same tabs, same icons. ---- */
 @media (min-width:1000px){
   body{display:flex;justify-content:center;background:var(--porcelain);}
-  .app{max-width:1080px;flex-direction:row;}
+  .app{max-width:1080px;width:100%;flex-direction:row;}
   .tabs{order:-1;flex-direction:column;justify-content:flex-start;gap:4px;
     width:232px;flex-shrink:0;padding:26px 16px;border-top:none;
     border-right:1px solid var(--hair);background:none;
@@ -592,6 +592,11 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
   .screen{min-width:0;}
   .pad{max-width:660px;margin:0 auto;width:100%;padding-top:34px;}
   .rv-head,.rv-list{max-width:660px;margin-left:auto;margin-right:auto;width:100%;}
+  /* full-cover layers keep a phone-ish column so bars never span 1080px */
+  .tbar,.meta,.prompt,.opts,.board{max-width:640px;margin-left:auto;margin-right:auto;width:100%;}
+  .prompt{width:100%;}
+  .chat-head,.chat-input{padding-left:calc(50% - 330px);padding-right:calc(50% - 330px);}
+  .msgs{max-width:660px;margin:0 auto;width:100%;}
 }
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

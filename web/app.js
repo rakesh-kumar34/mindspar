@@ -1,13 +1,13 @@
 // Synapse web client. Runs offline (local profile + bots) with no setup;
 // real accounts, email invites, and live rating-matched duels switch on when
 // firebase-config.js is filled in — same graceful degradation as the iOS app.
-import { QUESTIONS } from "./questions.js";
-import { firebaseConfig } from "./firebase-config.js";
-import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js";
-import { COUNTRIES, flagOf, countryName } from "./countries.js";
-import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js";
-import { characterAvatar, PICKER_SEEDS } from "./avatars.js";
-import { sfx, isMuted, setMuted } from "./sound.js";
+import { QUESTIONS } from "./questions.js?v=32";
+import { firebaseConfig } from "./firebase-config.js?v=32";
+import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js?v=32";
+import { COUNTRIES, flagOf, countryName } from "./countries.js?v=32";
+import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js?v=32";
+import { characterAvatar, PICKER_SEEDS } from "./avatars.js?v=32";
+import { sfx, isMuted, setMuted } from "./sound.js?v=32";
 
 // ---------------- game math (mirrors the Swift services) ----------------
 const LIMIT = 18, N = 10, MIN_ANSWERS = 16;

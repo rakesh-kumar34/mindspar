@@ -24,8 +24,8 @@
     try { document.documentElement.setAttribute("data-theme",
       localStorage.getItem("mindspar-theme") || "dark"); } catch (e) {}
   </script>
-  <link rel="preload" href="fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="style.css">
+  <link rel="preload" href="fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css?v=32">
 </head>
 <body>
   <main class="app">
@@ -42,6 +42,6 @@
     <div class="overlay" id="overlay"></div>
     <div class="toast" id="toast" role="status"></div>
   </main>
-  <script type="module" src="app.js?v=31"></script>
+  <script type="module" src="app.js?v=32"></script>
 </body>
 </html>
