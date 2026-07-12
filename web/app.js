@@ -1,23 +1,23 @@
 // Synapse web client. Runs offline (local profile + bots) with no setup;
 // real accounts, email invites, and live rating-matched duels switch on when
 // firebase-config.js is filled in — same graceful degradation as the iOS app.
-import { QUESTIONS } from "./questions.js?v=35";
-import { firebaseConfig } from "./firebase-config.js?v=35";
-import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js?v=35";
-import { COUNTRIES, flagOf, countryName } from "./countries.js?v=35";
-import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js?v=35";
-import { characterAvatar, PICKER_SEEDS } from "./avatars.js?v=35";
-import { sfx, isMuted, setMuted } from "./sound.js?v=35";
-import { mountAnim } from "./anim.js?v=35";
-const ASSET_V = "35";   // kept in lockstep by tools/release.sh
+import { QUESTIONS } from "./questions.js?v=36";
+import { firebaseConfig } from "./firebase-config.js?v=36";
+import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js?v=36";
+import { COUNTRIES, flagOf, countryName } from "./countries.js?v=36";
+import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js?v=36";
+import { characterAvatar, PICKER_SEEDS } from "./avatars.js?v=36";
+import { sfx, isMuted, setMuted } from "./sound.js?v=36";
+import { mountAnim } from "./anim.js?v=36";
+const ASSET_V = "36";   // kept in lockstep by tools/release.sh
 
 // ---------------- game math (mirrors the Swift services) ----------------
 const LIMIT = 18, N = 10, MIN_ANSWERS = 16;
 const DOMAINS = {
-  reasoning: ["Reasoning", "#6A6DC0", "◫"], math: ["Math", "#2E7EA6", "∑"],
-  verbal: ["Verbal", "#C9652F", "❝"], knowledge: ["Knowledge", "#9A66BB", "◍"],
-  science: ["Science", "#34917F", "⚛"], patterns: ["Patterns", "#B8862E", "≋"],
-  history: ["History", "#B85468", "◔"], geography: ["Geography", "#6B934D", "◈"],
+  reasoning: ["Reasoning", "#6366BB", "◫"], math: ["Math", "#2C7BA1", "∑"],
+  verbal: ["Verbal", "#BC5A26", "❝"], knowledge: ["Knowledge", "#9160B2", "◍"],
+  science: ["Science", "#308878", "⚛"], patterns: ["Patterns", "#A3771F", "≋"],
+  history: ["History", "#B04F62", "◔"], geography: ["Geography", "#628A46", "◈"],
 };
 const BOTS = [
   { id: "vega", name: "Vega", tag: "Numbers move first", glyph: "∑", rating: 1150,
@@ -1004,7 +1004,7 @@ function seedAch() {
 
 // Rank-ups ride the same banner queue as achievements.
 function rankPop(tierName) {
-  achQueue.push({ label: "Rank up", name: tierName, icon: "trophy", color: "#B8862E" });
+  achQueue.push({ label: "Rank up", name: tierName, icon: "trophy", color: "#A3771F" });
   if (!achShowing) nextAchPop();
 }
 
@@ -1268,7 +1268,7 @@ function renderHome() {
         ? `Scored ${P.dailyScore} · next challenge in ${nextDailyIn()}`
         : `Everyone plays the same ${N} today — compare with friends`}</span></span></button>
     <button class="playrow" id="h-gauntlet">
-      <span class="sig" style="background:rgba(176,68,88,.14);color:#B85468">${ic("trophy")}</span>
+      <span class="sig" style="background:rgba(176,68,88,.14);color:#B04F62">${ic("trophy")}</span>
       <span><b>Rivals</b><span>${gauntletRung() >= GAUNTLET.length
         ? "All ${GAUNTLET.length} defeated — champion"
         : `${gauntletRung()} of ${GAUNTLET.length} beaten · next up: ${GAUNTLET[gauntletRung()].name}`}</span></span></button>
@@ -1292,7 +1292,7 @@ function renderHome() {
         <span><b style="font-size:15px">Duel a Bot</b><br>
         <span style="font-size:12.5px;color:var(--ink2)">Pick a mind — and a subject</span></span>
       </div>
-      <div class="chips">${[["All", "#D95B43", null],
+      <div class="chips">${[["All", "#C24E36", null],
         ...Object.entries(DOMAINS).map(([k, v]) => [v[0], v[1], k])].map(([t, c, k]) =>
         `<button class="chip" data-dom="${k ?? ""}" style="${subject === k
           ? `background:${c};color:#fff` : `background:${c}18;color:${c}`}">${t}</button>`).join("")}</div>
@@ -1672,7 +1672,7 @@ function end() {
   else if (actual === 0) P.streak = 0;
   if (actual === 1 && lastMatch?.gauntlet !== undefined && lastMatch.gauntlet === gauntletRung()) {
     P.gauntlet = lastMatch.gauntlet + 1;       // rival beaten — the next unlocks
-    achQueue.push({ label: "Rival beaten", icon: "trophy", color: "#B85468",
+    achQueue.push({ label: "Rival beaten", icon: "trophy", color: "#B04F62",
                     name: P.gauntlet >= GAUNTLET.length
                       ? "All rivals defeated!"
                       : `${GAUNTLET[lastMatch.gauntlet].name} defeated` });
@@ -1711,7 +1711,7 @@ function confetti() {
   cv.width = box.width; cv.height = box.height;
   arena.appendChild(cv);
   const x = cv.getContext("2d");
-  const colors = ["#D95B43", "#2E7D6F", "#B8862E", "#E8734F", "#F3EDE0", "#F0B9A5"];
+  const colors = ["#D95B43", "#2E7D6F", "#A3771F", "#E8734F", "#F3EDE0", "#F0B9A5"];
   const bits = Array.from({ length: 120 }, () => ({
     x: Math.random() * cv.width, y: -20 - Math.random() * cv.height * .4,
     w: 5 + Math.random() * 5, h: 8 + Math.random() * 6,
@@ -2649,32 +2649,32 @@ function renderStats() {
 
 // ---- achievements: computed from stats already on the profile, no backend ----
 const ACH = [
-  { name: "First Duel", icon: "play", color: "#D95B43", desc: "Play your first duel.",
+  { name: "First Duel", icon: "play", color: "#C24E36", desc: "Play your first duel.",
     done: p => p.played >= 1, prog: p => [Math.min(p.played, 1), 1] },
-  { name: "First Victory", icon: "trophy", color: "#B8862E", desc: "Win a duel.",
+  { name: "First Victory", icon: "trophy", color: "#A3771F", desc: "Win a duel.",
     done: p => p.won >= 1, prog: p => [Math.min(p.won, 1), 1] },
-  { name: "Ten Up", icon: "hash", color: "#2E7EA6", desc: "Play 10 duels.",
+  { name: "Ten Up", icon: "hash", color: "#2C7BA1", desc: "Play 10 duels.",
     done: p => p.played >= 10, prog: p => [Math.min(p.played, 10), 10] },
-  { name: "Half Century", icon: "grid", color: "#9A66BB", desc: "Play 50 duels.",
+  { name: "Half Century", icon: "grid", color: "#9160B2", desc: "Play 50 duels.",
     done: p => p.played >= 50, prog: p => [Math.min(p.played, 50), 50] },
-  { name: "Calibrated", icon: "bulb", color: "#34917F", desc: `Answer ${MIN_ANSWERS} questions and unlock your Synapse Score.`,
+  { name: "Calibrated", icon: "bulb", color: "#308878", desc: `Answer ${MIN_ANSWERS} questions and unlock your Synapse Score.`,
     done: p => sparScore(p) !== null,
     prog: p => [Math.min(Object.values(p.dA).reduce((a, b) => a + b, 0), MIN_ANSWERS), MIN_ANSWERS] },
-  { name: "Scholar", icon: "grad", color: "#B85468", desc: "Reach the Scholar tier (rating 1050).",
+  { name: "Scholar", icon: "grad", color: "#B04F62", desc: "Reach the Scholar tier (rating 1050).",
     done: p => p.rating >= 1050, prog: p => [Math.min(p.rating, 1050), 1050] },
-  { name: "Sage", icon: "landmark", color: "#6B934D", desc: "Reach the Sage tier (rating 1200).",
+  { name: "Sage", icon: "landmark", color: "#628A46", desc: "Reach the Sage tier (rating 1200).",
     done: p => p.rating >= 1200, prog: p => [Math.min(p.rating, 1200), 1200] },
-  { name: "Hot Streak", icon: "fast", color: "#C9652F", desc: "Win 5 duels in a row.",
+  { name: "Hot Streak", icon: "fast", color: "#BC5A26", desc: "Win 5 duels in a row.",
     done: p => (p.best || 0) >= 5, prog: p => [Math.min(p.best || 0, 5), 5] },
   { name: "Daily Devotee", icon: "sun", color: "#D95B43", desc: "Keep a 7-day daily-challenge streak.",
     done: p => (p.dailyBestStreak || 0) >= 7, prog: p => [Math.min(p.dailyBestStreak || 0, 7), 7] },
-  { name: "Sharpshooter", icon: "eye", color: "#34917F", desc: "80% accuracy across 100+ answers.",
+  { name: "Sharpshooter", icon: "eye", color: "#308878", desc: "80% accuracy across 100+ answers.",
     done: p => { const a = Object.values(p.dA).reduce((x, y) => x + y, 0);
       return a >= 100 && Object.values(p.dC).reduce((x, y) => x + y, 0) / a >= .8; },
     prog: p => [Math.min(Object.values(p.dA).reduce((x, y) => x + y, 0), 100), 100] },
-  { name: "Lightning", icon: "zap", color: "#B8862E", desc: "Average answer speed of 70%+ over 50 correct answers.",
+  { name: "Lightning", icon: "zap", color: "#A3771F", desc: "Average answer speed of 70%+ over 50 correct answers.",
     done: p => p.sfN >= 50 && p.sfSum / p.sfN >= .7, prog: p => [Math.min(p.sfN || 0, 50), 50] },
-  { name: "Polymath", icon: "globe", color: "#9A66BB", desc: "Answer correctly in all 8 domains.",
+  { name: "Polymath", icon: "globe", color: "#9160B2", desc: "Answer correctly in all 8 domains.",
     done: p => Object.keys(DOMAINS).every(k => (p.dC[k] || 0) >= 1),
     prog: p => [Object.keys(DOMAINS).filter(k => (p.dC[k] || 0) >= 1).length, 8] },
 ];
