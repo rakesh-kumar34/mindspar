@@ -1,0 +1,4 @@
+trophy.json — "Trophy" from LottieFiles free library
+(lottiefiles.com/popular-free-animations), Lottie Simple License:
+free for commercial use, no attribution required, not redistributed
+as a standalone asset. Player: lottie-web (MIT), self-hosted.

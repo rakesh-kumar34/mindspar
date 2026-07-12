@@ -1,13 +1,15 @@
 // Synapse web client. Runs offline (local profile + bots) with no setup;
 // real accounts, email invites, and live rating-matched duels switch on when
 // firebase-config.js is filled in — same graceful degradation as the iOS app.
-import { QUESTIONS } from "./questions.js?v=33";
-import { firebaseConfig } from "./firebase-config.js?v=33";
-import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js?v=33";
-import { COUNTRIES, flagOf, countryName } from "./countries.js?v=33";
-import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js?v=33";
-import { characterAvatar, PICKER_SEEDS } from "./avatars.js?v=33";
-import { sfx, isMuted, setMuted } from "./sound.js?v=33";
+import { QUESTIONS } from "./questions.js?v=34";
+import { firebaseConfig } from "./firebase-config.js?v=34";
+import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js?v=34";
+import { COUNTRIES, flagOf, countryName } from "./countries.js?v=34";
+import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js?v=34";
+import { characterAvatar, PICKER_SEEDS } from "./avatars.js?v=34";
+import { sfx, isMuted, setMuted } from "./sound.js?v=34";
+import { mountAnim } from "./anim.js?v=34";
+const ASSET_V = "34";   // kept in lockstep by tools/release.sh
 
 // ---------------- game math (mirrors the Swift services) ----------------
 const LIMIT = 18, N = 10, MIN_ANSWERS = 16;
@@ -1312,6 +1314,7 @@ function renderGauntlet() {
   }).join("");
   screen.innerHTML = `<div class="pad" style="gap:12px">
     <button class="ghost" id="gt-back" style="align-self:flex-start;padding:4px 0">‹ Play</button>
+    ${g >= GAUNTLET.length ? `<div id="gt-trophy" style="width:150px;height:150px;margin:-8px auto -14px"></div>` : ""}
     <div>
       <div class="serif" style="font-size:24px;font-weight:600">Rivals</div>
       <div style="font-size:12.5px;color:var(--ink2);margin-top:3px">${g >= GAUNTLET.length
@@ -1322,6 +1325,7 @@ function renderGauntlet() {
     ${rows}
   </div>`;
   $("gt-back").onclick = () => { showGauntlet = false; render(); };
+  mountAnim($("gt-trophy"), "anim/trophy.json", { v: ASSET_V });
   screen.querySelectorAll("[data-g]").forEach(el =>
     el.onclick = () => startGauntletDuel(+el.dataset.g));
 }

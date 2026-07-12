@@ -9,5 +9,6 @@ set -e
 cd "$(dirname "$0")/.."
 OLD=$(grep -o 'app\.js?v=[0-9]*' web/index.html | grep -o '[0-9]*$')
 sed -i '' "s/?v=$OLD/?v=$1/g" web/index.html web/app.js
+sed -i '' "s/ASSET_V = \"$OLD\"/ASSET_V = \"$1\"/" web/app.js
 echo "bumped v=$OLD -> v=$1 in web/index.html + web/app.js"
 grep -c "?v=$1" web/index.html web/app.js
