@@ -1,13 +1,13 @@
 // Synapse web client. Runs offline (local profile + bots) with no setup;
 // real accounts, email invites, and live rating-matched duels switch on when
 // firebase-config.js is filled in — same graceful degradation as the iOS app.
-import { QUESTIONS } from "./questions.js?v=32";
-import { firebaseConfig } from "./firebase-config.js?v=32";
-import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js?v=32";
-import { COUNTRIES, flagOf, countryName } from "./countries.js?v=32";
-import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js?v=32";
-import { characterAvatar, PICKER_SEEDS } from "./avatars.js?v=32";
-import { sfx, isMuted, setMuted } from "./sound.js?v=32";
+import { QUESTIONS } from "./questions.js?v=33";
+import { firebaseConfig } from "./firebase-config.js?v=33";
+import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js?v=33";
+import { COUNTRIES, flagOf, countryName } from "./countries.js?v=33";
+import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js?v=33";
+import { characterAvatar, PICKER_SEEDS } from "./avatars.js?v=33";
+import { sfx, isMuted, setMuted } from "./sound.js?v=33";
 
 // ---------------- game math (mirrors the Swift services) ----------------
 const LIMIT = 18, N = 10, MIN_ANSWERS = 16;
@@ -1257,7 +1257,7 @@ function renderHome() {
         <span><b style="font-size:15px">Duel a Bot</b><br>
         <span style="font-size:12.5px;color:var(--ink2)">Pick a mind — and a subject</span></span>
       </div>
-      <div class="chips">${[["All", "#6A6DC0", null],
+      <div class="chips">${[["All", "#D95B43", null],
         ...Object.entries(DOMAINS).map(([k, v]) => [v[0], v[1], k])].map(([t, c, k]) =>
         `<button class="chip" data-dom="${k ?? ""}" style="${subject === k
           ? `background:${c};color:#fff` : `background:${c}18;color:${c}`}">${t}</button>`).join("")}</div>
@@ -1674,7 +1674,7 @@ function confetti() {
   cv.width = box.width; cv.height = box.height;
   arena.appendChild(cv);
   const x = cv.getContext("2d");
-  const colors = ["#D95B43", "#2E7D6F", "#B8862E", "#E8734F", "#F3EDE0", "#6A6DC0"];
+  const colors = ["#D95B43", "#2E7D6F", "#B8862E", "#E8734F", "#F3EDE0", "#F0B9A5"];
   const bits = Array.from({ length: 120 }, () => ({
     x: Math.random() * cv.width, y: -20 - Math.random() * cv.height * .4,
     w: 5 + Math.random() * 5, h: 8 + Math.random() * 6,
@@ -2612,7 +2612,7 @@ function renderStats() {
 
 // ---- achievements: computed from stats already on the profile, no backend ----
 const ACH = [
-  { name: "First Duel", icon: "play", color: "#6A6DC0", desc: "Play your first duel.",
+  { name: "First Duel", icon: "play", color: "#D95B43", desc: "Play your first duel.",
     done: p => p.played >= 1, prog: p => [Math.min(p.played, 1), 1] },
   { name: "First Victory", icon: "trophy", color: "#B8862E", desc: "Win a duel.",
     done: p => p.won >= 1, prog: p => [Math.min(p.won, 1), 1] },
@@ -2631,7 +2631,7 @@ const ACH = [
     done: p => (p.best || 0) >= 5, prog: p => [Math.min(p.best || 0, 5), 5] },
   { name: "Daily Devotee", icon: "sun", color: "#D95B43", desc: "Keep a 7-day daily-challenge streak.",
     done: p => (p.dailyBestStreak || 0) >= 7, prog: p => [Math.min(p.dailyBestStreak || 0, 7), 7] },
-  { name: "Sharpshooter", icon: "eye", color: "#6A6DC0", desc: "80% accuracy across 100+ answers.",
+  { name: "Sharpshooter", icon: "eye", color: "#34917F", desc: "80% accuracy across 100+ answers.",
     done: p => { const a = Object.values(p.dA).reduce((x, y) => x + y, 0);
       return a >= 100 && Object.values(p.dC).reduce((x, y) => x + y, 0) / a >= .8; },
     prog: p => [Math.min(Object.values(p.dA).reduce((x, y) => x + y, 0), 100), 100] },
