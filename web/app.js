@@ -1,15 +1,15 @@
 // Synapse web client. Runs offline (local profile + bots) with no setup;
 // real accounts, email invites, and live rating-matched duels switch on when
 // firebase-config.js is filled in — same graceful degradation as the iOS app.
-import { QUESTIONS } from "./questions.js?v=37";
-import { firebaseConfig } from "./firebase-config.js?v=37";
-import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js?v=37";
-import { COUNTRIES, flagOf, countryName } from "./countries.js?v=37";
-import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js?v=37";
-import { characterAvatar, PICKER_SEEDS } from "./avatars.js?v=37";
-import { sfx, isMuted, setMuted } from "./sound.js?v=37";
-import { mountAnim } from "./anim.js?v=37";
-const ASSET_V = "37";   // kept in lockstep by tools/release.sh
+import { QUESTIONS } from "./questions.js?v=38";
+import { firebaseConfig } from "./firebase-config.js?v=38";
+import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js?v=38";
+import { COUNTRIES, flagOf, countryName } from "./countries.js?v=38";
+import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js?v=38";
+import { characterAvatar, PICKER_SEEDS } from "./avatars.js?v=38";
+import { sfx, isMuted, setMuted } from "./sound.js?v=38";
+import { mountAnim } from "./anim.js?v=38";
+const ASSET_V = "38";   // kept in lockstep by tools/release.sh
 
 // ---------------- game math (mirrors the Swift services) ----------------
 const LIMIT = 18, N = 10, MIN_ANSWERS = 16;
@@ -743,6 +743,19 @@ window.addEventListener("beforeunload", e => {
   }
 });
 
+// Close a full-screen layer with a short exit animation. The "on" class is
+// removed immediately (every contains("on") check stays correct); the "out"
+// class replays the content fading away and self-clears. Reopening within
+// the window is safe: .out only renders while :not(.on).
+function closeLayer(el) {
+  if (!el.classList.contains("on")) return;
+  el.classList.remove("on");
+  el.classList.add("out");
+  setTimeout(() => el.classList.remove("out"), 240);
+}
+const closeOverlay = () => closeLayer(overlay);
+const closeArena = () => closeLayer(arena);
+
 function toast(message) {
   const el = $("toast");
   el.textContent = message;
@@ -852,13 +865,13 @@ async function processInviteLink() {
       ${prof.rating ?? 1000} rating. Add them as a friend to duel and chat.</span>
     <button class="primary" id="il-add">Add friend</button>
     <button class="ghost" id="il-close">Not now</button></div>`;
-  $("il-close").onclick = () => overlay.classList.remove("on");
+  $("il-close").onclick = () => closeOverlay();
   $("il-add").onclick = async () => {
     try {
       await backend.sendFriendRequest(prof.email, P);
-      overlay.classList.remove("on");
+      closeOverlay();
       toast(`Friend request sent to ${prof.name}.`);
-    } catch (e) { overlay.classList.remove("on"); toast(e.message); }
+    } catch (e) { closeOverlay(); toast(e.message); }
   };
 }
 
@@ -1163,13 +1176,13 @@ function forgotPassword(prefill) {
     <div class="err" id="fp-err"></div>
     <button class="primary" id="fp-go">Send reset link</button>
     <button class="ghost" id="fp-close">Cancel</button></div>`;
-  $("fp-close").onclick = () => overlay.classList.remove("on");
+  $("fp-close").onclick = () => closeOverlay();
   const go = async () => {
     const email = $("fp-email").value.trim();
     if (!email) return $("fp-err").textContent = "Enter your email.";
     try {
       await backend.resetPassword(email);
-      overlay.classList.remove("on");
+      closeOverlay();
       toast("Reset link sent — check your email.");
     } catch (e) { $("fp-err").textContent = e.message.replace("Firebase: ", ""); }
   };
@@ -1362,7 +1375,7 @@ function renderGauntlet() {
       <span class="gt-ic">${ic("lock", "15px")}</span>
       <span class="gt-meta"><b>${r.name}</b><span>${r.rating}</span></span></div>`;
   }).join("");
-  screen.innerHTML = `<div class="pad" style="gap:12px">
+  screen.innerHTML = `<div class="pad subin" style="gap:12px">
     <button class="ghost" id="gt-back" style="align-self:flex-start;padding:4px 0">‹ Play</button>
     ${g >= GAUNTLET.length ? `<div id="gt-trophy" style="width:150px;height:150px;margin:-8px auto -14px"></div>` : ""}
     <div>
@@ -1398,8 +1411,8 @@ function maybeIntro() {
       <span><b>Unlock your Synapse Score</b>${MIN_ANSWERS} answers calibrate an IQ-style score, normalized for your age group.</span></div>
     <button class="primary" id="in-go">Face ${GAUNTLET[0].name}, your first rival</button>
     <button class="ghost" id="in-later">Look around first</button></div>`;
-  $("in-go").onclick = () => { overlay.classList.remove("on"); startGauntletDuel(0); };
-  $("in-later").onclick = () => overlay.classList.remove("on");
+  $("in-go").onclick = () => { closeOverlay(); startGauntletDuel(0); };
+  $("in-later").onclick = () => closeOverlay();
 }
 
 // ---------------- matchmaking ----------------
@@ -1429,21 +1442,21 @@ async function quickMatch() {
         and always ready — or challenge a friend to an async duel they can play later.</span>
       <button class="primary" id="nm-bot">Duel ${esc(nearest.name)}</button>
       <button class="ghost" id="nm-close">Close</button></div>`;
-    $("nm-close").onclick = () => overlay.classList.remove("on");
-    $("nm-bot").onclick = () => { overlay.classList.remove("on"); startBotDuel(nearest.id); };
+    $("nm-close").onclick = () => closeOverlay();
+    $("nm-bot").onclick = () => { closeOverlay(); startBotDuel(nearest.id); };
   }, 30000);
   searchingPanel("Finding an opponent…",
     `Searching the ${tier(P.rating)} band (${P.rating - 200}–${P.rating + 200})`,
-    async () => { clearTimeout(giveUp); overlay.classList.remove("on"); await backend.cancelSearch(P); });
+    async () => { clearTimeout(giveUp); closeOverlay(); await backend.cancelSearch(P); });
   try {
     await backend.findMatch(P, human => {
       matched = true;
       clearTimeout(giveUp);
       if (!overlay.classList.contains("on")) return;
-      overlay.classList.remove("on");
+      closeOverlay();
       startHumanDuel(human);
     });
-  } catch (e) { clearTimeout(giveUp); overlay.classList.remove("on"); toast(e.message); }
+  } catch (e) { clearTimeout(giveUp); closeOverlay(); toast(e.message); }
 }
 
 function inviteFlow() {
@@ -1456,7 +1469,7 @@ function inviteFlow() {
     <div class="err" id="inv-err"></div>
     <button class="primary" id="inv-send">Start challenge</button>
     <button class="ghost" id="inv-close">Close</button></div>`;
-  $("inv-close").onclick = () => overlay.classList.remove("on");
+  $("inv-close").onclick = () => closeOverlay();
   $("inv-send").onclick = async () => {
     const email = $("inv-email").value.trim();
     if (!email) return;
@@ -1466,7 +1479,7 @@ function inviteFlow() {
       const opp = await backend.findUser(email);
       if (!opp) return $("inv-err").textContent = "No player found with that email.";
       if (opp.id === P.id) return $("inv-err").textContent = "That's your own email.";
-      overlay.classList.remove("on");
+      closeOverlay();
       challengeFriend(opp);
     } catch (e) { $("inv-err").textContent = e.message; }
   };
@@ -1606,7 +1619,7 @@ function ask() {
   clearInterval(timer);
   timer = setInterval(() => {
     const left = Math.max(0, LIMIT - (Date.now() - t0) / 1000);
-    fill.style.width = (left / LIMIT * 100) + "%";
+    fill.style.transform = `scaleX(${(left / LIMIT).toFixed(4)})`;
     fill.style.background = left / LIMIT > .3 ? "var(--iris)" : "var(--bad)";
     const whole = Math.ceil(left);
     if (whole <= 3 && whole >= 1 && whole !== lastTick) { lastTick = whole; sfx.tick(); }
@@ -1792,7 +1805,7 @@ function showResults() {
       <button class="arena-link" id="d-share">Share result</button>
     </div>
   </div>`;
-  $("d-done").onclick = () => { arena.classList.remove("on"); render(); };
+  $("d-done").onclick = () => { closeArena(); render(); };
   $("d-rematch").onclick = rematch;
   $("d-review").onclick = () => renderReview(showResults);
   const [meV, oppV] = arena.querySelectorAll(".fs .v");
@@ -1825,7 +1838,7 @@ function renderReview(back) {
         q[7] ? `<div class="rv-why">${ic("bulb", "14px")}<span>${esc(q[7])}</span></div>` : ""}</div>`;
   }).join("");
   arena.innerHTML = `
-    <div class="rv-head"><button class="arena-link" id="rv-back">‹ Back</button>
+    <div class="rv-head subin"><button class="arena-link" id="rv-back">‹ Back</button>
       <span class="vs">Answer review</span><span style="width:52px"></span></div>
     <div class="rv-list">${rows}</div>`;
   $("rv-back").onclick = back;
@@ -1880,7 +1893,7 @@ async function shareCard({ headline, line, sub }) {
 }
 
 function rematch() {
-  arena.classList.remove("on");
+  closeArena();
   if (lastMatch?.bot) return startBotDuel(lastMatch.bot);
   if (lastMatch?.gauntlet !== undefined) return startGauntletDuel(lastMatch.gauntlet);
   if (lastMatch?.friendId) {
@@ -1967,7 +1980,7 @@ async function showDailyResults() {
   cd.style.cssText = "font-size:12px;color:rgba(255,255,255,.5)";
   cd.textContent = `Next challenge in ${nextDailyIn()}`;
   arena.querySelector(".center")?.insertBefore(cd, $("dl-done"));
-  $("dl-done").onclick = () => { arena.classList.remove("on"); render(); };
+  $("dl-done").onclick = () => { closeArena(); render(); };
   const rv = $("dl-review");
   if (rv) rv.onclick = () => renderReview(showDailyResults);
   $("dl-share").onclick = () => shareCard({
@@ -2004,7 +2017,7 @@ async function challengeFriend(opp) {
     <div class="err" id="as-err"></div>
     <button class="primary" id="as-send">Send & play now</button>
     <button class="ghost" id="as-close">Cancel</button></div>`;
-  $("as-close").onclick = () => overlay.classList.remove("on");
+  $("as-close").onclick = () => closeOverlay();
   $("as-send").onclick = async () => {
     const err = $("as-err");
     $("as-send").disabled = true;
@@ -2014,7 +2027,7 @@ async function challengeFriend(opp) {
       const deckIds = buildDeck({ targetDifficulty: target, seen: freshSeen(P) }).map(q => q[0]);
       const id = await backend.createAsyncDuel(P, opp, deckIds, target);
       requestNotifyPermission();
-      overlay.classList.remove("on");
+      closeOverlay();
       startAsyncRun({ id, pids: [P.id, opp.id], fromId: P.id, deckIds,
         players: { [P.id]: { name: P.name }, [opp.id]: { name: opp.name, country: opp.country || "" } } });
     } catch (e) {
@@ -2031,16 +2044,16 @@ function liveChallenge(opp) {
   let timeout;
   const withdraw = () => (backend.cancelInvite ? backend.cancelInvite() : backend.stopMatch());
   searchingPanel(`Challenging ${first}…`, "They're online — waiting for them to accept",
-    () => { clearTimeout(timeout); overlay.classList.remove("on"); withdraw(); });
+    () => { clearTimeout(timeout); closeOverlay(); withdraw(); });
   backend.sendInvite(opp.email, P, human => {
     clearTimeout(timeout);
     if (!overlay.classList.contains("on")) return;
-    overlay.classList.remove("on");
+    closeOverlay();
     startHumanDuel(human);
-  }).catch(e => { clearTimeout(timeout); overlay.classList.remove("on"); toast(e.message); });
+  }).catch(e => { clearTimeout(timeout); closeOverlay(); toast(e.message); });
   timeout = setTimeout(() => {
     if (!overlay.classList.contains("on")) return;
-    overlay.classList.remove("on");
+    closeOverlay();
     withdraw();
     toast(`${first} didn't accept in time.`);
   }, 25000);
@@ -2156,7 +2169,7 @@ function showAsyncSent(duel, mine) {
     <button class="lightbtn" id="as-done">Done</button>
     <button class="arena-link" id="as-review">Review answers</button>
   </div>`;
-  $("as-done").onclick = () => { arena.classList.remove("on"); render(); };
+  $("as-done").onclick = () => { closeArena(); render(); };
   $("as-review").onclick = () => renderReview(() => showAsyncSent(duel, mine));
 }
 
@@ -2305,7 +2318,7 @@ function renderFriendProfile(v) {
       <span class="bar"><i style="width:${pct ?? 0}%;background:${c}"></i></span>
       <span class="pv">${pct === null ? "—" : pct + "%"}</span></div>`;
   }).join("") : "";
-  screen.innerHTML = `<div class="pad" style="gap:14px">
+  screen.innerHTML = `<div class="pad subin" style="gap:14px">
     <button class="ghost" id="fp-back" style="align-self:flex-start;padding:4px 0">‹ Friends</button>
     <div style="text-align:center">
       <div class="avatar" style="cursor:default">${avatarHTML(v)}</div>
@@ -2362,7 +2375,7 @@ function enableSecureChat(then) {
     <div class="err" id="ec-err"></div>
     <button class="primary" id="ec-go">Enable secure chat</button>
     <button class="ghost" id="ec-close">Cancel</button></div>`;
-  $("ec-close").onclick = () => overlay.classList.remove("on");
+  $("ec-close").onclick = () => closeOverlay();
   const go = async () => {
     const pw = $("ec-pass").value;
     if (!pw) return;
@@ -2373,7 +2386,7 @@ function enableSecureChat(then) {
     // to decrypt, leaving myKeys null). No re-auth needed.
     await setupIdentity(pw);
     if (myKeys) {
-      overlay.classList.remove("on");
+      closeOverlay();
       toast("Secure chat is ready.");
       then && then();
     } else {
@@ -2457,7 +2470,7 @@ function leaveChat() {
   if (chatUnsub) { chatUnsub(); chatUnsub = null; }
   if (chatMetaUnsub) { chatMetaUnsub(); chatMetaUnsub = null; }
   chatFriend = null; chatChannel = null; chatMeta = {};
-  chatEl.classList.remove("on");
+  closeLayer(chatEl);
   if (tab === "friends") renderFriends();
 }
 
@@ -2522,10 +2535,10 @@ function characterPicker() {
     <div class="charwrap">${PICKER_SEEDS.map(s =>
       `<button class="charopt${P.avatarSeed === s ? " on" : ""}" data-seed="${s}">${characterAvatar(s)}</button>`).join("")}</div>
     <button class="ghost" id="cp-close">Close</button></div>`;
-  $("cp-close").onclick = () => overlay.classList.remove("on");
+  $("cp-close").onclick = () => closeOverlay();
   overlay.querySelectorAll("[data-seed]").forEach(el => el.onclick = () => {
     P.avatarSeed = el.dataset.seed; P.photo = null; persist();
-    overlay.classList.remove("on"); renderProfile();
+    closeOverlay(); renderProfile();
   });
 }
 
@@ -2709,7 +2722,7 @@ function showAch(i) {
            : `<div class="cal" style="width:80%"><i style="width:${Math.round(cur / goal * 100)}%"></i></div>
               <span style="font-size:12px;color:var(--ink2)">${cur} / ${goal}</span>`}
     <button class="ghost" id="ach-close">Close</button></div>`;
-  $("ach-close").onclick = () => overlay.classList.remove("on");
+  $("ach-close").onclick = () => closeOverlay();
 }
 
 // ---- Profile: identity only — who you are, how you look, your trophies,
@@ -2790,7 +2803,7 @@ function editProfileFlow() {
     <button class="primary" id="ep-save">Save</button>
     <button class="ghost" id="ep-email">Change email…</button>
     <button class="ghost" id="ep-close">Cancel</button></div>`;
-  $("ep-close").onclick = () => overlay.classList.remove("on");
+  $("ep-close").onclick = () => closeOverlay();
   $("ep-email").onclick = changeEmailFlow;
   $("ep-save").onclick = async () => {
     const name = $("ep-name").value.trim();
@@ -2798,7 +2811,7 @@ function editProfileFlow() {
     P.name = name;
     P.country = $("ep-country").value || P.country || "";
     await persist();
-    overlay.classList.remove("on");
+    closeOverlay();
     toast("Profile updated.");
     renderProfile();
   };
@@ -2821,7 +2834,7 @@ function changeEmailFlow() {
     <div class="err" id="ce-err"></div>
     <button class="primary" id="ce-go">${backend.isLive ? "Send confirmation link" : "Save email"}</button>
     <button class="ghost" id="ce-close">Cancel</button></div>`;
-  $("ce-close").onclick = () => overlay.classList.remove("on");
+  $("ce-close").onclick = () => closeOverlay();
   if (backend.isLive) wirePwEye("ce-pass");
   $("ce-go").onclick = async () => {
     const err = $("ce-err");
@@ -2835,7 +2848,7 @@ function changeEmailFlow() {
     try {
       await backend.changeEmail(P, email, pw);
       if (!backend.isLive) await persist();
-      overlay.classList.remove("on");
+      closeOverlay();
       toast(backend.isLive ? `Confirmation link sent to ${email}.` : "Email updated.");
       renderProfile();
     } catch (e) {
@@ -2859,7 +2872,7 @@ function deleteAccountFlow() {
     <div class="err" id="da-err"></div>
     <button class="primary" id="da-go" style="background:var(--bad);box-shadow:none">Delete forever</button>
     <button class="ghost" id="da-close">Keep my account</button></div>`;
-  $("da-close").onclick = () => overlay.classList.remove("on");
+  $("da-close").onclick = () => closeOverlay();
   if (backend.isLive) { wirePwEye("da-pass"); $("da-pass").focus(); }
   $("da-go").onclick = async () => {
     const err = $("da-err");
@@ -2871,7 +2884,7 @@ function deleteAccountFlow() {
       const uid = P.id;
       await backend.deleteAccount(P, pw);
       localStorage.removeItem("mindspar-e2e-" + uid);
-      overlay.classList.remove("on");
+      closeOverlay();
       await doSignOut();
       toast("Your account has been deleted.");
     } catch (e) {
