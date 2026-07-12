@@ -34,6 +34,8 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 .side-brand{display:none}
+.app::after{content:"";position:absolute;inset:0;z-index:60;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");}
 html,body{height:100%}
 body{background:var(--porcelain);color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
@@ -125,6 +127,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
   font-family:inherit;transition:transform .12s ease,background .12s ease;}
 .chalbtn:hover{background:var(--iris-soft)}
 .chalbtn:active{transform:scale(.93)}
+
+/* drifting dust on the auth screen (hand-rolled; no particle library) */
+.dust{position:absolute;inset:0;pointer-events:none;z-index:0;}
 
 /* home hero (the design's dark Quick Match card) */
 .hero{display:flex;flex-direction:column;gap:10px;padding:22px;border-radius:22px;
@@ -481,6 +486,17 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
   font-family:inherit;color:inherit;cursor:pointer;text-align:left;padding:0;}
 .fpeek:active{opacity:.55}
 
+/* loading shimmer (replaces spinners for list screens) */
+.skel{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);
+  border:1px solid var(--hair);border-radius:18px;}
+.skel i{border-radius:50%;width:42px;height:42px;flex-shrink:0;}
+.skel b{height:13px;border-radius:7px;flex:1;max-width:45%;}
+.skel span{height:10px;border-radius:5px;flex:1;max-width:28%;}
+.skel i,.skel b,.skel span{background:linear-gradient(90deg,var(--hair) 25%,
+  color-mix(in srgb,var(--card) 60%,var(--hair)) 50%,var(--hair) 75%);
+  background-size:200% 100%;animation:shimmer 1.3s linear infinite;}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+
 /* leaderboard */
 .lb-row{display:flex;align-items:center;gap:11px;}
 .lb-rank{width:24px;text-align:center;font-size:15px;font-variant-numeric:tabular-nums;flex-shrink:0;}
@@ -544,6 +560,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 
 /* tab-switch entrance (added one-shot by setTab, never on live repaints) */
 .tabin{animation:tabin .22s ease;}
+.tabin>*{animation:rise .38s ease both;}
+.tabin>*:nth-child(2){animation-delay:.04s}.tabin>*:nth-child(3){animation-delay:.08s}
+.tabin>*:nth-child(4){animation-delay:.12s}.tabin>*:nth-child(5){animation-delay:.16s}
+.tabin>*:nth-child(n+6){animation-delay:.2s}
 @keyframes tabin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 /* each new question slides in */
 .prompt,.opts{animation:qin .26s cubic-bezier(.2,.8,.3,1);}
@@ -592,6 +612,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
   .screen{min-width:0;}
   .pad{max-width:660px;margin:0 auto;width:100%;padding-top:34px;}
   .rv-head,.rv-list{max-width:660px;margin-left:auto;margin-right:auto;width:100%;}
+  .playrow:hover,.gt-row:not(.lock):hover,.frow:hover,.hero:hover{transform:translateY(-2px);}
+  .playrow,.gt-row,.frow,.hero{transition:transform .18s ease,border-color .15s ease,box-shadow .18s ease;}
   /* full-cover layers keep a phone-ish column so bars never span 1080px */
   .tbar,.meta,.prompt,.opts,.board{max-width:640px;margin-left:auto;margin-right:auto;width:100%;}
   .prompt{width:100%;}

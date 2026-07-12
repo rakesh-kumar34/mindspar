@@ -1,15 +1,15 @@
 // Synapse web client. Runs offline (local profile + bots) with no setup;
 // real accounts, email invites, and live rating-matched duels switch on when
 // firebase-config.js is filled in — same graceful degradation as the iOS app.
-import { QUESTIONS } from "./questions.js?v=34";
-import { firebaseConfig } from "./firebase-config.js?v=34";
-import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js?v=34";
-import { COUNTRIES, flagOf, countryName } from "./countries.js?v=34";
-import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js?v=34";
-import { characterAvatar, PICKER_SEEDS } from "./avatars.js?v=34";
-import { sfx, isMuted, setMuted } from "./sound.js?v=34";
-import { mountAnim } from "./anim.js?v=34";
-const ASSET_V = "34";   // kept in lockstep by tools/release.sh
+import { QUESTIONS } from "./questions.js?v=35";
+import { firebaseConfig } from "./firebase-config.js?v=35";
+import { createIdentity, unwrapIdentity, makeChannel } from "./e2e.js?v=35";
+import { COUNTRIES, flagOf, countryName } from "./countries.js?v=35";
+import { ic, BOT_ICON, DOMAIN_ICON } from "./icons.js?v=35";
+import { characterAvatar, PICKER_SEEDS } from "./avatars.js?v=35";
+import { sfx, isMuted, setMuted } from "./sound.js?v=35";
+import { mountAnim } from "./anim.js?v=35";
+const ASSET_V = "35";   // kept in lockstep by tools/release.sh
 
 // ---------------- game math (mirrors the Swift services) ----------------
 const LIMIT = 18, N = 10, MIN_ANSWERS = 16;
@@ -1073,6 +1073,38 @@ function wirePwEye(id) {
 // Default to sign-in (most opens are returning players); new players tap the
 // "Create an account" link. Standard for mainstream apps.
 let authMode = "signin";
+// Slow-drifting dust motes behind the sign-in panel — ambience, not a
+// particle library. Stops itself the moment the canvas leaves the DOM.
+function spawnDust(host) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const cv = document.createElement("canvas");
+  cv.className = "dust";
+  host.style.position = "relative";
+  host.prepend(cv);
+  const x = cv.getContext("2d");
+  const fit = () => { cv.width = host.clientWidth; cv.height = host.clientHeight; };
+  fit();
+  const motes = Array.from({ length: 16 }, () => ({
+    x: Math.random(), y: Math.random(), r: .8 + Math.random() * 1.8,
+    vy: .00025 + Math.random() * .0005, drift: Math.random() * Math.PI * 2,
+    warm: Math.random() < .3,
+  }));
+  (function tick() {
+    if (!cv.isConnected) return;
+    if (cv.width !== host.clientWidth) fit();
+    x.clearRect(0, 0, cv.width, cv.height);
+    for (const m of motes) {
+      m.y -= m.vy; m.drift += .004;
+      if (m.y < -.02) { m.y = 1.02; m.x = Math.random(); }
+      x.beginPath();
+      x.arc((m.x + Math.sin(m.drift) * .01) * cv.width, m.y * cv.height, m.r, 0, Math.PI * 2);
+      x.fillStyle = m.warm ? "rgba(217,91,67,.14)" : "rgba(36,28,15,.08)";
+      x.fill();
+    }
+    requestAnimationFrame(tick);
+  })();
+}
+
 function renderAuth() {
   const signup = authMode === "signup";
   screen.innerHTML = `<div class="pad" style="justify-content:center;gap:13px">
@@ -1106,6 +1138,7 @@ function renderAuth() {
     <div class="fine">Synapse is for adults 18 and over · <a href="privacy.html" style="color:inherit">Privacy</a></div>
     ${installBanner()}
   </div>`;
+  spawnDust(screen.firstElementChild);
   $("a-switch").onclick = () => { authMode = signup ? "signin" : "signup"; renderAuth(); };
   $("a-go").onclick = submitAuth;
   wirePwEye("a-pass");
@@ -2157,8 +2190,8 @@ function renderFriends() {
   }
   if (viewingFriend) return renderFriendProfile(viewingFriend);
   if (!friendsLoaded) {
-    screen.innerHTML = `<div class="pad"><div class="serif" style="font-size:24px;font-weight:600">Friends</div>
-      <div class="loading"><span class="spin"></span></div></div>`;
+    screen.innerHTML = `<div class="pad" style="gap:14px"><div class="serif" style="font-size:24px;font-weight:600">Friends</div>
+      ${`<div class="skel"><i></i><b></b><span></span></div>`.repeat(4)}</div>`;
     return;
   }
 
