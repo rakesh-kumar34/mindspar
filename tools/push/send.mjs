@@ -22,7 +22,7 @@ async function deliver(uid, body, ref, mark) {
   const sub = user.get("push");
   if (sub) {
     try {
-      await webpush.sendNotification(sub, JSON.stringify({ title: "Mindspar", body, tag: "async" }));
+      await webpush.sendNotification(sub, JSON.stringify({ title: "Synapse", body, tag: "async" }));
       sent++;
     } catch (e) {
       if (e.statusCode === 404 || e.statusCode === 410) {

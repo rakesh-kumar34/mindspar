@@ -1,6 +1,12 @@
-/* Fraunces (display serif) — self-hosted, SIL OFL 1.1 (fonts/OFL-LICENSE.txt).
-   Served locally so no visitor data ever goes to a font CDN. Variable font:
-   one file carries weights 500–700. */
+/* Display serif: Instrument Serif (the Synapse design's face), Fraunces as
+   fallback. Both self-hosted, SIL OFL 1.1 (fonts/OFL-LICENSE.txt) — no visitor
+   data ever goes to a font CDN. Instrument ships only regular+italic, so
+   display type sets at weight 400 with tight tracking, as the design does. */
+@font-face{font-family:"Instrument Serif";font-style:normal;font-weight:400;font-display:swap;
+  src:url("fonts/instrument-serif.woff2") format("woff2");}
+@font-face{font-family:"Instrument Serif";font-style:italic;font-weight:400;font-display:swap;
+  src:url("fonts/instrument-serif-italic.woff2") format("woff2");}
+
 @font-face{font-family:"Fraunces";font-style:normal;font-weight:500 700;font-display:swap;
   src:url("fonts/fraunces-latin.woff2") format("woff2");
   unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
@@ -9,22 +15,25 @@
   unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;}
 
 :root{
-  --porcelain:#f6f6f9; --card:#fff; --ink:#14161f; --ink2:#6d7280;
-  --iris:#5457e8; --violet:#8b5cf6; --iris-soft:rgba(84,87,232,.09);
-  --arena:#14161f; --arena-card:#20232f; --good:#21b06b; --bad:#db4547;
-  --hair:#ececf2; --tabbar:rgba(246,246,249,.94); --toast-bg:#14161f; --toast-fg:#fff;
-  --avatar-ring:#fff; --shadow:rgba(20,22,31,.05);
+  --porcelain:#F3EDE0; --card:#FFFDF7; --ink:#241C0F; --ink2:#8A7F6C;
+  --iris:#D95B43; --violet:#E8734F; --iris-soft:rgba(217,91,67,.10);
+  --arena:#241C0F; --arena-card:#382E20; --good:#2E7D6F; --bad:#C44536;
+  --gold:#B8862E; --gold-soft:rgba(184,134,46,.14);
+  --hair:#E4DCC9; --tabbar:rgba(243,237,224,.94); --toast-bg:#241C0F; --toast-fg:#FFFDF7;
+  --avatar-ring:#FFFDF7; --shadow:rgba(36,28,15,.08);
   color-scheme:light;
 }
 :root[data-theme="dark"]{
-  --porcelain:#0e0f15; --card:#181b24; --ink:#eceef4; --ink2:#9298a8;
-  --iris:#7d80f0; --violet:#a78bfa; --iris-soft:rgba(125,128,240,.16);
-  --arena:#0a0b10; --arena-card:#1b1f2b; --good:#2bbd78; --bad:#e2595b;
-  --hair:#272b39; --tabbar:rgba(14,15,21,.92); --toast-bg:#2a2f3d; --toast-fg:#f2f4f9;
-  --avatar-ring:#232735; --shadow:rgba(0,0,0,.35);
+  --porcelain:#171310; --card:#221C15; --ink:#F2EDE3; --ink2:#A69A87;
+  --iris:#E07356; --violet:#EC8A66; --iris-soft:rgba(224,115,86,.14);
+  --arena:#14100C; --arena-card:#282017; --good:#3C947F; --bad:#E2685A;
+  --gold:#C99B4F; --gold-soft:rgba(201,155,79,.16);
+  --hair:#33291F; --tabbar:rgba(23,19,16,.92); --toast-bg:#382E20; --toast-fg:#F2EDE3;
+  --avatar-ring:#2E251B; --shadow:rgba(0,0,0,.35);
   color-scheme:dark;
 }
 *{margin:0;padding:0;box-sizing:border-box}
+.side-brand{display:none}
 html,body{height:100%}
 body{background:var(--porcelain);color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
@@ -36,7 +45,8 @@ body{background:var(--porcelain);color:var(--ink);
 .screen::-webkit-scrollbar{display:none}
 .pad{padding:max(22px,env(safe-area-inset-top)) 20px 20px;display:flex;flex-direction:column;gap:12px;flex:1;}
 
-.serif{font-family:"Fraunces",ui-serif,"New York",Georgia,serif;letter-spacing:-0.01em;}
+.serif{font-family:"Instrument Serif","Fraunces",ui-serif,Georgia,serif;
+  font-weight:400!important;letter-spacing:-0.02em;}
 .eyebrow{font-size:11px;font-weight:600;letter-spacing:.2em;color:var(--ink2);}
 .cardbox{background:var(--card);border:1px solid var(--hair);border-radius:22px;
   box-shadow:0 6px 20px var(--shadow);}
@@ -63,8 +73,8 @@ input:focus{outline:none;border-color:var(--iris);box-shadow:0 0 0 3px var(--iri
 .select:focus{outline:none;border-color:var(--iris);box-shadow:0 0 0 3px var(--iris-soft);}
 .primary{background:linear-gradient(135deg,var(--iris),var(--violet));color:#fff;border:none;
   border-radius:16px;padding:16px;width:100%;font-size:16px;font-weight:600;cursor:pointer;
-  box-shadow:0 8px 20px rgba(84,87,232,.28);transition:transform .12s ease,box-shadow .12s ease;}
-.primary:active{transform:scale(.975);box-shadow:0 4px 12px rgba(84,87,232,.24);}
+  box-shadow:0 8px 20px rgba(217,91,67,.30);transition:transform .12s ease,box-shadow .12s ease;}
+.primary:active{transform:scale(.975);box-shadow:0 4px 12px rgba(217,91,67,.26);}
 .primary:disabled{opacity:.4;cursor:default;box-shadow:none;}
 .ghost{background:none;border:none;color:var(--ink2);font-size:13.5px;cursor:pointer;padding:8px;}
 .ghost:active{opacity:.5;}
@@ -79,7 +89,7 @@ input:focus{outline:none;border-color:var(--iris);box-shadow:0 0 0 3px var(--iri
 .check{display:flex;gap:10px;align-items:center;font-size:13.5px;}
 .check input{width:18px;height:18px;accent-color:var(--iris);}
 button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-offset:1px;}
-.fine{font-size:10.5px;color:#989eae;text-align:center;line-height:1.55;padding:0 14px;}
+.fine{font-size:10.5px;color:#9a8f7c;text-align:center;line-height:1.55;padding:0 14px;}
 
 /* home */
 .playrow{display:flex;align-items:center;gap:14px;padding:16px;cursor:pointer;width:100%;
@@ -98,7 +108,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 .playrow b{font-size:15px;display:block;}
 .playrow span{font-size:12.5px;color:var(--ink2);}
 .tierpill{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;
-  letter-spacing:.14em;color:var(--iris);background:var(--iris-soft);border-radius:999px;
+  letter-spacing:.14em;color:var(--gold);background:var(--gold-soft);border-radius:999px;
   padding:6px 13px;}
 .tierpill i{font-style:normal;font-weight:600;color:var(--ink2);letter-spacing:0;}
 .invitecard{background:var(--iris-soft);border-radius:18px;padding:14px 16px;display:flex;
@@ -115,6 +125,30 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
   font-family:inherit;transition:transform .12s ease,background .12s ease;}
 .chalbtn:hover{background:var(--iris-soft)}
 .chalbtn:active{transform:scale(.93)}
+
+/* home hero (the design's dark Quick Match card) */
+.hero{display:flex;flex-direction:column;gap:10px;padding:22px;border-radius:22px;
+  background:#241C0F;color:#FFFDF7;border:none;cursor:pointer;text-align:left;width:100%;
+  font-family:inherit;box-shadow:0 14px 34px rgba(36,28,15,.16);
+  transition:transform .12s ease;}
+:root[data-theme="dark"] .hero{background:#282017;border:1px solid #3a2f22;}
+.hero:active{transform:scale(.985)}
+.hero .h-eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.2em;color:rgba(255,253,247,.55);}
+.hero .h-title{font-family:"Instrument Serif","Fraunces",ui-serif,Georgia,serif;
+  font-size:30px;font-weight:400;letter-spacing:-0.02em;line-height:1.1;}
+.hero .h-sub{font-size:12.5px;color:rgba(255,253,247,.6);}
+.hero .h-cta{display:inline-flex;align-items:center;align-self:flex-start;margin-top:6px;background:var(--iris);color:#fff;
+  border-radius:999px;padding:10px 22px;font-size:14px;font-weight:700;
+  box-shadow:0 6px 16px rgba(217,91,67,.4);}
+
+/* matchmaking pulse (design's searching animation) */
+.pulsewrap{position:relative;width:84px;height:84px;display:grid;place-items:center;}
+.pulsewrap .favBig{width:66px;height:66px;position:relative;z-index:1;}
+.pring{position:absolute;inset:9px;border-radius:50%;background:var(--iris);opacity:.5;
+  animation:pring 1.6s ease-out infinite;}
+.pring.d2{animation-delay:.55s}
+@keyframes pring{0%{transform:scale(1);opacity:.5}70%{transform:scale(1.9);opacity:0}
+  100%{transform:scale(1.9);opacity:0}}
 
 /* install banner */
 .install-card{padding:15px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;
@@ -174,7 +208,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
   border-radius:14px;padding:14px 16px;font-size:15px;font-weight:500;text-align:left;
   cursor:pointer;display:flex;justify-content:space-between;gap:8px;font-family:inherit;
   transition:background .15s ease,transform .1s ease,opacity .2s ease;}
-.opt:hover{background:#282c3a}
+.opt:hover{background:#42382a}
 .opt:active{transform:scale(.985)}
 .opt.correct{background:rgba(33,176,107,.30);animation:settle .35s ease;}
 .opt.wrong{background:rgba(219,69,71,.30);animation:shake .3s ease;}
@@ -188,7 +222,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
   overflow:hidden;text-overflow:ellipsis;padding:0 6px;}
 .side .sc{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;
   font-family:ui-rounded,-apple-system,sans-serif;}
-.side.me .sc{color:#9a9cfb}
+.side.me .sc{color:#F0B9A5}
 .side .pg{font-size:9px;color:rgba(255,255,255,.4);font-variant-numeric:tabular-nums;}
 /* the race: one pip per question, filled as each side answers */
 .pips{display:flex;gap:3px;justify-content:center;margin-top:6px;padding:0 8px;flex-wrap:wrap;}
@@ -196,7 +230,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
   transition:background .25s ease;}
 .pip.ok{background:var(--good)}
 .pip.no{background:var(--bad)}
-.scorepop{position:absolute;top:-6px;left:50%;color:#7de0a8;font-weight:700;font-size:15px;
+.scorepop{position:absolute;top:-6px;left:50%;color:#8FD3B8;font-weight:700;font-size:15px;
   font-variant-numeric:tabular-nums;pointer-events:none;
   animation:popfly .85s ease forwards;}
 @keyframes popfly{from{opacity:0;transform:translate(-50%,8px)}
@@ -214,15 +248,15 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
   overflow:hidden;text-overflow:ellipsis;}
 .favBig{width:66px;height:66px;border-radius:50%;overflow:hidden;display:grid;place-items:center;
   background:linear-gradient(135deg,var(--iris),var(--violet));color:#fff;
-  font-family:"Fraunces",ui-serif,Georgia,serif;font-size:26px;
+  font-family:"Instrument Serif","Fraunces",ui-serif,Georgia,serif;font-size:26px;
   box-shadow:0 8px 24px rgba(0,0,0,.4);}
 .favBig svg{width:100%;height:100%;display:block;}
 .favBig img{width:100%;height:100%;object-fit:cover;}
-.favBig.ic{background:var(--arena-card);color:#9a9cfb;}
+.favBig.ic{background:var(--arena-card);color:#F0B9A5;}
 .favBig.ic svg{width:30px;height:30px;}
-.vsbig{font-family:"Fraunces",ui-serif,Georgia,serif;font-style:italic;font-size:24px;
-  font-weight:700;color:rgba(255,255,255,.45);}
-.headline{font-family:"Fraunces",ui-serif,Georgia,serif;font-size:40px;font-weight:700;
+.vsbig{font-family:"Instrument Serif","Fraunces",ui-serif,Georgia,serif;font-style:italic;font-size:26px;
+  font-weight:400;color:rgba(255,255,255,.45);}
+.headline{font-family:"Instrument Serif","Fraunces",ui-serif,Georgia,serif;font-size:44px;font-weight:400;
   letter-spacing:-0.01em;animation:rise .45s cubic-bezier(.2,.8,.3,1);}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .finals{display:flex;align-items:center;gap:20px;font-variant-numeric:tabular-nums;}
@@ -230,7 +264,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 .fs .n{font-size:11px;font-weight:600;color:rgba(255,255,255,.6);white-space:nowrap;
   overflow:hidden;text-overflow:ellipsis;}
 .fs .v{font-size:40px;font-weight:700;font-family:ui-rounded,-apple-system,sans-serif;}
-.fs.win .v{color:#9a9cfb}
+.fs.win .v{color:#F0B9A5}
 .delta{font-size:13px;font-weight:600;padding:6px 14px;border-radius:999px;}
 .dots{display:flex;flex-direction:column;gap:7px;font-size:12px;width:250px;}
 .dots .row{display:flex;align-items:center;gap:8px;}
@@ -263,8 +297,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 
 /* answer-review "why" */
 .rv-why{display:flex;gap:8px;align-items:flex-start;font-size:12px;line-height:1.5;
-  color:#c9cdf3;background:rgba(125,128,240,.10);border-radius:10px;padding:9px 11px;}
-.rv-why svg{flex-shrink:0;margin-top:1px;color:#9a9cfb;}
+  color:#E9DFC8;background:rgba(240,185,165,.10);border-radius:10px;padding:9px 11px;}
+.rv-why svg{flex-shrink:0;margin-top:1px;color:#F0B9A5;}
 
 /* the Gauntlet ladder */
 .gt-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;
@@ -290,7 +324,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 
 /* On the always-dark arena: white button with FIXED dark text (not var(--ink),
    which flips to light in dark mode and made the text disappear). */
-.lightbtn{background:#fff;color:#14161f;border:none;border-radius:14px;padding:14px 0;
+.lightbtn{background:#FFFDF7;color:#241C0F;border:none;border-radius:14px;padding:14px 0;
   width:100%;max-width:260px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;}
 
 /* overlay */
@@ -309,8 +343,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 /* full-area loading state (boot, friends, etc.) */
 .loading{flex:1;display:flex;flex-direction:column;gap:14px;align-items:center;
   justify-content:center;min-height:55vh;}
-.splash{font-family:"Fraunces",ui-serif,"New York",Georgia,serif;font-size:34px;
-  font-weight:600;letter-spacing:-0.01em;animation:breathe 1.6s ease-in-out infinite;}
+.splash{font-family:"Instrument Serif","Fraunces",ui-serif,Georgia,serif;font-size:38px;
+  font-weight:400;letter-spacing:-0.01em;animation:breathe 1.6s ease-in-out infinite;}
 @keyframes breathe{0%,100%{opacity:.45}50%{opacity:1}}
 
 /* victory confetti canvas rides over the arena */
@@ -325,9 +359,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 
 /* profile */
 .avatar{width:88px;height:88px;border-radius:50%;display:grid;place-items:center;color:#fff;
-  font-size:33px;font-weight:600;font-family:"Fraunces",ui-serif,Georgia,serif;overflow:hidden;
+  font-size:33px;font-weight:600;font-family:"Instrument Serif","Fraunces",ui-serif,Georgia,serif;overflow:hidden;
   background:linear-gradient(135deg,var(--iris),var(--violet));
-  border:3px solid var(--avatar-ring);box-shadow:0 10px 28px rgba(84,87,232,.32);margin:0 auto;}
+  border:3px solid var(--avatar-ring);box-shadow:0 10px 28px rgba(217,91,67,.30);margin:0 auto;}
 .score{font-size:68px;font-weight:700;font-family:ui-rounded,-apple-system,sans-serif;
   font-variant-numeric:tabular-nums;
   background:linear-gradient(180deg,var(--iris),var(--violet));
@@ -393,7 +427,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 .hl{flex:1;text-align:center;}
 .hl+.hl{border-left:1px solid var(--hair);}
 .hl-l{font-size:9.5px;font-weight:700;letter-spacing:.14em;color:var(--ink2);}
-.hl-v{font-size:16px;font-weight:600;margin-top:5px;font-family:"Fraunces",ui-serif,Georgia,serif;}
+.hl-v{font-size:17px;font-weight:400;margin-top:5px;font-family:"Instrument Serif","Fraunces",ui-serif,Georgia,serif;}
 .hl-s{font-size:11px;color:var(--ink2);margin-top:2px;}
 
 /* segmented control (iOS-style) */
@@ -406,7 +440,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 .frow{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);
   border:1px solid var(--hair);border-radius:18px;box-shadow:0 4px 14px var(--shadow);}
 .fav{width:42px;height:42px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;
-  color:#fff;font-size:17px;font-weight:600;font-family:"Fraunces",ui-serif,Georgia,serif;overflow:hidden;
+  color:#fff;font-size:17px;font-weight:600;font-family:"Instrument Serif","Fraunces",ui-serif,Georgia,serif;overflow:hidden;
   background:linear-gradient(135deg,var(--iris),var(--violet));}
 .fav.sm{width:34px;height:34px;font-size:15px;}
 .fav img{width:100%;height:100%;object-fit:cover;}
@@ -496,7 +530,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
   border-bottom-left-radius:6px;}
 .tick{font-size:10px;margin-left:6px;opacity:.85;color:rgba(255,255,255,.75);
   letter-spacing:-1px;vertical-align:baseline;}
-.tick.read{color:#8fd3ff;opacity:1;}
+.tick.read{color:#F3C89A;opacity:1;}
 .chat-note{margin:auto;font-size:12.5px;color:var(--ink2);text-align:center;max-width:220px;line-height:1.5;}
 .chat-input{display:flex;gap:8px;padding:10px 12px max(12px,env(safe-area-inset-bottom));
   border-top:1px solid var(--hair);background:var(--tabbar);
@@ -522,24 +556,42 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--iris);outline-o
 .intro-ic{width:34px;height:34px;border-radius:11px;background:var(--iris-soft);color:var(--iris);
   display:grid;place-items:center;flex-shrink:0;margin-top:2px;}
 
-/* ---- the stage: on tablets, laptops and desktops the app renders as a
-   framed device on a branded backdrop instead of a bare column in a void.
-   Phones (<700px) keep the full-bleed app exactly as before. ---- */
-@media (min-width:700px) and (min-height:560px){
-  body{background:radial-gradient(120% 140% at 20% 0%,#1b1e2e 0%,#0b0c13 55%,#07080d 100%);
+/* ---- tablets (700–999px): the app renders as a framed device on a warm
+   ink backdrop. Phones (<700px) keep the full-bleed app exactly as before. */
+@media (min-width:700px) and (max-width:999px) and (min-height:560px){
+  body{background:radial-gradient(120% 140% at 20% 0%,#382E20 0%,#1c1710 55%,#14100c 100%);
     display:flex;align-items:center;justify-content:center;}
-  body::before{content:"Mindspar";position:fixed;left:38px;bottom:26px;
-    font-family:"Fraunces",ui-serif,Georgia,serif;font-weight:700;font-style:italic;
-    font-size:clamp(40px,7vw,88px);color:rgba(255,255,255,.05);pointer-events:none;}
-  body::after{content:none;}
-}
-@media (min-width:1100px) and (min-height:560px){
-  body::after{content:"Head-to-head thinking duels";position:fixed;right:42px;top:34px;
-    font-size:12px;letter-spacing:.22em;text-transform:uppercase;
-    color:rgba(255,255,255,.22);pointer-events:none;}
+  body::before{content:"Synapse.";position:fixed;left:38px;bottom:26px;
+    font-family:"Instrument Serif","Fraunces",ui-serif,Georgia,serif;font-style:italic;
+    font-size:clamp(40px,7vw,88px);color:rgba(255,253,247,.06);pointer-events:none;}
   .app{height:min(860px,94vh);border-radius:42px;overflow:hidden;
-    border:1px solid rgba(255,255,255,.09);
-    box-shadow:0 50px 140px rgba(0,0,0,.6),0 0 0 10px rgba(255,255,255,.03);}
+    border:1px solid rgba(255,253,247,.09);
+    box-shadow:0 50px 140px rgba(0,0,0,.6),0 0 0 10px rgba(255,253,247,.03);}
+}
+
+/* ---- desktop/laptop (≥1000px): the design's real sidebar layout — nav on
+   the left, one content column, no phone frame. Same tabs, same icons. ---- */
+@media (min-width:1000px){
+  body{display:flex;justify-content:center;background:var(--porcelain);}
+  .app{max-width:1080px;flex-direction:row;}
+  .tabs{order:-1;flex-direction:column;justify-content:flex-start;gap:4px;
+    width:232px;flex-shrink:0;padding:26px 16px;border-top:none;
+    border-right:1px solid var(--hair);background:none;
+    backdrop-filter:none;-webkit-backdrop-filter:none;}
+  .side-brand{display:block;font-family:"Instrument Serif","Fraunces",ui-serif,Georgia,serif;
+    font-size:31px;letter-spacing:-0.02em;color:var(--ink);padding:2px 14px 24px;}
+  .side-brand i{font-style:normal;color:var(--iris);}
+  .tab{flex:none;flex-direction:row;justify-content:flex-start;gap:13px;
+    padding:12px 14px;border-radius:12px;transition:background .15s ease,color .15s ease;}
+  .tab span{font-size:14.5px;font-weight:600;letter-spacing:0;}
+  .tab:hover{background:var(--iris-soft);}
+  .tab:active{transform:none;}
+  .tab.on{background:var(--iris-soft);}
+  .tab .tico svg{width:21px;height:21px;}
+  .badge{top:50%;right:14px;transform:translateY(-50%);border-color:var(--card);}
+  .screen{min-width:0;}
+  .pad{max-width:660px;margin:0 auto;width:100%;padding-top:34px;}
+  .rv-head,.rv-list{max-width:660px;margin-left:auto;margin-right:auto;width:100%;}
 }
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

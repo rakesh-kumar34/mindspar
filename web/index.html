@@ -7,14 +7,14 @@
        can't load foreign scripts or exfiltrate to arbitrary hosts. -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com; connect-src 'self' https://*.googleapis.com; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'">
   <meta name="referrer" content="no-referrer">
-  <title>Mindspar</title>
-  <meta name="description" content="Head-to-head thinking duels. Reasoning, math, verbal, knowledge, science, patterns, history and geography.">
+  <title>Synapse</title>
+  <meta name="description" content="The thinking person's arena. Head-to-head thinking duels across reasoning, math, verbal, knowledge, science, patterns, history and geography.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Mindspar">
+  <meta name="apple-mobile-web-app-title" content="Synapse">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#f6f6f9" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0e0f15" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#F3EDE0" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#171310" media="(prefers-color-scheme: dark)">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
@@ -29,8 +29,9 @@
 </head>
 <body>
   <main class="app">
-    <div class="screen" id="screen" aria-live="polite"><div class="loading"><div class="splash">Mindspar</div><span class="spin"></span></div></div>
+    <div class="screen" id="screen" aria-live="polite"><div class="loading"><div class="splash">Synapse.</div><span class="spin"></span></div></div>
     <nav class="tabs" id="tabs" style="display:none">
+      <div class="side-brand">Synapse<i>.</i></div>
       <button class="tab on" id="t-play"><i class="tico" data-ic="play"></i><span>Play</span></button>
       <button class="tab" id="t-stats"><i class="tico" data-ic="chart"></i><span>Stats</span></button>
       <button class="tab" id="t-friends"><i class="tico" data-ic="friends"></i><span>Friends</span><i class="badge" id="fr-badge"></i></button>
@@ -41,6 +42,6 @@
     <div class="overlay" id="overlay"></div>
     <div class="toast" id="toast" role="status"></div>
   </main>
-  <script type="module" src="app.js?v=30"></script>
+  <script type="module" src="app.js?v=31"></script>
 </body>
 </html>

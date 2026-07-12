@@ -1,4 +1,4 @@
-// Mindspar web client. Runs offline (local profile + bots) with no setup;
+// Synapse web client. Runs offline (local profile + bots) with no setup;
 // real accounts, email invites, and live rating-matched duels switch on when
 // firebase-config.js is filled in — same graceful degradation as the iOS app.
 import { QUESTIONS } from "./questions.js";
@@ -12,10 +12,10 @@ import { sfx, isMuted, setMuted } from "./sound.js";
 // ---------------- game math (mirrors the Swift services) ----------------
 const LIMIT = 18, N = 10, MIN_ANSWERS = 16;
 const DOMAINS = {
-  reasoning: ["Reasoning", "#5457e8", "◫"], math: ["Math", "#0f85d4", "∑"],
-  verbal: ["Verbal", "#cc5624", "❝"], knowledge: ["Knowledge", "#8c5cd4", "◍"],
-  science: ["Science", "#219e78", "⚛"], patterns: ["Patterns", "#c48c1c", "≋"],
-  history: ["History", "#b04458", "◔"], geography: ["Geography", "#0e8f8a", "◈"],
+  reasoning: ["Reasoning", "#6A6DC0", "◫"], math: ["Math", "#2E7EA6", "∑"],
+  verbal: ["Verbal", "#C9652F", "❝"], knowledge: ["Knowledge", "#9A66BB", "◍"],
+  science: ["Science", "#34917F", "⚛"], patterns: ["Patterns", "#B8862E", "≋"],
+  history: ["History", "#B85468", "◔"], geography: ["Geography", "#6B934D", "◈"],
 };
 const BOTS = [
   { id: "vega", name: "Vega", tag: "Numbers move first", glyph: "∑", rating: 1150,
@@ -681,7 +681,7 @@ function notifyAsync(message) {
   toast(message);
   if (document.visibilityState === "hidden" && "Notification" in window
       && Notification.permission === "granted") {
-    try { new Notification("Mindspar", { body: message, tag: "async" }); } catch { /* ok */ }
+    try { new Notification("Synapse", { body: message, tag: "async" }); } catch { /* ok */ }
   }
 }
 let chatFriend = null, chatUnsub = null, chatMetaUnsub = null, chatChannel = null, chatCache = new Map();
@@ -708,7 +708,7 @@ function applyTheme(t) {
   // chosen theme, not just the OS preference.
   document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
     m.removeAttribute("media");
-    m.setAttribute("content", t === "dark" ? "#0e0f15" : "#f6f6f9");
+    m.setAttribute("content", t === "dark" ? "#171310" : "#F3EDE0");
   });
 }
 applyTheme(theme);
@@ -863,7 +863,7 @@ async function processInviteLink() {
 // Your own invite link, shared the native way (clipboard as fallback).
 async function shareInviteLink() {
   const url = `${location.origin}${location.pathname}?add=${P.id}`;
-  const data = { title: "Mindspar", text: "Duel me on Mindspar — head-to-head thinking duels.", url };
+  const data = { title: "Synapse", text: "Duel me on Synapse — the thinking person's arena.", url };
   if (navigator.share) { try { await navigator.share(data); return; } catch { /* cancelled */ } }
   try { await navigator.clipboard.writeText(url); toast("Invite link copied — send it to a friend."); }
   catch { toast(url); }
@@ -954,7 +954,7 @@ const cachePriv = (uid, obj) => localStorage.setItem("mindspar-e2e-" + uid, JSON
 function notifyMessage(friend) {
   toast(`New message from ${friend.name}`);
   if (document.visibilityState === "hidden" && "Notification" in window && Notification.permission === "granted") {
-    try { new Notification("Mindspar", { body: `New message from ${friend.name}`, tag: "msg-" + friend.id }); }
+    try { new Notification("Synapse", { body: `New message from ${friend.name}`, tag: "msg-" + friend.id }); }
     catch { /* ignore */ }
   }
 }
@@ -1002,7 +1002,7 @@ function seedAch() {
 
 // Rank-ups ride the same banner queue as achievements.
 function rankPop(tierName) {
-  achQueue.push({ label: "Rank up", name: tierName, icon: "trophy", color: "#c48c1c" });
+  achQueue.push({ label: "Rank up", name: tierName, icon: "trophy", color: "#B8862E" });
   if (!achShowing) nextAchPop();
 }
 
@@ -1075,9 +1075,9 @@ function renderAuth() {
   const signup = authMode === "signup";
   screen.innerHTML = `<div class="pad" style="justify-content:center;gap:13px">
     <div style="text-align:center;margin-bottom:6px">
-      <div class="serif" style="font-size:42px;font-weight:600">Mindspar</div>
+      <div class="serif" style="font-size:46px">Synapse<i style="font-style:normal;color:var(--iris)">.</i></div>
       <div style="font-size:13px;color:var(--ink2);margin-top:6px;line-height:1.5">
-        Head-to-head thinking duels.<br>${N} questions · 8 domains · speed counts</div>
+        The thinking person's arena.<br>${N} questions · 8 domains · speed counts</div>
     </div>
     ${signup ? `<input id="a-name" placeholder="Your name" autocomplete="name">` : ""}
     <input id="a-email" type="email" placeholder="Email" autocomplete="email">
@@ -1101,7 +1101,7 @@ function renderAuth() {
       : `<div class="fine">Running offline — your profile stays in this browser. Bot duels and the daily challenge work fully.</div>`}
     ${localStorage.getItem("mindspar-pending-add")
       ? `<div class="fine" style="color:var(--iris)">You've been invited by a friend — sign up to connect.</div>` : ""}
-    <div class="fine">Mindspar is for adults 18 and over · <a href="privacy.html" style="color:inherit">Privacy</a></div>
+    <div class="fine">Synapse is for adults 18 and over · <a href="privacy.html" style="color:inherit">Privacy</a></div>
     ${installBanner()}
   </div>`;
   $("a-switch").onclick = () => { authMode = signup ? "signin" : "signup"; renderAuth(); };
@@ -1156,7 +1156,7 @@ async function submitAuth() {
       if (!email || password.length < 6) return err.textContent = "Enter your email and a 6+ character password.";
       if (!country) return err.textContent = "Choose your country.";
       if (!dob) return err.textContent = "Enter your date of birth.";
-      if (yearsOld(dob) < 18) return err.textContent = "Mindspar is for adults 18 and over.";
+      if (yearsOld(dob) < 18) return err.textContent = "Synapse is for adults 18 and over.";
       if (!$("a-adult").checked) return err.textContent = "Please confirm you are 18 or older.";
       const result = await backend.signUp({ name, email, password, dob, country });
       if (result && result.pendingVerification) {   // online: must confirm email first
@@ -1185,7 +1185,7 @@ function renderVerify() {
     <div class="serif" style="font-size:28px;font-weight:600">Confirm your email</div>
     <div style="font-size:14px;color:var(--ink2);line-height:1.6">
       We sent a verification link to<br><b style="color:var(--ink)">${esc(email)}</b>.<br>
-      Click it, then come back and continue. This keeps Mindspar to real,
+      Click it, then come back and continue. This keeps Synapse to real,
       verified players only.</div>
     <div class="err" id="v-err"></div>
     <button class="primary" id="v-cont">I've verified — continue</button>
@@ -1229,19 +1229,25 @@ function renderHome() {
     ${asyncCards()}
     <button class="playrow" id="h-daily">
       <span class="sig" style="background:linear-gradient(135deg,#f6b73c,#ea5f2d);color:#fff">${ic("sun")}</span>
-      <span><b>Daily Challenge${dailyStreakNow() > 1 ? ` <i style="font-style:normal;font-weight:600;font-size:11.5px;color:#e8843c">🔥 ${dailyStreakNow()}</i>` : ""}</b><span>${P.dailyDone === todayKey()
+      <span><b>Daily Challenge${dailyStreakNow() > 1 ? ` <i style="font-style:normal;font-weight:600;font-size:11.5px;color:#D95B43">🔥 ${dailyStreakNow()}</i>` : ""}</b><span>${P.dailyDone === todayKey()
         ? `Scored ${P.dailyScore} · next challenge in ${nextDailyIn()}`
         : `Everyone plays the same ${N} today — compare with friends`}</span></span></button>
     <button class="playrow" id="h-gauntlet">
-      <span class="sig" style="background:rgba(176,68,88,.14);color:#c4566b">${ic("trophy")}</span>
+      <span class="sig" style="background:rgba(176,68,88,.14);color:#B85468">${ic("trophy")}</span>
       <span><b>Rivals</b><span>${gauntletRung() >= GAUNTLET.length
         ? "All ${GAUNTLET.length} defeated — champion"
         : `${gauntletRung()} of ${GAUNTLET.length} beaten · next up: ${GAUNTLET[gauntletRung()].name}`}</span></span></button>
-    <button class="playrow" id="h-quick">
-      <span class="sig hot">${ic("bolt")}</span>
-      <span><b>Quick Match</b><span>${backend.isLive
-        ? `A player near your rating · ${tier(P.rating)} band`
-        : "Not available offline — duel a bot instead"}</span></span></button>
+    ${backend.isLive ? `
+    <button class="hero" id="h-quick">
+      <span class="h-eyebrow">QUICK MATCH</span>
+      <span class="h-title">Find an opponent</span>
+      <span class="h-sub">A player near your rating · ${tier(P.rating)} band · live</span>
+      <span class="h-cta">${ic("bolt", "14px")}&nbsp; Find opponent</span></button>` : `
+    <button class="hero" id="h-quick">
+      <span class="h-eyebrow">RIVALS</span>
+      <span class="h-title">${gauntletRung() >= GAUNTLET.length ? "All rivals defeated" : `Face ${esc(GAUNTLET[gauntletRung()].name)}`}</span>
+      <span class="h-sub">${gauntletRung() >= GAUNTLET.length ? "Replay any rival from the ladder" : `Rival ${gauntletRung() + 1} of ${GAUNTLET.length} · ${esc(GAUNTLET[Math.min(gauntletRung(), GAUNTLET.length - 1)].tag)}`}</span>
+      <span class="h-cta">${ic("bolt", "14px")}&nbsp; Duel now</span></button>`}
     <button class="playrow" id="h-invite">
       <span class="sig">${ic("send")}</span>
       <span><b>Challenge a Friend</b><span>Play live when they're online</span></span></button>
@@ -1251,7 +1257,7 @@ function renderHome() {
         <span><b style="font-size:15px">Duel a Bot</b><br>
         <span style="font-size:12.5px;color:var(--ink2)">Pick a mind — and a subject</span></span>
       </div>
-      <div class="chips">${[["All", "#5457e8", null],
+      <div class="chips">${[["All", "#6A6DC0", null],
         ...Object.entries(DOMAINS).map(([k, v]) => [v[0], v[1], k])].map(([t, c, k]) =>
         `<button class="chip" data-dom="${k ?? ""}" style="${subject === k
           ? `background:${c};color:#fff` : `background:${c}18;color:${c}`}">${t}</button>`).join("")}</div>
@@ -1268,7 +1274,8 @@ function renderHome() {
   maybeIntro();
   $("h-daily").onclick = startDaily;
   $("h-gauntlet").onclick = () => { showGauntlet = true; render(); };
-  $("h-quick").onclick = quickMatch;
+  $("h-quick").onclick = backend.isLive ? quickMatch
+    : () => startGauntletDuel(Math.min(gauntletRung(), GAUNTLET.length - 1));
   $("h-invite").onclick = inviteFlow;
   screen.querySelectorAll("[data-dom]").forEach(el =>
     el.onclick = () => { subject = el.dataset.dom || null; renderHome(); });
@@ -1328,13 +1335,13 @@ function maybeIntro() {
   // Brand-new players go straight toward their first fight, not a brochure.
   overlay.classList.add("on");
   overlay.innerHTML = `<div class="panel" style="width:330px;align-items:stretch;text-align:left">
-    <div class="serif" style="font-size:24px;font-weight:600;text-align:center">Welcome to Mindspar</div>
+    <div class="serif" style="font-size:24px;font-weight:600;text-align:center">Welcome to Synapse</div>
     <div class="intro-row"><span class="intro-ic">${ic("bolt", "18px")}</span>
       <span><b>Duel in ${N} questions</b>8 domains, 18 seconds each — accuracy and speed both score.</span></div>
     <div class="intro-row"><span class="intro-ic">${ic("trophy", "18px")}</span>
       <span><b>Beat your rivals</b>Ten opponents stand in a ladder. Beat one to unlock the next — and move your rating with every duel.</span></div>
     <div class="intro-row"><span class="intro-ic">${ic("bulb", "18px")}</span>
-      <span><b>Unlock your Mindspar Score</b>${MIN_ANSWERS} answers calibrate an IQ-style score, normalized for your age group.</span></div>
+      <span><b>Unlock your Synapse Score</b>${MIN_ANSWERS} answers calibrate an IQ-style score, normalized for your age group.</span></div>
     <button class="primary" id="in-go">Face ${GAUNTLET[0].name}, your first rival</button>
     <button class="ghost" id="in-later">Look around first</button></div>`;
   $("in-go").onclick = () => { overlay.classList.remove("on"); startGauntletDuel(0); };
@@ -1344,7 +1351,9 @@ function maybeIntro() {
 // ---------------- matchmaking ----------------
 function searchingPanel(text, sub, onCancel) {
   overlay.classList.add("on");
-  overlay.innerHTML = `<div class="panel"><div class="spin"></div>
+  overlay.innerHTML = `<div class="panel">
+    <span class="pulsewrap"><span class="pring"></span><span class="pring d2"></span>
+      <span class="favBig">${avatarHTML(P)}</span></span>
     <b>${text}</b><span style="font-size:12.5px;color:var(--ink2)">${sub}</span>
     <button class="ghost" id="ov-cancel">Cancel</button></div>`;
   $("ov-cancel").onclick = onCancel;
@@ -1626,7 +1635,7 @@ function end() {
   else if (actual === 0) P.streak = 0;
   if (actual === 1 && lastMatch?.gauntlet !== undefined && lastMatch.gauntlet === gauntletRung()) {
     P.gauntlet = lastMatch.gauntlet + 1;       // rival beaten — the next unlocks
-    achQueue.push({ label: "Rival beaten", icon: "trophy", color: "#b04458",
+    achQueue.push({ label: "Rival beaten", icon: "trophy", color: "#B85468",
                     name: P.gauntlet >= GAUNTLET.length
                       ? "All rivals defeated!"
                       : `${GAUNTLET[lastMatch.gauntlet].name} defeated` });
@@ -1665,7 +1674,7 @@ function confetti() {
   cv.width = box.width; cv.height = box.height;
   arena.appendChild(cv);
   const x = cv.getContext("2d");
-  const colors = ["#7d80f0", "#a78bfa", "#2bbd78", "#ffd257", "#ff5f6b", "#6ee7ff"];
+  const colors = ["#D95B43", "#2E7D6F", "#B8862E", "#E8734F", "#F3EDE0", "#6A6DC0"];
   const bits = Array.from({ length: 120 }, () => ({
     x: Math.random() * cv.width, y: -20 - Math.random() * cv.height * .4,
     w: 5 + Math.random() * 5, h: 8 + Math.random() * 6,
@@ -1716,8 +1725,8 @@ function showResults() {
       <div class="fs ${theirs > mine ? "win" : ""}"><div class="n">${oppTag(opp)} ${esc(opp.name.toUpperCase())}</div><div class="v">${theirs}</div></div>
     </div>
     <div class="delta" style="${delta >= 0
-      ? "color:#7de0a8;background:rgba(33,176,107,.15)"
-      : "color:#f29b9c;background:rgba(219,69,71,.15)"}">
+      ? "color:#8FD3B8;background:rgba(46,125,111,.28)"
+      : "color:#F0A69B;background:rgba(196,69,54,.25)"}">
       ${delta >= 0 ? "+" : ""}${delta} rating · now ${now} · ${tier(now)}</div>
     <div class="dots">${dots}</div>
     <div style="display:flex;gap:10px;width:100%;max-width:300px">
@@ -1781,19 +1790,19 @@ async function shareCard({ headline, line, sub }) {
   c.width = 1080; c.height = 1080;
   const x = c.getContext("2d");
   const bg = x.createLinearGradient(0, 0, 0, 1080);
-  bg.addColorStop(0, "#12131c"); bg.addColorStop(1, "#0a0b10");
+  bg.addColorStop(0, "#2B2214"); bg.addColorStop(1, "#171310");
   x.fillStyle = bg; x.fillRect(0, 0, 1080, 1080);
-  x.fillStyle = "#7d80f0"; x.fillRect(0, 0, 1080, 10);
+  x.fillStyle = "#D95B43"; x.fillRect(0, 0, 1080, 10);
   x.textAlign = "center";
   x.fillStyle = "rgba(255,255,255,.65)";
   x.font = '600 52px "Fraunces", Georgia, serif';
-  x.fillText("Mindspar", 540, 200);
+  x.fillText("Synapse", 540, 200);
   x.fillStyle = "#fff";
   x.font = '700 130px "Fraunces", Georgia, serif';
   x.fillText(headline, 540, 480);
   x.font = "600 58px -apple-system, 'Segoe UI', sans-serif";
   x.fillText(line, 540, 620);
-  x.fillStyle = "#9a9cfb";
+  x.fillStyle = "#E8A18F";
   x.font = "600 44px -apple-system, 'Segoe UI', sans-serif";
   x.fillText(sub, 540, 710);
   x.fillStyle = "rgba(255,255,255,.45)";
@@ -1805,7 +1814,7 @@ async function shareCard({ headline, line, sub }) {
   if (!blob) return toast("Couldn't build the share image.");
   const file = new File([blob], "mindspar-result.png", { type: "image/png" });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: "Mindspar" }); return; }
+    try { await navigator.share({ files: [file], title: "Synapse" }); return; }
     catch { /* user cancelled — fall through to download */ }
   }
   const a = document.createElement("a");
@@ -1883,7 +1892,7 @@ async function showDailyResults() {
     <div style="display:flex;align-items:center;gap:10px;padding:6px 0">
       <span style="width:26px;text-align:center">${["🥇", "🥈", "🥉"][i] || `<b style="color:rgba(255,255,255,.5)">${i + 1}</b>`}</span>
       <span style="flex:1;color:#fff;font-weight:${s.id === P.id ? 700 : 500};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${flagOf(s.country)} ${esc(s.name)}${s.id === P.id ? ` <span style="font-size:9px;background:var(--iris);padding:1px 5px;border-radius:5px;vertical-align:middle">YOU</span>` : ""}</span>
-      <span style="font-weight:700;font-variant-numeric:tabular-nums;color:#9a9cfb">${s.score}</span></div>`).join("");
+      <span style="font-weight:700;font-variant-numeric:tabular-nums;color:#F0B9A5">${s.score}</span></div>`).join("");
   const streak = dailyStreakNow();
   arena.innerHTML = `<div class="center">
     <div class="headline">Daily Challenge</div>
@@ -2200,7 +2209,7 @@ function renderFriends() {
     ${friendReqs.length ? `<div class="eyebrow">REQUESTS</div>${reqRows}` : ""}
     <div class="eyebrow">YOUR FRIENDS</div>
     ${friendRows}
-    <div class="fine">Chats are end-to-end encrypted on your device — Mindspar's
+    <div class="fine">Chats are end-to-end encrypted on your device — Synapse's
       servers only ever store scrambled text they can't read.</div>
   </div>`;
 
@@ -2219,7 +2228,7 @@ function renderFriends() {
     el.onclick = () => openFriendProfile(friends.find(x => x.id === el.dataset.fprof)));
 }
 
-// A read-only look at a friend's stats + Mindspar Score.
+// A read-only look at a friend's stats + Synapse Score.
 async function openFriendProfile(friend) {
   if (!friend) return;
   viewingFriend = { ...friend, loading: true };
@@ -2252,7 +2261,7 @@ function renderFriendProfile(v) {
     </div>
     ${v.loading ? `<div class="cardbox" style="padding:24px;text-align:center;color:var(--ink2)">Loading…</div>` : `
     <div class="cardbox" style="padding:22px;text-align:center">
-      <div class="eyebrow">MINDSPAR SCORE</div>
+      <div class="eyebrow">SYNAPSE SCORE</div>
       ${score !== null ? `<div class="score">${score}</div>`
         : `<div class="serif" style="font-size:22px;font-weight:600;margin-top:8px">Not calibrated yet</div>`}
     </div>
@@ -2359,7 +2368,7 @@ async function openChat(friend) {
   if (!myKeys) return enableSecureChat(() => openChat(friend));
   // Always use the friend's latest published key (it may have changed on a re-key).
   const theirPub = (await backend.getPubKey(friend.id)) || friend.pubKey;
-  if (!theirPub) return toast(`${friend.name} hasn't set up secure chat yet — ask them to sign in on Mindspar.`);
+  if (!theirPub) return toast(`${friend.name} hasn't set up secure chat yet — ask them to sign in on Synapse.`);
   chatFriend = friend; chatMeta = {};
   requestNotifyPermission();
   try {
@@ -2538,7 +2547,7 @@ function renderStats() {
     <div class="serif" style="font-size:24px;font-weight:600">Stats</div>
 
     <div class="cardbox" style="padding:24px;text-align:center">
-      <div class="eyebrow">MINDSPAR SCORE</div>
+      <div class="eyebrow">SYNAPSE SCORE</div>
       ${score !== null
         ? `<div class="score">${score}</div>
            <div style="font-size:11.5px;color:var(--ink2)">Normalized within ${ageBand(P)} · mean 100</div>`
@@ -2596,39 +2605,39 @@ function renderStats() {
       }).join("")}
     </div>` : ""}
 
-    <div class="fine">The Mindspar Score reflects your relative performance in this game, normalized by
+    <div class="fine">The Synapse Score reflects your relative performance in this game, normalized by
       age group. It is an entertainment estimate — not a clinical or psychometric IQ assessment.</div>
   </div>`;
 }
 
 // ---- achievements: computed from stats already on the profile, no backend ----
 const ACH = [
-  { name: "First Duel", icon: "play", color: "#5457e8", desc: "Play your first duel.",
+  { name: "First Duel", icon: "play", color: "#6A6DC0", desc: "Play your first duel.",
     done: p => p.played >= 1, prog: p => [Math.min(p.played, 1), 1] },
-  { name: "First Victory", icon: "trophy", color: "#c48c1c", desc: "Win a duel.",
+  { name: "First Victory", icon: "trophy", color: "#B8862E", desc: "Win a duel.",
     done: p => p.won >= 1, prog: p => [Math.min(p.won, 1), 1] },
-  { name: "Ten Up", icon: "hash", color: "#0f85d4", desc: "Play 10 duels.",
+  { name: "Ten Up", icon: "hash", color: "#2E7EA6", desc: "Play 10 duels.",
     done: p => p.played >= 10, prog: p => [Math.min(p.played, 10), 10] },
-  { name: "Half Century", icon: "grid", color: "#8c5cd4", desc: "Play 50 duels.",
+  { name: "Half Century", icon: "grid", color: "#9A66BB", desc: "Play 50 duels.",
     done: p => p.played >= 50, prog: p => [Math.min(p.played, 50), 50] },
-  { name: "Calibrated", icon: "bulb", color: "#219e78", desc: `Answer ${MIN_ANSWERS} questions and unlock your Mindspar Score.`,
+  { name: "Calibrated", icon: "bulb", color: "#34917F", desc: `Answer ${MIN_ANSWERS} questions and unlock your Synapse Score.`,
     done: p => sparScore(p) !== null,
     prog: p => [Math.min(Object.values(p.dA).reduce((a, b) => a + b, 0), MIN_ANSWERS), MIN_ANSWERS] },
-  { name: "Scholar", icon: "grad", color: "#b04458", desc: "Reach the Scholar tier (rating 1050).",
+  { name: "Scholar", icon: "grad", color: "#B85468", desc: "Reach the Scholar tier (rating 1050).",
     done: p => p.rating >= 1050, prog: p => [Math.min(p.rating, 1050), 1050] },
-  { name: "Sage", icon: "landmark", color: "#0e8f8a", desc: "Reach the Sage tier (rating 1200).",
+  { name: "Sage", icon: "landmark", color: "#6B934D", desc: "Reach the Sage tier (rating 1200).",
     done: p => p.rating >= 1200, prog: p => [Math.min(p.rating, 1200), 1200] },
-  { name: "Hot Streak", icon: "fast", color: "#cc5624", desc: "Win 5 duels in a row.",
+  { name: "Hot Streak", icon: "fast", color: "#C9652F", desc: "Win 5 duels in a row.",
     done: p => (p.best || 0) >= 5, prog: p => [Math.min(p.best || 0, 5), 5] },
-  { name: "Daily Devotee", icon: "sun", color: "#e8843c", desc: "Keep a 7-day daily-challenge streak.",
+  { name: "Daily Devotee", icon: "sun", color: "#D95B43", desc: "Keep a 7-day daily-challenge streak.",
     done: p => (p.dailyBestStreak || 0) >= 7, prog: p => [Math.min(p.dailyBestStreak || 0, 7), 7] },
-  { name: "Sharpshooter", icon: "eye", color: "#5457e8", desc: "80% accuracy across 100+ answers.",
+  { name: "Sharpshooter", icon: "eye", color: "#6A6DC0", desc: "80% accuracy across 100+ answers.",
     done: p => { const a = Object.values(p.dA).reduce((x, y) => x + y, 0);
       return a >= 100 && Object.values(p.dC).reduce((x, y) => x + y, 0) / a >= .8; },
     prog: p => [Math.min(Object.values(p.dA).reduce((x, y) => x + y, 0), 100), 100] },
-  { name: "Lightning", icon: "zap", color: "#c48c1c", desc: "Average answer speed of 70%+ over 50 correct answers.",
+  { name: "Lightning", icon: "zap", color: "#B8862E", desc: "Average answer speed of 70%+ over 50 correct answers.",
     done: p => p.sfN >= 50 && p.sfSum / p.sfN >= .7, prog: p => [Math.min(p.sfN || 0, 50), 50] },
-  { name: "Polymath", icon: "globe", color: "#8c5cd4", desc: "Answer correctly in all 8 domains.",
+  { name: "Polymath", icon: "globe", color: "#9A66BB", desc: "Answer correctly in all 8 domains.",
     done: p => Object.keys(DOMAINS).every(k => (p.dC[k] || 0) >= 1),
     prog: p => [Object.keys(DOMAINS).filter(k => (p.dC[k] || 0) >= 1).length, 8] },
 ];
@@ -2693,7 +2702,7 @@ function renderProfile() {
       </div>
     </div>
 
-    <div class="fine">Mindspar is for adults 18 and over · <a href="privacy.html" style="color:inherit">Privacy</a></div>
+    <div class="fine">Synapse is for adults 18 and over · <a href="privacy.html" style="color:inherit">Privacy</a></div>
     <button class="signout" id="p-out">Sign out</button>
     <button class="ghost" id="p-del" style="color:var(--bad);opacity:.75">Delete account…</button>
   </div>`;
@@ -2853,7 +2862,7 @@ function initPWA() {
     deferredInstall = e;
     if (!arena.classList.contains("on") && !chatEl.classList.contains("on")) render();
   });
-  window.addEventListener("appinstalled", () => { deferredInstall = null; toast("Mindspar installed 🎉"); });
+  window.addEventListener("appinstalled", () => { deferredInstall = null; toast("Synapse installed 🎉"); });
 }
 
 // Home-screen banner: a real Install button where the browser supports it, or
@@ -2863,14 +2872,14 @@ function installBanner() {
   if (isStandalone() || localStorage.getItem("mindspar-install-x") === "1") return "";
   if (deferredInstall) {
     return `<div class="cardbox install-card">
-      <div><b>Install Mindspar</b><span>Add it to your home screen — it opens full-screen like an app.</span></div>
+      <div><b>Install Synapse</b><span>Add it to your home screen — it opens full-screen like an app.</span></div>
       <div class="install-actions">
         <button class="smallbtn" id="pwa-install">Install</button>
         <button class="ghost" id="pwa-x">Not now</button></div></div>`;
   }
   if (isIOS()) {
     return `<div class="cardbox install-card ios">
-      <b>Add Mindspar to your home screen</b>
+      <b>Add Synapse to your home screen</b>
       <div class="install-note">Open this page in <em>Safari</em> (not Chrome or an in-app browser),
         tap the <em>Share</em> button — the square with an up arrow — then scroll down and choose
         “Add to Home Screen.”</div>
